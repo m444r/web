@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $role = $_POST['role'];
 
     // validate if email is empty
     if (empty($email)) {
@@ -37,7 +38,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                 if (password_verify($password, $row['password'])) {
                     $_SESSION["userid"] = $row['id'];
                     //$_SESSION["user"] = $row;
-                    header("location: simple.php");////!!!!!!!!!!!!!!!!!
+                   // header("location: simple.php");////!!!!!!!!!!!!!!!!!
+
+                     // Κάνε redirect ανάλογα με τον ρόλο
+                    if ($role == 'student') {
+                        header("Location: simple.php");
+                    } elseif ($role == 'teacher') {
+                        header("Location: simple.php");
+                    } elseif ($role == 'admin') {
+                        header("Location: simple.php");
+                    }
+                    
+
                     exit;
                 } else {
                     $error .= '<p class="error">The password is not valid.</p>';
@@ -68,19 +80,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     <h2>Login</h2>
                     <p>Please fill in your email and password.</p>
                     <?php echo $error; ?>
+                    
                     <form action="" method="post">
                         <div class="form-group">
+                            <label>Ρόλος:</label><br>
+                            <label><input type="radio" name="role" value="student" required> Φοιτητής</label>
+                            <label><input type="radio" name="role" value="teacher"> Διδάσκων</label>
+                            <label><input type="radio" name="role" value="admin"> Γραμματεία</label><br>
+
                             <label>Email Address</label>
                             <input type="email" name="email" class="form-control" required />
+                            
+
                         </div>    
                         <div class="form-group">
                             <label>Password</label>
                             <input type="password" name="password" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <input type="submit" name="submit" class="btn btn-primary" value="Submit">
+                            <input type="submit" name="submit" class="btn btn-primary" value="Login">
                         </div>
-                        <p>Don't have an account? <a href="register.php">Register here</a>.</p>
                     </form>
                 </div>
             </div>
