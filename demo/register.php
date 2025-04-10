@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     if ($role == 'student') {
                         header("Location: simple.php");
                     } elseif ($role == 'teacher') {
-                        header("Location: simple.php");
+                        header("Location: teacher.html");
                     } elseif ($role == 'admin') {
                         header("Location: simple.php");
                     }
