@@ -13,7 +13,7 @@ $db = mysqli_connect(DBSERVER, DBUSERNAME, DBPASSWORD, DBNAME);
 if($db === false){
     die("Error: connection error. " . mysqli_connect_error());
 }
-echo "Σύνδεση με τη βάση πέτυχε!";
+/*echo "Σύνδεση με τη βάση πέτυχε!";
 
 $sql = "SELECT * FROM users";
 $result = mysqli_query($db, $sql);
@@ -36,13 +36,13 @@ if (mysqli_num_rows($result) > 0) {
 } else {
     echo "⚠️ Δεν βρέθηκαν λογαριασμοί στη βάση.";
 }
+*/
 
 
+//$password = 'markar'; // Βάλε εδώ τον αρχικό κωδικό
+//$hash = password_hash($password, PASSWORD_DEFAULT);
 
-$password = 'markar'; // Βάλε εδώ τον αρχικό κωδικό
-$hash = password_hash($password, PASSWORD_DEFAULT);
-
-echo $hash;
+//echo $hash;
 
 // Κλείσιμο σύνδεσης
 //mysqli_close($db);
