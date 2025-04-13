@@ -2,7 +2,7 @@
 define('DBSERVER', 'localhost'); // Database server
 define('DBUSERNAME', 'root'); // Database username
 define('DBPASSWORD', 'password'); // Database password
-define('DBNAME', 'demo'); // Database name
+define('DBNAME', 'web'); // Database name
  
 /* connect to MySQL database */
 $db = mysqli_connect(DBSERVER, DBUSERNAME, DBPASSWORD, DBNAME);
@@ -13,9 +13,9 @@ $db = mysqli_connect(DBSERVER, DBUSERNAME, DBPASSWORD, DBNAME);
 if($db === false){
     die("Error: connection error. " . mysqli_connect_error());
 }
-/*echo "Σύνδεση με τη βάση πέτυχε!";
+echo "Σύνδεση με τη βάση πέτυχε!";
 
-$sql = "SELECT * FROM users";
+/*$sql = "SELECT * FROM users";
 $result = mysqli_query($db, $sql);
 
 // Έλεγχος αν υπάρχουν αποτελέσματα
@@ -36,13 +36,14 @@ if (mysqli_num_rows($result) > 0) {
 } else {
     echo "⚠️ Δεν βρέθηκαν λογαριασμοί στη βάση.";
 }
-*/
 
 
-//$password = 'markar'; // Βάλε εδώ τον αρχικό κωδικό
-//$hash = password_hash($password, PASSWORD_DEFAULT);
 
-//echo $hash;
+$password = 'markar'; // Βάλε εδώ τον αρχικό κωδικό
+$hash = password_hash($password, PASSWORD_DEFAULT);
+
+echo $hash;
 
 // Κλείσιμο σύνδεσης
 //mysqli_close($db);
+*/
