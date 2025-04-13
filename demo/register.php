@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $role = $_POST['role'];
+    //$rolos = $_POST['rolos'];
 
     // validate if email is empty
     if (empty($email)) {
@@ -37,20 +38,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             if ($row) {
                 if (password_verify($password, $row['password'])) {
                     $_SESSION["userid"] = $row['id'];
-                    //$_SESSION["user"] = $row;
-                   // header("location: simple.php");////!!!!!!!!!!!!!!!!!
+                    $_SESSION["user"] = $row;
+                    $_SESSION["role"] = $row['role'];
+                    //header("location: simple.php");////!!!!!!!!!!!!!!!!!
+                    if ($role == $row['role']) {
+                        $_SESSION["userid"] = $row['id'];  // Store user ID in session
+    
+                        // Redirect based on the user's role
+                        if ($role == 'student') {
+                            header("Location: student.php"); // Redirect to student's page
+                        } elseif ($role == 'teacher') {
+                            header("Location: teacher.php"); // Redirect to teacher's page
+                        } elseif ($role == 'secretary') {
+                            header("Location: secretary.php]"); // Redirect to admin's page
+                        }
+                        else {
+                            $error .= '<p class="error">Your selected role does not match your account role.</p>';
+                        } /// den leitourgei to else ti fasi?
 
-                     // Κάνε redirect ανάλογα με τον ρόλο
-                    if ($role == 'student') {
-                        header("Location: simple.php");
-                    } elseif ($role == 'teacher') {
-                        header("Location: teacher.html");
-                    } elseif ($role == 'admin') {
-                        header("Location: simple.php");
-                    }
-                    
-
-                    exit;
+                    } 
+         
                 } else {
                     $error .= '<p class="error">The password is not valid.</p>';
                 }
