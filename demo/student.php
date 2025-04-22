@@ -13,6 +13,8 @@ if (!isset($_SESSION['userid']) || $_SESSION['role'] != 'student') {
 
 <!DOCTYPE html>
 <html lang="el">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <head>
     <meta charset="UTF-8">
     <title>Πίνακας Ελέγχου Φοιτητή</title>
@@ -90,17 +92,74 @@ if (!isset($_SESSION['userid']) || $_SESSION['role'] != 'student') {
             <p>Δείτε τις λεπτομέρειες της διπλωματικής σας εργασίας, την τρέχουσα κατάσταση και τα μέλη της τριμελούς επιτροπής (αν υπάρχουν).</p>
             <a class="btn" href="view_topic.php">Προβολή Θέματος</a>
         </div>
+<!-- Μικρό κουμπί πάνω δεξιά -->
+<div style="position: absolute; top: 20px; right: 20px;">
+    <!-- Κουμπί με εικονίδιο ρυθμίσεων -->
+    <div style="position: relative;">
+        <button onclick="toggleDropdown()" style="
+            background: none;
+            border: none;
+            color: #007BFF;
+            font-size: 20px;
+            cursor: pointer;
+        ">
+            <i class="fas fa-cog"></i>
+        </button>
 
-        <!-- 2. Επεξεργασία Προφίλ -->
-        <div class="card">
-            <h2>2. Επεξεργασία Προφίλ</h2>
-            <p>Ενημερώστε τα στοιχεία επικοινωνίας σας, όπως διεύθυνση, τηλέφωνο και email.</p>
-            <a class="btn" href="edit_profile.php">Επεξεργασία Προφίλ</a>
+        <!-- Dropdown μενού -->
+        <div id="settingsDropdown" style="
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 5px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        ">
+            <a href="edit_profile.php" style="
+                display: block;
+                padding: 10px 15px;
+                color: #333;
+                text-decoration: none;
+                font-size: 14px;
+            ">Επεξεργασία Προφίλ</a>
+            <a href="logout.php" style="
+                display: block;
+                padding: 10px 15px;
+                color: #dc3545;
+                text-decoration: none;
+                font-size: 14px;
+            ">Αποσύνδεση</a>
         </div>
+    </div>
+</div>
+
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById("settingsDropdown");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    // Κλείσιμο dropdown όταν κάνεις κλικ έξω
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById("settingsDropdown");
+        const button = event.target.closest('button');
+
+        if (!event.target.closest('#settingsDropdown') && !button) {
+            dropdown.style.display = "none";
+        }
+    });
+</script>
+
+
+
+
 
         <!-- 3. Διαχείριση Διπλωματικής Εργασίας -->
         <div class="card">
-            <h2>3. Διαχείριση Διπλωματικής Εργασίας</h2>
+            <h2>2. Διαχείριση Διπλωματικής Εργασίας</h2>
             <p>Ανάλογα με την κατάσταση της διπλωματικής σας, μπορείτε να κάνετε τις απαραίτητες ενέργειες .</p> 
             <a class="btn" href="manage_thesis.php">Διαχείριση Διπλωματικής</a>
         </div>
