@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                         } elseif ($role == 'teacher') {
                             header("Location: teacher.php"); // Redirect to teacher's page
                         } elseif ($role == 'secretary') {
-                            header("Location: secretary.php]"); // Redirect to admin's page
+                            header("Location: secretary.php"); // Redirect to admin's page
                         }
                         else {
                             $error .= '<p class="error">Your selected role does not match your account role.</p>';
@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                             <label>Ρόλος:</label><br>
                             <label><input type="radio" name="role" value="student" required> Φοιτητής</label>
                             <label><input type="radio" name="role" value="teacher"> Διδάσκων</label>
-                            <label><input type="radio" name="role" value="admin"> Γραμματεία</label><br>
+                            <label><input type="radio" name="role" value="secretary"> Γραμματεία</label><br>
 
                             <label>Email Address</label>
                             <input type="email" name="email" class="form-control" required />
