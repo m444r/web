@@ -81,6 +81,18 @@ if (!isset($_SESSION['userid']) || $_SESSION['role'] != 'teacher') {
 
     <h1>Καλωσήρθατε, Διδάσκοντα</h1>
 
+    <div style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center;">
+    <a href="logout.php" style="
+        background-color: #dc3545;
+        color: white;
+        padding: 6px 12px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+    ">Αποσύνδεση</a>
+    </div>
+
     <div class="container">
 
         <!-- 1 -->
@@ -119,12 +131,14 @@ if (!isset($_SESSION['userid']) || $_SESSION['role'] != 'teacher') {
         </div>
 
         <div class="card">
-            <h2>5. Διαχείριση Διπλωματικών Εργασιών</h2>
+            <h2>6. Διαχείριση Διπλωματικών Εργασιών</h2>
             <p>Διαχειριστείτε υπο ανάθεση/ενεργές/υπο εξέταση διπλωματικές εργασίες .</p>
             <a class="btn" href="manage_diplomatikes.php"> Μετάβαση </a>
         </div>
 
     </div>
+
+    
 
 </body>
 </html>
