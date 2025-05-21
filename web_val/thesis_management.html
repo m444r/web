@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Διαχείριση Διπλωματικών Εργασιών</title>
+    <link rel="stylesheet" href="css/thesis_management.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Διαχείριση Διπλωματικών Εργασιών</h1>
+
+        <!-- Υπό Ανάθεση -->
+        <div class="thesis-state">
+            <h2 class="state-title">Υπό Ανάθεση</h2>
+            <ul class="action-list">
+                <li>
+                    Προβολή μελών - Διδασκόντων που έχουν προσκληθεί
+                    <div class="role-specific">(με ημερομηνίες πρόσκλησης, αποδοχής, απόρριψης)</div>
+                </li>
+                <li>
+                    <button class="button danger">Ακύρωση Ανάθεσης</button>
+                    <div class="role-specific">(μόνο για επιβλέποντα Διδάσκοντα)</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Ενεργή -->
+        <div class="thesis-state">
+            <h2 class="state-title">Ενεργή</h2>
+            <ul class="action-list">
+                <li>
+                    <div class="notes-section">
+                        <h3>Σημειώσεις</h3>
+                        <textarea placeholder="Προσθέστε σημείωση (μέχρι 300 χαρακτήρες)" maxlength="300"></textarea>
+                        <button class="button">Αποθήκευση Σημείωσης</button>
+                    </div>
+                </li>
+                <li>
+                    <button class="button danger">Ακύρωση Ανάθεσης</button>
+                    <div class="role-specific">(μόνο για επιβλέποντα, μετά από 2 έτη)</div>
+                </li>
+                <li>
+                    <button class="button">Αλλαγή σε Υπό Εξέταση</button>
+                    <div class="role-specific">(μόνο για επιβλέποντα)</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Υπό Εξέταση -->
+        <div class="thesis-state">
+            <h2 class="state-title">Υπό Εξέταση</h2>
+            <ul class="action-list">
+                <li>
+                    <button class="button">Προβολή Πρόχειρου Κειμένου</button>
+                </li>
+                <li>
+                    <button class="button">Παραγωγή Κειμένου Ανακοίνωσης</button>
+                    <div class="role-specific">(μόνο για επιβλέποντα)</div>
+                </li>
+                <li>
+                    <div class="grade-section">
+                        <h3>Καταχώρηση Βαθμού</h3>
+                        <div class="role-specific">(για επιβλέποντα και μέλη τριμελούς)</div>
+                        <form>
+                            <div>
+                                <label>Κριτήριο 1:</label>
+                                <input type="number" min="0" max="10" step="0.5">
+                            </div>
+                            <div>
+                                <label>Κριτήριο 2:</label>
+                                <input type="number" min="0" max="10" step="0.5">
+                            </div>
+                            <div>
+                                <label>Κριτήριο 3:</label>
+                                <input type="number" min="0" max="10" step="0.5">
+                            </div>
+                            <button class="button">Υποβολή Βαθμού</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
