@@ -174,4 +174,111 @@ $recent = $pdo->query("
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-                   
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Announcements -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Recent Announcements</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php if (empty($recent)): ?>
+                            <p>No recent announcements found.</p>
+                        <?php else: ?>
+                            <div class="list-group">
+                                <?php foreach ($recent as $announcement): ?>
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1"><?= htmlspecialchars($announcement['title']) ?></h6>
+                                        <small><?= date('d/m/Y', strtotime($announcement['presentation_date'])) ?></small>
+                                    </div>
+                                    <p class="mb-1"><?= htmlspecialchars($announcement['student_first'].' '.$announcement['student_last']) ?></p>
+                                    <p class="mb-0 text-truncate"><?= htmlspecialchars($announcement['announcement_text']) ?></p>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <a href="all_announcements.php" class="btn btn-sm btn-outline-secondary">View All</a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <!-- Public Announcements Feed -->
+                <div class="card mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Public Feed</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>The public announcements feed is available at:</p>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" value="<?= htmlspecialchars('https://'.$_SERVER['HTTP_HOST'].'/api/announcements') ?>" readonly>
+                            <button class="btn btn-outline-secondary" type="button" id="copyFeedUrl">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                        <p class="small">This feed can be embedded in department websites.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Announcement Modal -->
+    <div class="modal fade" id="editAnnouncementModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Announcement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST">
+                    <input type="hidden" name="thesis_id" id="announcementThesisId">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="announcementText" class="form-label">Announcement Text</label>
+                            <textarea class="form-control" id="announcementText" name="announcement_text" rows="6" required></textarea>
+                            <div class="form-text">This text will be published on the department website.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="add_announcement" class="btn btn-primary">Save Announcement</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle edit announcement button clicks
+        document.querySelectorAll('.edit-announcement').forEach(button => {
+            button.addEventListener('click', function() {
+                const thesisId = this.getAttribute('data-thesis-id');
+                const announcementText = this.getAttribute('data-announcement-text') || '';
+                
+                document.getElementById('announcementThesisId').value = thesisId;
+                document.getElementById('announcementText').value = announcementText;
+            });
+        });
+        
+        // Copy feed URL to clipboard
+        document.getElementById('copyFeedUrl').addEventListener('click', function() {
+            const feedUrl = document.querySelector('.input-group input');
+            feedUrl.select();
+            document.execCommand('copy');
+            
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
