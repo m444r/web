@@ -1,0 +1,385 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f7faff;
+    color: #222;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #222;
+}
+
+h2 {
+    color: #000000;
+    margin-bottom: 18px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-bottom: 6px;
+    width: fit-content;
+    border-bottom: none;
+}
+
+.create-topic,
+.topics-list .topic-card {
+    background: white;
+    padding: 28px 32px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+    border: 1.5px solid #e0e7ef;
+    position: relative;
+}
+
+.topics-list {
+    margin-top: 40px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cdd4da;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #222;
+    background-color: #f7faff;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #6a7a8c;
+    box-shadow: 0 0 0 0.2rem rgba(106, 122, 140, 0.25);
+    background-color: #eef2f7;
+}
+
+textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+button {
+    background-color: #8fbc8f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(143, 188, 143, 0.10);
+}
+
+button:hover {
+    background-color: #7ba87b;
+    box-shadow: 0 4px 12px rgba(143, 188, 143, 0.18);
+}
+
+button:active {
+    background-color: #6a7a8c;
+    box-shadow: 0 2px 6px rgba(106, 122, 140, 0.15);
+}
+
+.create-topic-btn {
+    background-color: #6a7a8c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(106, 122, 140, 0.10);
+    margin-left: auto;
+    margin-top: 10px;
+}
+
+.create-topic-btn:hover {
+    background-color: #5a6a7a;
+    box-shadow: 0 4px 12px rgba(106, 122, 140, 0.18);
+}
+
+.create-topic-btn:active {
+    background-color: #4a5a6a;
+    box-shadow: 0 2px 6px rgba(106, 122, 140, 0.15);
+}
+
+.topic-card h3 {
+    color: #222;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-bottom: 6px;
+    width: fit-content;
+    border-bottom: none;
+}
+
+.topic-card p {
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.topic-actions {
+    margin-top: 15px;
+}
+
+.edit-btn {
+    display: inline-block;
+    background-color: #6a7a8c;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.edit-btn:hover {
+    background-color: #5a6a7a;
+}
+
+.edit-btn:active {
+    background-color: #4a5a6a;
+}
+
+a[href$=".pdf"] {
+    display: inline-block;
+    background-color: #6a7a8c;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-right: 10px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+a[href$=".pdf"]:hover {
+    background-color: #5a6a7a;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+        margin: 20px auto;
+    }
+    .create-topic,
+    .topics-list .topic-card {
+        padding: 20px;
+    }
+    button,
+    .create-topic-btn,
+    .edit-btn,
+    a[href$=".pdf"] {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    label {
+        font-size: 14px;
+    }
+    input[type="text"],
+    textarea {
+        font-size: 14px;
+    }
+    .topic-card h3 {
+        font-size: 1.1rem;
+    }
+    .topic-card p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Styles for the horizontal rule */
+.hr {
+    border: none;
+    border-top: 2px solid #222;
+    margin: 0 0 40px 0;
+}
+
+/* Styles for the header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+/* Styles for the header title */
+.header-title {
+    font-size: 1.3rem; /* Match statistics page title size */
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Styles for the header icons container */
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between icons */
+}
+
+/* Styles for the home icon */
+.home-icon i {
+    font-size: 1.5rem;
+    color: #222; /* Default color */
+    transition: color 0.2s ease-in-out;
+}
+
+.home-icon:hover i {
+    color: #6a7a8c; /* Dusty blue on hover */
+}
+
+.home-icon:active i {
+    color: #5a6a7a; /* Darker dusty blue when active */
+    transform: scale(0.95); /* Slightly shrink the icon when active */
+    transition: transform 0.1s ease-out; /* Quick transition for press effect */
+}
+
+/* Styles for the menu icon (three lines) */
+.menu-icon {
+    position: relative;
+    cursor: pointer;
+    padding: 5px; /* Add padding for hover background */
+    border-radius: 4px; /* Optional: slight rounded corners */
+    transition: background 0.2s ease-in-out;
+}
+
+.menu-icon:hover {
+    background: rgba(106, 122, 140, 0.1); /* Subtle dusty blue background on hover */
+}
+
+.menu-icon:active {
+    background: rgba(106, 122, 140, 0.25); /* More prominent background when active */
+    transition: background 0.1s ease-out; /* Quick transition for press effect */
+}
+
+/* Styles for the dropdown menu */
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #fff;
+    border: 1px solid #e0e7ef;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-width: 290px;
+    z-index: 10;
+}
+
+.menu-dropdown.show {
+    display: block;
+}
+
+.menu-dropdown a {
+    display: block;
+    padding: 12px 18px;
+    color: #222;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.menu-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.menu-dropdown a:hover {
+    background: #cdd4da; /* Using a muted blue-gray for hover */
+    color: #003366; /* Using the deep blue for text on hover */
+}
+
+.menu-dropdown a:active {
+    background: #aebdc6; /* A bit darker than hover */
+    color: #001a33; /* Darker text color */
+    transition: background 0.1s ease-out, color 0.1s ease-out;
+}
+
+.form-group.file-upload-submit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Adjust margin-top if needed to control vertical spacing */
+}
+
+.form-group.file-upload-submit-row .form-group {
+    margin-bottom: 0; /* Remove bottom margin from nested form group */
+}
+
+@media (max-width: 768px) {
+    .form-group.file-upload-submit-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .create-topic-btn {
+        margin-left: 0; /* Remove auto margin on small screens */
+        margin-top: 15px; /* Add space above button on small screens */
+    }
+}
+
+.edit-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 1.2rem;
+    color: #6a7a8c;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.edit-icon:hover {
+    color: #5a6a7a;
+}
+
+.edit-icon:active {
+    color: #4a5a6a;
+}
+
+.edit-icon::after {
+    content: "Επεξεργασία";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    transform: translateX(0);
+    white-space: nowrap;
+    background-color: #555;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.edit-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
+}

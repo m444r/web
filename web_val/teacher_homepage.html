@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Dashboard</title>
+    <link rel="stylesheet" href="css/teacher_homepage.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Teacher's Dashboard</h1>
+            <div class="user-info">
+                <span class="user-name">Welcome, Teacher</span>
+                <button class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="dashboard-grid">
+                <!-- Assignments Section -->
+                <section class="dashboard-card">
+                    <h2><i class="fas fa-tasks"></i> Assignments</h2>
+                    <div class="card-content">
+                        <button class="action-btn" id="viewAssignments">View Assignments</button>
+                        <button class="action-btn" id="createAssignment">Create New Assignment</button>
+                    </div>
+                </section>
+
+                <!-- Topic Assignment Section -->
+                <section class="dashboard-card">
+                    <h2><i class="fas fa-user-graduate"></i> Topic Assignment</h2>
+                    <div class="card-content">
+                        <button class="action-btn" id="assignTopic">Assign Topic to Student</button>
+                        <div class="topic-list">
+                            <h3>Recent Assignments</h3>
+                            <ul id="recentTopics">
+                                <!-- Will be populated dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Diplomats Section -->
+                <section class="dashboard-card">
+                    <h2><i class="fas fa-users"></i> Diplomats</h2>
+                    <div class="card-content">
+                        <div class="search-box">
+                            <input type="text" placeholder="Search diplomats...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="diplomats-list">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Group Invitations Section -->
+                <section class="dashboard-card">
+                    <h2><i class="fas fa-user-friends"></i> Group Invitations</h2>
+                    <div class="card-content">
+                        <div class="invitations-list">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistics Section -->
+                <section class="dashboard-card">
+                    <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
+                    <div class="card-content">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <h3>Active Students</h3>
+                                <p class="stat-number">0</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3>Pending Assignments</h3>
+                                <p class="stat-number">0</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3>Completed Works</h3>
+                                <p class="stat-number">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Work Management Section -->
+                <section class="dashboard-card">
+                    <h2><i class="fas fa-clipboard-list"></i> Work Management</h2>
+                    <div class="card-content">
+                        <div class="work-status-tabs">
+                            <button class="status-tab active" data-status="active">Active</button>
+                            <button class="status-tab" data-status="assignment">Under Assignment</button>
+                            <button class="status-tab" data-status="review">Under Review</button>
+                        </div>
+                        <div class="work-list">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for creating new assignment -->
+    <div class="modal" id="createAssignmentModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create New Assignment</h2>
+            <form id="assignmentForm">
+                <div class="form-group">
+                    <label for="assignmentTitle">Title</label>
+                    <input type="text" id="assignmentTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="assignmentDescription">Description</label>
+                    <textarea id="assignmentDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="dueDate">Due Date</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Assignment</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Στατιστικά Διπλωματικών</title>
+    <link rel="stylesheet" href="css/statistics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-title"><b>Στατιστικά Διπλωματικών</b></div>
+            <div class="header-icons">
+                <a href="#" class="home-icon"><i class="fas fa-home"></i></a>
+                <div class="menu-icon" id="menuIcon">
+                    <div style="width:32px">
+                        <div style="border-top:2px solid #111; margin:7px 0;"></div>
+                        <div style="border-top:2px solid #111; margin:7px 0;"></div>
+                        <div style="border-top:2px solid #111; margin:7px 0;"></div>
+                    </div>
+                    <div class="menu-dropdown" id="menuDropdown">
+                        <a href="#">Προβολή και Δημιουργία Θεμάτων</a>
+                        <a href="#">Ανάθεση Θέματος σε Φοιτητή</a>
+                        <a href="#">Προβολή Διπλωματικών</a>
+                        <a href="#">Προβολή Προσκλήσεων Τριμελής</a>
+                        <a href="#">Διαχείριση Διπλωματικών</a>
+                        <a href="#">Προβολή Στατιστικών</a>
+                        <a href="#">Αποσύνδεση</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <hr class="hr">
+        <main>
+            <div class="stats-column spaced-cards">
+                <div class="stat-card">
+                    <div class="stat-card-title">Μεσος Χρονος Περατωσης</div>
+                    <div class="chart-container">
+                        <canvas id="completionTimeChart"></canvas>
+                    </div>
+                    <div class="legend legend-centered">
+                        <div class="legend-item" data-index="0"><span class="legend-color legend-pink"></span> Επιβλεπων</div>
+                        <div class="legend-item" data-index="1"><span class="legend-color legend-blue"></span> Τριμελης</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-title">Μεσος Βαθμος</div>
+                    <div class="chart-container">
+                        <canvas id="gradeChart"></canvas>
+                    </div>
+                    <div class="legend legend-centered">
+                        <div class="legend-item" data-index="0"><span class="legend-color legend-pink"></span> Επιβλεπων</div>
+                        <div class="legend-item" data-index="1"><span class="legend-color legend-blue"></span> Τριμελης</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-title">Συνολικο Πληθος</div>
+                    <div class="chart-container">
+                        <canvas id="totalThesesChart"></canvas>
+                    </div>
+                    <div class="legend legend-centered">
+                        <div class="legend-item" data-index="0"><span class="legend-color legend-pink"></span> Επιβλεπων</div>
+                        <div class="legend-item" data-index="1"><span class="legend-color legend-blue"></span> Τριμελης</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        // Dropdown menu logic
+        const menuIcon = document.getElementById('menuIcon');
+        const menuDropdown = document.getElementById('menuDropdown');
+        document.addEventListener('click', function(e) {
+            if (menuIcon.contains(e.target)) {
+                menuDropdown.classList.toggle('show');
+            } else {
+                menuDropdown.classList.remove('show');
+            }
+        });
+        // Chart.js code
+        const completionTimeData = {
+            labels: ['Επιβλεπων', 'Τριμελης'],
+            datasets: [{
+                label: 'Μέσος Χρόνος (μήνες)',
+                data: [15, 13],
+                backgroundColor: ['#8fbc8f', '#6a7a8c'],
+                borderColor: ['#8fbc8f', '#6a7a8c'],
+                borderWidth: 1,
+                maxBarThickness: 28
+            }]
+        };
+        const gradeData = {
+            labels: ['Επιβλεπων', 'Τριμελης'],
+            datasets: [{
+                label: 'Μέσος Βαθμός',
+                data: [8, 5],
+                backgroundColor: ['#8fbc8f', '#6a7a8c'],
+                borderColor: ['#8fbc8f', '#6a7a8c'],
+                borderWidth: 1,
+                maxBarThickness: 28
+            }]
+        };
+        const totalThesesData = {
+            labels: ['Επιβλεπων', 'Τριμελης'],
+            datasets: [{
+                label: 'Πλήθος Διπλωματικών',
+                data: [9, 11],
+                backgroundColor: ['#8fbc8f', '#6a7a8c'],
+                borderColor: ['#8fbc8f', '#6a7a8c'],
+                borderWidth: 1,
+                maxBarThickness: 28
+            }]
+        };
+        const chartConfig = {
+            type: 'bar',
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                animation: {
+                    duration: 300
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: '#e0e7ef' },
+                        ticks: { color: '#222' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        };
+        const completionTimeChart = new Chart(
+            document.getElementById('completionTimeChart'),
+            { ...chartConfig, data: completionTimeData }
+        );
+        const gradeChart = new Chart(
+            document.getElementById('gradeChart'),
+            { ...chartConfig, data: gradeData }
+        );
+        const totalThesesChart = new Chart(
+            document.getElementById('totalThesesChart'),
+            { ...chartConfig, data: totalThesesData }
+        );
+
+        // --- Legend hover effect ---
+        function addLegendHoverEffect(legendSelector, chart, colorActive, colorInactive, borderActive, borderInactive) {
+            const legend = legendSelector;
+            if (!legend) return;
+            const items = legend.querySelectorAll('.legend-item');
+            items.forEach((item, idx) => {
+                item.addEventListener('mouseenter', () => {
+                    chart.data.datasets[0].backgroundColor = chart.data.datasets[0].backgroundColor.map((c, i) =>
+                        i === idx ? colorActive[i] : colorInactive[i]
+                    );
+                    chart.data.datasets[0].borderColor = chart.data.datasets[0].borderColor.map((c, i) =>
+                        i === idx ? borderActive[i] : borderInactive[i]
+                    );
+                    chart.update();
+                });
+                item.addEventListener('mouseleave', () => {
+                    chart.data.datasets[0].backgroundColor = colorActive;
+                    chart.data.datasets[0].borderColor = borderActive;
+                    chart.update();
+                });
+            });
+        }
+        // Colors for active/inactive
+        const sageGreen = '#8fbc8f', dustyBlue = '#6a7a8c';
+        const sageGreenFaded = 'rgba(143, 188, 143, 0.5)', dustyBlueFaded = 'rgba(106, 122, 140, 0.5)';
+        // Add effect for each chart
+        addLegendHoverEffect(
+            document.querySelectorAll('.legend-centered')[0],
+            completionTimeChart,
+            [sageGreen, dustyBlue],
+            [sageGreenFaded, dustyBlueFaded],
+            [sageGreen, dustyBlue],
+            [sageGreenFaded, dustyBlueFaded]
+        );
+        addLegendHoverEffect(
+            document.querySelectorAll('.legend-centered')[1],
+            gradeChart,
+            [sageGreen, dustyBlue],
+            [sageGreenFaded, dustyBlueFaded],
+            [sageGreen, dustyBlue],
+            [sageGreenFaded, dustyBlueFaded]
+        );
+        addLegendHoverEffect(
+            document.querySelectorAll('.legend-centered')[2],
+            totalThesesChart,
+            [sageGreen, dustyBlue],
+            [sageGreenFaded, dustyBlueFaded],
+            [sageGreen, dustyBlue],
+            [sageGreenFaded, dustyBlueFaded]
+        );
+    </script>
+</body>
+</html> 
