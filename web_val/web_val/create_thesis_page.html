@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Διαχείριση Θεμάτων Διπλωματικών</title>
+    <link rel="stylesheet" href="css/create_thesis.css">
+    <!-- Add Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-title">Θέματα Διπλωματικών</div>
+            <div class="header-icons">
+                <a href="#" class="home-icon"><i class="fas fa-home"></i></a>
+                <div class="menu-icon" id="menuIcon">
+                    <div style="width:32px">
+                        <div style="border-top:2px solid #111; margin:7px 0;"></div>
+                        <div style="border-top:2px solid #111; margin:7px 0;"></div>
+                        <div style="border-top:2px solid #111; margin:7px 0;"></div>
+                    </div>
+                    <div class="menu-dropdown" id="menuDropdown">
+                        <a href="#">Προβολή και Δημιουργία Θεμάτων</a>
+                        <a href="#">Ανάθεση Θέματος σε Φοιτητή</a>
+                        <a href="#">Προβολή Διπλωματικών</a>
+                        <a href="#">Προβολή Προσκλήσεων Τριμελής</a>
+                        <a href="#">Διαχείριση Διπλωματικών</a>
+                        <a href="#">Προβολή Στατιστικών</a>
+                        <a href="#">Αποσύνδεση</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <hr class="hr">
+        <!-- Form for creating new topic -->
+        <div class="create-topic">
+            <h2>Δημιουργία Νέου Θέματος</h2>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Τίτλος Θέματος:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Περιγραφή:</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+                
+                <div class="form-group file-upload-submit-row">
+                    <div class="form-group">
+                        <label for="pdf_file">Αρχείο PDF:</label>
+                        <input type="file" id="pdf_file" name="pdf_file" accept=".pdf">
+                    </div>
+                    <button type="submit" class="create-topic-btn">Δημιουργία Θέματος</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- List of existing topics -->
+        <div class="topics-list">
+            <h2>Τα Θέματά μου</h2>
+            <!-- Example topic card - Temporary for styling preview -->
+            <div class="topic-card">
+                <h3>Παράδειγμα Τίτλου Θέματος 1</h3>
+                <p>Παράδειγμα περιγραφής θέματος. Εδώ θα εμφανίζεται η περιγραφή του θέματος. Αυτό είναι ένα παράδειγμα κειμένου για να δούμε πώς φαίνεται η παράγραφος μέσα στην κάρτα.</p>
+                <a href="#" target="_blank">Προβολή PDF</a>
+                <!-- Edit Icon -->
+                <i class="fas fa-edit edit-icon" data-topic-id="1"></i>
+            </div>
+            
+            <!-- Another example topic card - Temporary for styling preview -->
+            <div class="topic-card">
+                <h3>Άλλο Παράδειγμα Τίτλου Θέματος 2</h3>
+                <p>Μια άλλη περιγραφή θέματος για παράδειγμα. Και εδώ λίγο περισσότερο κείμενο για να γεμίσει η κάρτα.</p>
+                <a href="#" target="_blank">Προβολή PDF</a>
+                <!-- Edit Icon -->
+                <i class="fas fa-edit edit-icon" data-topic-id="2"></i>
+            </div>
+            <!-- The dynamic content will replace these examples -->
+        </div>
+    </div>
+    <script>
+        // Dropdown menu logic
+        const menuIcon = document.getElementById('menuIcon');
+        const menuDropdown = document.getElementById('menuDropdown');
+        document.addEventListener('click', function(e) {
+            if (menuIcon.contains(e.target)) {
+                menuDropdown.classList.toggle('show');
+            } else {
+                menuDropdown.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html> 
