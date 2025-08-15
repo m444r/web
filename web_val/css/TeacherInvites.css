@@ -1,0 +1,306 @@
+/* Sidebar Styles from TeacherDashboard */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: #F0F0F0;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  background-color: #6A90C7;
+  color: black;
+  min-height: 100vh;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: all 0.3s ease;
+  width: 250px;
+  max-width: 250px;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: block;
+  margin: 15px auto 8px auto;
+  cursor: pointer;
+  border: none;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-name {
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 18px;
+}
+
+.name-separator {
+  border-top: 1px solid #ccc;
+  margin: 20px auto;
+  width: 130px;
+}
+
+.sidebar a {
+  color: black;
+  text-decoration: none;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  transition: all 0.15s ease;
+  font-size: 15px;
+  margin-left: -12px;
+  margin-right: -12px;
+  padding-left: 24px;
+  padding-right: 12px;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  color: black;
+  font-size: 16px;
+}
+
+.sidebar a:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+.sidebar a.active {
+  background-color: rgba(255,255,255,0.3);
+  font-weight: normal;
+  border-left: 3px solid white;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 32px;
+  padding-right: 20px;
+  border-radius: 0;
+}
+
+.sidebar a.logout {
+  color: #B04F4F;
+}
+
+.sidebar a.logout:hover {
+  font-size: 16px;
+}
+
+.nav-spacing {
+  margin-top: 3px;
+}
+
+.nav-separator {
+  border-top: 1px solid #ccc;
+  margin: 10px auto;
+  width: 130px;
+}
+
+.sidebar-container {
+  padding: 15px 12px;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: #6A90C7;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    z-index: 1000;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+}
+
+/* Original TeacherInvites Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #6c5ce7, #a8a4e6);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+header .subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.invitations-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.invitation-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.invitation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.invitation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.invitation-header h3 {
+    font-size: 1.3rem;
+    color: #2c3e50;
+}
+
+.status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.invitation-details {
+    margin-bottom: 1.5rem;
+}
+
+.invitation-details p {
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4a5568;
+}
+
+.invitation-details i {
+    color: #6c5ce7;
+    width: 20px;
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn.accept {
+    background-color: #48bb78;
+    color: white;
+}
+
+.btn.reject {
+    background-color: #f56565;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn.accept:hover {
+    background-color: #38a169;
+}
+
+.btn.reject:hover {
+    background-color: #e53e3e;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    header {
+        padding: 1.5rem;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .invitations-container {
+        grid-template-columns: 1fr;
+    }
+} 

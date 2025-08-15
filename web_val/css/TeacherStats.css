@@ -1,0 +1,372 @@
+/* Sidebar Styles from TeacherDashboard */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: #F0F0F0;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  background-color: #6A90C7;
+  color: black;
+  min-height: 100vh;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: all 0.3s ease;
+  width: 250px;
+  max-width: 250px;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: block;
+  margin: 15px auto 8px auto;
+  cursor: pointer;
+  border: none;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-name {
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 18px;
+}
+
+.name-separator {
+  border-top: 1px solid #ccc;
+  margin: 20px auto;
+  width: 130px;
+}
+
+.sidebar a {
+  color: black;
+  text-decoration: none;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  transition: all 0.15s ease;
+  font-size: 15px;
+  margin-left: -12px;
+  margin-right: -12px;
+  padding-left: 24px;
+  padding-right: 12px;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  color: black;
+  font-size: 16px;
+}
+
+.sidebar a:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+.sidebar a.active {
+  background-color: rgba(255,255,255,0.3);
+  font-weight: normal;
+  border-left: 3px solid white;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 32px;
+  padding-right: 20px;
+  border-radius: 0;
+}
+
+.sidebar a.logout {
+  color: #B04F4F;
+}
+
+.sidebar a.logout:hover {
+  font-size: 16px;
+}
+
+.nav-spacing {
+  margin-top: 3px;
+}
+
+.nav-separator {
+  border-top: 1px solid #ccc;
+  margin: 10px auto;
+  width: 130px;
+}
+
+.sidebar-container {
+  padding: 15px 12px;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: #6A90C7;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    z-index: 1000;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+}
+
+/* Original TeacherStats Styles */
+html, body {
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    background: #f7faff;
+    color: #222;
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+.header-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.home-icon i {
+    font-size: 1.5rem;
+    color: #222;
+    transition: color 0.2s ease-in-out;
+}
+
+.home-icon:hover i {
+    color: #003366;
+}
+
+.home-icon:active i {
+    color: #001a33;
+    transform: scale(0.95);
+    transition: transform 0.1s ease-out;
+}
+
+.menu-icon {
+    position: relative;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background 0.2s ease-in-out;
+}
+
+.menu-icon:hover {
+    background: rgba(0, 51, 102, 0.1);
+}
+
+.menu-icon:active {
+    background: rgba(0, 51, 102, 0.25);
+    transition: background 0.1s ease-out;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #fff;
+    border: 1px solid #e0e7ef;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-width: 290px;
+    z-index: 10;
+}
+.menu-dropdown.show {
+    display: block;
+}
+.menu-dropdown a {
+    display: block;
+    padding: 12px 18px;
+    color: #222;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+.menu-dropdown a:last-child {
+    border-bottom: none;
+}
+.menu-dropdown a:hover {
+    background: #cdd4da;
+    color: #003366;
+}
+
+.menu-dropdown a:active {
+    background: #aebdc6;
+    color: #001a33;
+    transition: background 0.1s ease-out, color 0.1s ease-out;
+}
+
+.hr {
+    border: none;
+    border-top: 2px solid #222;
+    margin: 0 0 40px 0;
+}
+
+.stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.spaced-cards {
+    gap: 56px;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1.5px solid #e0e7ef;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 28px 32px 18px 32px;
+    margin-bottom: 0;
+}
+
+.stat-card-title {
+    color: #000000;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
+}
+
+.chart-container {
+    width: 100%;
+    height: 220px;
+    max-width: 100%;
+    margin-bottom: 18px;
+    display: block;
+}
+
+.legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 0;
+    margin-bottom: 0;
+    align-items: center;
+}
+
+.legend-centered {
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.93rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    margin-right: 8px;
+    border: 1.5px solid #e0e7ef;
+}
+
+.legend-pink {
+    background: #8fbc8f;
+}
+
+.legend-blue {
+    background: #6a7a8c;
+}
+
+.stats-column .stat-card:last-child {
+    margin-bottom: 48px;
+}
+
+@media (max-width: 700px) {
+    .container {
+        padding: 0 4px;
+    }
+    .stat-card {
+        padding: 16px 6px 10px 6px;
+    }
+    .header-title {
+        font-size: 1rem;
+        margin-bottom: 1.2rem;
+    }
+    .spaced-cards {
+        gap: 28px;
+    }
+    .stat-card-title {
+        font-size: 1rem;
+    }
+    .legend {
+        gap: 12px;
+    }
+    .chart-container {
+        height: 140px;
+        max-width: 98vw;
+    }
+    .stats-column .stat-card:last-child {
+        margin-bottom: 28px;
+    }
+}
+
+button:hover {
+    background-color: #5a6a7a; 
+} 
