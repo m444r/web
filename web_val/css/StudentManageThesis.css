@@ -36,7 +36,7 @@ body {
 }
 
 .user-name {
-  color: black;
+  color: #292D32;
   font-weight: bold;
   text-align: center;
   margin-bottom: 30px;
@@ -50,7 +50,7 @@ body {
 }
 
 .sidebar a {
-  color: black;
+  color: #292D32;
   text-decoration: none;
   padding: 10px 12px;
   display: flex;
@@ -68,7 +68,7 @@ body {
 }
 
 .sidebar a:hover {
-  color: black;
+  color: #292D32;
   font-size: 16px;
 }
 
@@ -143,20 +143,7 @@ body {
   }
 }
 
-/* Original TeacherInvites Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
-}
-
-body {
-    background-color: #f7faff;
-    color: #222;
-    line-height: 1.6;
-}
-
+/* Student Manage Thesis Specific Styles */
 .container {
     max-width: 1000px;
     margin: 20px auto;
@@ -184,10 +171,6 @@ header h1 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-header .subtitle {
-    display: none;
-}
-
 /* Horizontal Line */
 .hr {
     border: none;
@@ -195,129 +178,129 @@ header .subtitle {
     margin: 0 40px 40px 40px;
 }
 
-.invitations-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
+.thesis-status {
     margin-left: 40px;
     margin-right: 40px;
+    margin-bottom: 2rem;
 }
 
-.invitation-card {
+.status-card {
     background: #fff;
     border: 1.5px solid #e0e7ef;
     border-radius: 16px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     padding: 28px 32px 18px 32px;
     margin-bottom: 0;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.invitation-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
-
-.invitation-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e0e7ef;
-}
-
-.invitation-header h3 {
+.status-card h3 {
     font-size: 1.1rem;
     color: #000000;
     font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
 }
 
-.status {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.status.pending {
-    background-color: #6a7a8c;
-    color: white;
-}
-
-.invitation-details {
-    margin-bottom: 1.5rem;
-}
-
-.invitation-details p {
-    margin-bottom: 0.8rem;
+.status-info {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: #222;
-}
-
-.invitation-details i {
-    color: #6A90C7;
-    width: 20px;
-}
-
-.invitation-actions {
-    display: flex;
+    margin-bottom: 1rem;
     gap: 1rem;
 }
 
-.btn {
-    flex: 1;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
+.status-label {
+    font-weight: 600;
+    color: #222;
+    min-width: 100px;
 }
 
-.btn.accept {
+.status-value {
+    color: #6A90C7;
+    font-weight: 500;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
     background-color: #8fbc8f;
     color: white;
 }
 
-.btn.reject {
-    background-color: #B04F4F;
-    color: white;
+.thesis-progress {
+    margin-left: 40px;
+    margin-right: 40px;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.thesis-progress h3 {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
 }
 
-.btn.accept:hover {
-    background-color: #7aac7a;
+.progress-section {
+    background: #fff;
+    border: 1.5px solid #e0e7ef;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 28px 32px 18px 32px;
+    margin-bottom: 0;
 }
 
-.btn.reject:hover {
-    background-color: #9f3f3f;
+.progress-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
+.progress-item:last-child {
+    margin-bottom: 0;
+}
 
-    header {
-        padding: 1.5rem;
-    }
+.progress-item i {
+    font-size: 1.2rem;
+    width: 20px;
+}
 
-    header h1 {
-        font-size: 2rem;
-    }
+.progress-item.completed {
+    background-color: rgba(143, 188, 143, 0.1);
+}
 
-    .invitations-container {
-        grid-template-columns: 1fr;
-    }
-} 
+.progress-item.completed i {
+    color: #8fbc8f;
+}
+
+.progress-item.active {
+    background-color: rgba(106, 122, 140, 0.1);
+}
+
+.progress-item.active i {
+    color: #6a7a8c;
+}
+
+.progress-item:not(.completed):not(.active) {
+    background-color: rgba(224, 231, 239, 0.5);
+}
+
+.progress-item:not(.completed):not(.active) i {
+    color: #e0e7ef;
+}
+
+.progress-item span {
+    color: #222;
+    font-weight: 500;
+}

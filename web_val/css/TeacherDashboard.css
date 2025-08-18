@@ -1,6 +1,6 @@
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background-color: #F0F0F0;
+  background-color: #f7faff;
   margin: 0;
   padding: 0;
 }
@@ -35,7 +35,7 @@ body {
 }
 
 .user-name {
-  color: black;
+  color: #292D32;
   font-weight: bold;
   text-align: center;
   margin-bottom: 30px;
@@ -49,7 +49,7 @@ body {
 }
 
 .sidebar a {
-  color: black;
+  color: #292D32;
   text-decoration: none;
   padding: 10px 12px;
   display: flex;
@@ -67,7 +67,7 @@ body {
 }
 
 .sidebar a:hover {
-  color: black;
+  color: #292D32;
   font-size: 16px;
 }
 
@@ -106,17 +106,26 @@ body {
 
 .content-box {
   background: white;
-  padding: 20px;
   border-radius: 10px;
   margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+  min-height: 200px;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 0 20px;
 }
 
 .main-heading {
-  color: black;
-  font-weight: bold;
-  font-size: 24px;
-  margin-bottom: 20px;
+  color: #292D32;
+  font-weight: 1000;
+  font-size: 20px;
+  margin-bottom: 35px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .sidebar-container {
@@ -145,7 +154,7 @@ body {
 
 .thesis-title {
   font-weight: bold;
-  color: #333;
+  color: #292D32;
 }
 
 .thesis-author {
@@ -155,19 +164,30 @@ body {
 
 .pagination-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 20px;
-  gap: 10px;
+  gap: 8px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .pagination-btn {
   background: none;
-  border: 1px solid #ddd;
+  border: none;
   padding: 8px 12px;
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
+  color: #292D32;
+  font-size: 14px;
+}
+
+.pagination-ellipsis {
+  color: #292D32;
+  font-size: 14px;
+  padding: 8px 4px;
 }
 
 .pagination-btn:hover {
@@ -175,30 +195,47 @@ body {
 }
 
 .pagination-btn.active {
-  background-color: #6A90C7;
-  color: white;
-  border-color: #6A90C7;
+  background-color: transparent;
+  color: #6A90C7;
+  font-weight: bold;
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1000px;
+  margin-top: 100px;
+}
+
+.stats-header .main-heading {
+  margin: 0;
+  margin-left: 0;
 }
 
 .stats-container {
   position: relative;
+  min-height: 500px;
+  padding: 50px;
 }
 
 .chart-nav {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  margin-right: 0;
 }
 
 .chart-nav-btn {
   background: none;
-  border: 1px solid #ddd;
+  border: none;
   padding: 8px 12px;
-  border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
+  color: #292D32;
+  font-size: 16px;
 }
 
 .chart-nav-btn:hover {
