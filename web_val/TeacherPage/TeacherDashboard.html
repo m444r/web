@@ -57,6 +57,18 @@
             </a>
           </li>
           <li class="nav-spacing">
+            <a href="TeacherNotes.html">
+              <img src="../icons/wirte.png" alt="Notes" class="nav-icon">
+              Σημειωσεις
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="TeacherAssignTopic.html">
+              <img src="../icons/invitation.png" alt="Assign Topic" class="nav-icon">
+              Αναθεση Θεματος
+            </a>
+          </li>
+          <li class="nav-spacing">
             <a href="TeacherInvites.html">
               <img src="../icons/invitation.png" alt="Invitations" class="nav-icon">
               Προσκλησεις
@@ -88,75 +100,108 @@
         <i class="fas fa-bars"></i> Μενού
       </button>
 
-      <!-- Thesis Section -->
-      <h3 class="main-heading">Τα Θεματα μου</h3>
-      
-      <div class="content-box">
-        <div class="thesis-list">
-          <div class="thesis-item">
-            <div>
-              <div class="thesis-title">Ανάπτυξη Web Εφαρμογής για Διαχείριση Διπλωματικών</div>
-              <div class="thesis-author">Μαρία Παπαδοπούλου</div>
-            </div>
-          </div>
-          <div class="thesis-item">
-            <div>
-              <div class="thesis-title">Μηχανική Μάθηση για Προγνωστικά Μοντέλα</div>
-              <div class="thesis-author">Γιώργος Κωνσταντίνου</div>
-            </div>
-          </div>
-          <div class="thesis-item">
-            <div>
-              <div class="thesis-title">Ανάλυση Δεδομένων με Python</div>
-              <div class="thesis-author">Ελένη Δημητρίου</div>
-            </div>
-          </div>
-          <div class="thesis-item">
-            <div>
-              <div class="thesis-title">Κυβερνοασφάλεια σε IoT Συσκευές</div>
-              <div class="thesis-author">Νίκος Αλεξίου</div>
-            </div>
-          </div>
-          <div class="thesis-item">
-            <div>
-              <div class="thesis-title">Blockchain Τεχνολογίες</div>
-              <div class="thesis-author">Αννα Μιχαηλίδου</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Pagination -->
-        <div class="pagination-container">
-          <button class="pagination-btn">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="pagination-btn active">1</button>
-          <button class="pagination-btn">2</button>
-          <button class="pagination-btn">3</button>
-          <span class="pagination-ellipsis">...</span>
-          <button class="pagination-btn">4</button>
-          <button class="pagination-btn">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </div>
+      <!-- Teacher Dashboard Content -->
+      <div class="container">
+        <header>
+            <h1>Καλώς ήρθες, Βαλία!</h1>
+        </header>
+        <hr class="hr">
 
-      <!-- Statistics Section -->
-      <div class="stats-header">
-        <h3 class="main-heading">Στατιστικα</h3>
-        <!-- Chart Navigation -->
-        <div class="chart-nav">
-          <button class="chart-nav-btn">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="chart-nav-btn">
-            <i class="fas fa-chevron-right"></i>
-          </button>
+        <!-- Quick Stats Section -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Ενεργές ΔΕ</h3>
+                    <p class="stat-number">5</p>
+                    <p class="stat-label">Διπλωματικές</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Υπό Ανάθεση</h3>
+                    <p class="stat-number">3</p>
+                    <p class="stat-label">Θέματα</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Περατωμένες</h3>
+                    <p class="stat-number">4</p>
+                    <p class="stat-label">Διπλωματικές</p>
+                </div>
+            </div>
         </div>
-      </div>
-      
-      <div class="content-box stats-container">
-        <canvas id="statsChart" style="max-height: 400px;"></canvas>
+
+        <!-- Thesis Section -->
+        <div class="thesis-section">
+            <h2>Τα Θεματα μου</h2>
+            <div class="thesis-list">
+              <div class="thesis-item">
+                <div>
+                  <div class="thesis-title">Ανάπτυξη Web Εφαρμογής για Διαχείριση Διπλωματικών</div>
+                  <div class="thesis-author">Μαρία Παπαδοπούλου</div>
+                </div>
+              </div>
+              <div class="thesis-item">
+                <div>
+                  <div class="thesis-title">Μηχανική Μάθηση για Προγνωστικά Μοντέλα</div>
+                  <div class="thesis-author">Γιώργος Κωνσταντίνου</div>
+                </div>
+              </div>
+              <div class="thesis-item">
+                <div>
+                  <div class="thesis-title">Ανάλυση Δεδομένων με Python</div>
+                  <div class="thesis-author">Ελένη Δημητρίου</div>
+                </div>
+              </div>
+              <div class="thesis-item">
+                <div>
+                  <div class="thesis-title">Κυβερνοασφάλεια σε IoT Συσκευές</div>
+                  <div class="thesis-author">Νίκος Αλεξίου</div>
+                </div>
+              </div>
+              <div class="thesis-item">
+                <div>
+                  <div class="thesis-title">Blockchain Τεχνολογίες</div>
+                  <div class="thesis-author">Αννα Μιχαηλίδου</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-container">
+              <button class="pagination-btn">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="pagination-btn active">1</button>
+              <button class="pagination-btn">2</button>
+              <button class="pagination-btn">3</button>
+              <span class="pagination-ellipsis">...</span>
+              <button class="pagination-btn">4</button>
+              <button class="pagination-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="thesis-section">
+            <h2>Στατιστικα</h2>
+            <div class="stats-container">
+                <canvas id="statsChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
       </div>
     </div>
   </div>

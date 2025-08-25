@@ -36,7 +36,7 @@ body {
 }
 
 .user-name {
-  color: black;
+  color: #292D32;
   font-weight: bold;
   text-align: center;
   margin-bottom: 30px;
@@ -50,7 +50,7 @@ body {
 }
 
 .sidebar a {
-  color: black;
+  color: #292D32;
   text-decoration: none;
   padding: 10px 12px;
   display: flex;
@@ -64,12 +64,12 @@ body {
   margin-right: -12px;
   padding-left: 24px;
   padding-right: 12px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .sidebar a:hover {
-  color: black;
-  font-size: 16px;
+  color: #292D32;
+  font-size: 15px;
 }
 
 .sidebar a:hover .nav-icon {
@@ -78,7 +78,7 @@ body {
 
 .sidebar a.active {
   background-color: rgba(255,255,255,0.3);
-  font-weight: normal;
+  font-weight: 600;
   border-left: 3px solid white;
   margin-left: -20px;
   margin-right: -20px;
@@ -92,7 +92,7 @@ body {
 }
 
 .sidebar a.logout:hover {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .nav-spacing {
