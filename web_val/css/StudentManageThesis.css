@@ -1,0 +1,306 @@
+/* Sidebar Styles from TeacherDashboard */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: #F0F0F0;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  background-color: #6A90C7;
+  color: black;
+  min-height: 100vh;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: all 0.3s ease;
+  width: 250px;
+  max-width: 250px;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: block;
+  margin: 15px auto 8px auto;
+  cursor: pointer;
+  border: none;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.user-name {
+  color: #292D32;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 18px;
+}
+
+.name-separator {
+  border-top: 1px solid #ccc;
+  margin: 20px auto;
+  width: 130px;
+}
+
+.sidebar a {
+  color: #292D32;
+  text-decoration: none;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 6px;
+  margin-bottom: 3px;
+  transition: all 0.15s ease;
+  font-size: 15px;
+  margin-left: -12px;
+  margin-right: -12px;
+  padding-left: 24px;
+  padding-right: 12px;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  color: #292D32;
+  font-size: 16px;
+}
+
+.sidebar a:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+.sidebar a.active {
+  background-color: rgba(255,255,255,0.3);
+  font-weight: normal;
+  border-left: 3px solid white;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 32px;
+  padding-right: 20px;
+  border-radius: 0;
+}
+
+.sidebar a.logout {
+  color: #B04F4F;
+}
+
+.sidebar a.logout:hover {
+  font-size: 16px;
+}
+
+.nav-spacing {
+  margin-top: 3px;
+}
+
+.nav-separator {
+  border-top: 1px solid #ccc;
+  margin: 10px auto;
+  width: 130px;
+}
+
+.sidebar-container {
+  padding: 15px 12px;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: #6A90C7;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    z-index: 1000;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+}
+
+/* Student Manage Thesis Specific Styles */
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    position: relative;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+header h1 {
+    color: #292D32;
+    font-weight: 1000;
+    font-size: 20px;
+    margin-bottom: 35px;
+    margin-top: 20px;
+    margin-left: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Horizontal Line */
+.hr {
+    border: none;
+    border-top: 2px solid #222;
+    margin: 0 40px 40px 40px;
+}
+
+.thesis-status {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 2rem;
+}
+
+.status-card {
+    background: #fff;
+    border: 1.5px solid #e0e7ef;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 28px 32px 18px 32px;
+    margin-bottom: 0;
+}
+
+.status-card h3 {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
+}
+
+.status-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.status-label {
+    font-weight: 600;
+    color: #222;
+    min-width: 100px;
+}
+
+.status-value {
+    color: #6A90C7;
+    font-weight: 500;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background-color: #8fbc8f;
+    color: white;
+}
+
+.thesis-progress {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.thesis-progress h3 {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
+}
+
+.progress-section {
+    background: #fff;
+    border: 1.5px solid #e0e7ef;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 28px 32px 18px 32px;
+    margin-bottom: 0;
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.progress-item:last-child {
+    margin-bottom: 0;
+}
+
+.progress-item i {
+    font-size: 1.2rem;
+    width: 20px;
+}
+
+.progress-item.completed {
+    background-color: rgba(143, 188, 143, 0.1);
+}
+
+.progress-item.completed i {
+    color: #8fbc8f;
+}
+
+.progress-item.active {
+    background-color: rgba(106, 122, 140, 0.1);
+}
+
+.progress-item.active i {
+    color: #6a7a8c;
+}
+
+.progress-item:not(.completed):not(.active) {
+    background-color: rgba(224, 231, 239, 0.5);
+}
+
+.progress-item:not(.completed):not(.active) i {
+    color: #e0e7ef;
+}
+
+.progress-item span {
+    color: #222;
+    font-weight: 500;
+}

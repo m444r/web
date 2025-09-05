@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ανάθεση Θέματος Πτυχιακής</title>
+    <link rel="stylesheet" href="../css/assign_thesis.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-graduation-cap"></i> Σύστημα Ανάθεσης Θέματος Πτυχιακής</h1>
+        </header>
+
+        <main>
+            <div class="search-section">
+                <div class="search-box">
+                    <h2>Αναζήτηση Φοιτητή</h2>
+                    <div class="search-inputs">
+                        <div class="input-group">
+                            <label for="student-id">Αριθμός Μητρώου:</label>
+                            <input type="text" id="student-id" placeholder="Εισάγετε ΑΜ">
+                        </div>
+                        <div class="input-group">
+                            <label for="student-name">Ονοματεπώνυμο:</label>
+                            <input type="text" id="student-name" placeholder="Εισάγετε όνομα">
+                        </div>
+                        <button class="search-btn"><i class="fas fa-search"></i> Αναζήτηση</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assignment-section">
+                <div class="student-info">
+                    <h2>Πληροφορίες Φοιτητή</h2>
+                    <div class="info-card">
+                        <div class="info-item">
+                            <span class="label">ΑΜ:</span>
+                            <span class="value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Ονοματεπώνυμο:</span>
+                            <span class="value">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Τμήμα:</span>
+                            <span class="value">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="thesis-assignment">
+                    <h2>Ανάθεση Θέματος</h2>
+                    <div class="assignment-form">
+                        <div class="input-group">
+                            <label for="thesis-title">Τίτλος Θέματος:</label>
+                            <input type="text" id="thesis-title" placeholder="Εισάγετε τίτλο θέματος">
+                        </div>
+                        <div class="input-group">
+                            <label for="thesis-description">Περιγραφή:</label>
+                            <textarea id="thesis-description" placeholder="Εισάγετε περιγραφή θέματος"></textarea>
+                        </div>
+                        <div class="button-group">
+                            <button class="assign-btn"><i class="fas fa-check"></i> Ανάθεση Θέματος</button>
+                            <button class="cancel-btn"><i class="fas fa-times"></i> Ακύρωση Ανάθεσης</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <h2>Κατάσταση Ανάθεσης</h2>
+                <div class="status-card">
+                    <div class="status-item">
+                        <span class="status-label">Κατάσταση:</span>
+                        <span class="status-value pending">Σε εκκρεμότητα</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Ημερομηνία Ανάθεσης:</span>
+                        <span class="status-value">-</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html> 

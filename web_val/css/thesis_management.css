@@ -1,0 +1,322 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+body {
+    background-color: #f7faff;
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: #222;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1 {
+    color: #222;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.thesis-state {
+    margin-bottom: 40px;
+    padding: 25px;
+    border: none;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1.5px solid #e0e7ef;
+}
+
+.thesis-state:first-of-type {
+    margin-top: 30px;
+}
+
+
+.state-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 18px;
+    padding-bottom: 6px;
+    border-bottom: none;
+    width: fit-content;
+}
+
+.action-list {
+    list-style: none;
+}
+
+.action-list li {
+    margin: 15px 0;
+    padding: 20px;
+    background-color: #f7faff;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e7ef;
+}
+
+.action-list li:hover {
+    /* background-color: #eef2f7; */
+    /* transform: translateX(5px); */
+}
+
+.action-list li:has(.notes-section) {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.role-specific {
+    margin-left: 20px;
+    color: #555;
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 8px;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #8fbc8f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: 500;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(143, 188, 143, 0.10);
+}
+
+.button:hover {
+    background-color: #7ba87b;
+    box-shadow: 0 4px 12px rgba(143, 188, 143, 0.18);
+}
+
+.button:active {
+    background-color: #6a7a8c;
+    box-shadow: 0 2px 6px rgba(106, 122, 140, 0.15);
+}
+
+.button.danger {
+    background-color: #b85c5c;
+}
+
+.button.danger:hover {
+    background-color: #a14d4d;
+    box-shadow: 0 4px 12px rgba(184, 92, 92, 0.18);
+}
+
+.button.danger:active {
+    background-color: #8c3f3f;
+    box-shadow: 0 2px 6px rgba(184, 92, 92, 0.15);
+}
+
+.notes-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #dbe7f3;
+    border-radius: 8px;
+    border: 1px solid #6a7a8c;
+}
+
+.notes-section textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px 12px;
+    margin: 10px 0;
+    border: 1px solid #cdd4da;
+    border-radius: 6px;
+    resize: vertical;
+    font-family: inherit;
+    color: #222;
+    background-color: #f7faff;
+}
+
+.notes-section textarea:focus {
+    outline: none;
+    border-color: #6a7a8c;
+    box-shadow: 0 0 0 0.2rem rgba(106, 122, 140, 0.25);
+    background-color: #eef2f7;
+}
+
+.grade-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #d4edda;
+    border-radius: 8px;
+    border: 1px solid #c3e6cb;
+}
+
+.grade-section form div {
+    margin: 15px 0;
+}
+
+.grade-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+.grade-section input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cdd4da;
+    border-radius: 6px;
+    font-size: 1em;
+    color: #222;
+    background-color: #f7faff;
+}
+
+.grade-section input[type="number"]:focus {
+    outline: none;
+    border-color: #6a7a8c;
+    box-shadow: 0 0 0 2px rgba(106, 122, 140, 0.2);
+    background-color: #eef2f7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    .thesis-state {
+        padding: 20px;
+    }
+    
+    .button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .action-list li {
+        padding: 15px;
+    }
+}
+
+/* Styles for the horizontal rule */
+.hr {
+    border: none;
+    border-top: 2px solid #222;
+    margin: 0 0 40px 0; 
+}
+
+/* Styles for the header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    position: relative;
+}
+
+/* Styles for the header title */
+.header-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Styles for the header icons container */
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between icons */
+}
+
+/* Styles for the home icon */
+.home-icon i {
+    font-size: 1.5rem;
+    color: #222;
+    transition: color 0.2s ease-in-out;
+}
+
+.home-icon:hover i {
+    color: #6a7a8c;
+}
+
+.home-icon:active i {
+    color: #5a6a7a;
+    transform: scale(0.95);
+    transition: transform 0.1s ease-out;
+}
+
+/* Styles for the menu icon (three lines) */
+.menu-icon {
+    position: relative;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background 0.2s ease-in-out;
+}
+
+.menu-icon:hover {
+    background: rgba(106, 122, 140, 0.1);
+}
+
+.menu-icon:active {
+    background: rgba(106, 122, 140, 0.25);
+    transition: background 0.1s ease-out;
+}
+
+/* Styles for the dropdown menu */
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #fff;
+    border: 1px solid #e0e7ef;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-width: 290px; /* Match create_thesis.css min-width */
+    z-index: 10;
+}
+
+.menu-dropdown.show {
+    display: block;
+}
+
+.menu-dropdown a {
+    display: block;
+    padding: 12px 18px;
+    color: #222;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.menu-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.menu-dropdown a:hover {
+    background: #cdd4da; /* Using muted blue-gray from create_thesis.css */
+    color: #003366; /* Using deep blue from create_thesis.css */
+}
+
+.menu-dropdown a:active {
+    background: #aebdc6; /* A bit darker than hover */
+    color: #001a33; /* Darker text color */
+    transition: background 0.1s ease-out, color 0.1s ease-out;
+} 
