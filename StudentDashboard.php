@@ -21,10 +21,10 @@ if ($row = $result->fetch_assoc()) {
 
 $theses = [];
 if ($student_id) {
-    $stmt = $db->prepare("SELECT t.*, u.name AS teacher_name, u.surname AS teacher_surname 
+    $stmt = $db->prepare("SELECT t.*, u.name AS teacher_name, u.surname AS teacher_surname  
                           FROM topics t 
                           JOIN users u ON t.teacher_id = u.id 
-                          WHERE t.assigned_to = ? AND t.status = 'confirmed'");
+                          WHERE t.assigned_to = ? AND (t.status = 'confirmed' OR t.status='for examination')");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -45,6 +45,38 @@ if ($student_id) {
     $active_count = intval($result['count']);
     if ($result['days'] !== null) {
         $days_remaining = max(0, intval($result['days'])); // Δεν εμφανίζουμε αρνητικές μέρες
+    }
+}
+
+// Ενημέρωση exam_mode και exam_datetime από φοιτητή
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
+    $topic_id = intval($_POST['topic_id']);
+    $exam_mode = $_POST['exam_mode'] ?? null;
+    $exam_datetime = $_POST['exam_datetime'] ?? null;
+
+    if ($exam_mode && $exam_datetime) {
+        // Ενημέρωση exam_mode και exam_datetime
+        $stmt = $db->prepare("UPDATE topics SET exam_mode = ?, exam_datetime = ? WHERE id = ? AND assigned_to = ?");
+        $stmt->bind_param("ssii", $exam_mode, $exam_datetime, $topic_id, $student_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Ενημέρωση exam_location
+        if($exam_mode === 'online'){
+            $exam_location = 'http/hjfhfddhj';
+        } else {
+            $exam_location = 'Αίθουσα Γ';
+        }
+
+        $stmt = $db->prepare("UPDATE topics SET exam_location = ? WHERE id = ? AND assigned_to = ?");
+        $stmt->bind_param("sii", $exam_location, $topic_id, $student_id);
+        $stmt->execute();
+        $stmt->close();
+
+        $message = "Η καταχώρηση εξέτασης αποθηκεύτηκε επιτυχώς.";
+
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 
@@ -135,7 +167,7 @@ if ($student_id) {
       <!-- Student Dashboard Content -->
       <div class="container">
         <header>
-            <h1>Καλώς ήρθες, Γιώργο!</h1>
+            <h1>Καλώς ήρθες, <?= htmlspecialchars($studentName) ?>!</h1>
         </header>
         <hr class="hr">
 
@@ -177,17 +209,51 @@ if ($student_id) {
                 <div class="thesis-card">
                     <div class="thesis-header">
                         <h3><?= htmlspecialchars($thesis['title']) ?></h3>
-                        <span class="status-badge active"><?= htmlspecialchars($thesis['status']) ?></span>
+                        <span class="status-badge <?= $thesis['status']=='confirmed'?'active':'warning' ?>">
+                            <?= htmlspecialchars($thesis['status']) ?>
+                        </span>
+                       
                     </div>
                     <div class="thesis-details">
                         <p><strong>Επιβλέπων:</strong> <?= htmlspecialchars($thesis['teacher_name'].' '.$thesis['teacher_surname']) ?></p>
                         <p><strong>Ημερομηνία Έναρξης:</strong> <?= htmlspecialchars($thesis['confirmed_time']) ?></p>
                         <p><strong>Προθεσμία Υποβολής:</strong> <?= htmlspecialchars($thesis['deadline'] ?? '-') ?></p>
+                        <p><strong>Αίθουσα Εξέτασης:</strong> <?= htmlspecialchars($thesis['exam_location'] ?? '-') ?></p>
                     </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: <?= intval($thesis['progress'] ?? 0) ?>%"></div>
                     </div>
                     <p class="progress-text">Πρόοδος: <?= intval($thesis['progress'] ?? 0) ?>%</p>
+
+                   <?php if($thesis['status'] === 'for examination'): ?>
+    <form method="POST" class="mt-2">
+        <input type="hidden" name="topic_id" value="<?= $thesis['id'] ?>">
+
+        <div class="mb-2">
+            <label for="exam_mode_<?= $thesis['id'] ?>">Τρόπος Εξέτασης</label>
+            <select name="exam_mode" id="exam_mode_<?= $thesis['id'] ?>" class="form-select" required>
+                <option value="">Επιλογή τρόπου</option>
+                <option value="onsite" <?= ($thesis['exam_mode']==='onsite') ? 'selected' : '' ?>>Onsite</option>
+                <option value="online" <?= ($thesis['exam_mode']==='online') ? 'selected' : '' ?>>Online</option>
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label for="exam_datetime_<?= $thesis['id'] ?>">Ημερομηνία & Ώρα Εξέτασης</label>
+            <input type="datetime-local" name="exam_datetime" 
+                   id="exam_datetime_<?= $thesis['id'] ?>" 
+                   class="form-control" 
+                   value="<?= $thesis['exam_datetime'] ? date('Y-m-d\TH:i', strtotime($thesis['exam_datetime'])) : '' ?>" 
+                   required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+    </form>
+<?php endif; ?>
+
+
+
+
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>

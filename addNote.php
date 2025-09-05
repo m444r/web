@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'], $_POST['n
    
 
     // Εισαγωγή της σημείωσης
-    $stmt = $db->prepare("INSERT INTO notes (topic_id, teacher_id, note_text) VALUES (?, ?, ?)");
+    $stmt = $db->prepare("INSERT INTO notes (topic_id, teacher_id, note_text, created_at) VALUES (?, ?, ?, NOW())");
     $stmt->bind_param("iis", $topic_id, $teacher_id, $note_text);
     if (!$stmt->execute()) {
         die("Insert failed: " . $stmt->error);

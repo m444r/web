@@ -1,3 +1,47 @@
+<?php
+session_start();
+require 'config.php';
+
+if (!isset($_SESSION["userid"])) {
+    header("Location: register.php");
+    exit;
+}
+
+$student_id = $_SESSION["userid"];
+$message = "";
+
+$studentName = "";
+$stmt = $db->prepare("SELECT name, surname FROM users WHERE id = ?");
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($row = $result->fetch_assoc()) {
+    $studentName = $row['name'] . " " . $row['surname'];
+}
+
+
+$stmt = $db->prepare("
+    SELECT t.id, t.title, t.summary, t.pdf_path
+    FROM topics t
+    WHERE t.assigned_to = ? AND t.status = 'confirmed'
+");
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$topicsResult = $stmt->get_result();
+
+$stmt = $db->prepare("
+    SELECT t.id, t.title, t.summary
+    FROM topics t
+    WHERE t.assigned_to = ? AND t.status = 'confirmed'
+");
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$topicsResult = $stmt->get_result();
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -24,7 +68,7 @@
         
         <!-- User name link -->
         <div class="user-name">
-          Γιώργος Παπαδόπουλος
+          <?= htmlspecialchars($studentName) ?>
         </div>
         
         <!-- Name separator -->
@@ -78,32 +122,77 @@
       <!-- Student Topics Content -->
       <div class="container">
         <header>
-            <h1>Διαθέσιμα Θέματα Διπλωματικών</h1>
+            <h1>Ανάρτηση Αρχείων</h1>
         </header>
         <hr class="hr">
 
-        <div class="topics-container">
-            <!-- Topic cards will go here -->
-            <div class="topic-card">
-                <h3>Ανάπτυξη Web Εφαρμογής για Διαχείριση Διπλωματικών</h3>
-                <p>Ανάπτυξη σύγχρονης web εφαρμογής για τη διαχείριση διπλωματικών εργασιών με χρήση τεχνολογιών όπως React, Node.js και MySQL.</p>
-                <div class="topic-details">
-                    <span class="supervisor">Επιβλέπων: Δρ. Μαρία Κωνσταντίνου</span>
-                    <span class="department">Τμήμα: Πληροφορικής</span>
-                </div>
-                <button class="apply-btn">Αίτηση Θέματος</button>
-            </div>
+<div class="topics-container">
+    <?php while($row = $topicsResult->fetch_assoc()): ?>
+        <div class="topic-card">
+            <h3><?= htmlspecialchars($row['title']) ?></h3>
+            <p><?= htmlspecialchars($row['summary']) ?></p>
+            <?php if(!empty($row['pdf_path'])): ?>
+                <a href="<?= htmlspecialchars($row['pdf_path']) ?>" target="_blank" class="btn btn-sm btn-primary">Προβολή PDF</a>
+            <?php endif; ?>
 
-            <div class="topic-card">
-                <h3>Μηχανική Μάθηση για Προγνωστικά Μοντέλα</h3>
-                <p>Εφαρμογή αλγορίθμων μηχανικής μάθησης για την ανάπτυξη προγνωστικών μοντέλων σε πραγματικά δεδομένα.</p>
-                <div class="topic-details">
-                    <span class="supervisor">Επιβλέπων: Δρ. Νίκος Αλεξίου</span>
-                    <span class="department">Τμήμα: Πληροφορικής</span>
+            <!-- Φόρμα upload με textarea για σχόλια -->
+            <form action="upload_submission.php" method="POST" enctype="multipart/form-data" class="mt-2">
+                <input type="hidden" name="topic_id" value="<?= $row['id'] ?>">
+
+                <div class="mb-2">
+                    <label for="comments_<?= $row['id'] ?>" class="form-label">Σχόλια:</label>
+                    <textarea name="comments" id="comments_<?= $row['id'] ?>" class="form-control" rows="3" placeholder="Γράψε εδώ τα σχόλιά σου..."></textarea>
                 </div>
-                <button class="apply-btn">Αίτηση Θέματος</button>
-            </div>
+
+                <div class="mb-2">
+                    <input type="file" name="submission_file" accept=".pdf,.doc,.docx">
+                </div>
+
+                <button type="submit" class="btn btn-sm btn-success mt-1">Ανέβασμα αρχείου</button>
+            </form>
+
+            
+
         </div>
+    <?php endwhile; ?>
+</div>
+<div class="topic-submissions mt-2">
+    <h5>Προηγούμενες υποβολές:</h5>
+    <?php
+    $stmt2 = $db->prepare("
+        SELECT s.file_path, s.uploaded_at, t.title, s.comments
+        FROM student_submissions s
+        INNER JOIN topics t ON s.topic_id = t.id
+        WHERE s.student_id = ? AND t.status = 'confirmed'
+        ORDER BY s.uploaded_at DESC
+    ");
+    $stmt2->bind_param("i", $student_id);
+    $stmt2->execute();
+    $submissionsResult = $stmt2->get_result();
+
+    if($submissionsResult->num_rows > 0){
+        echo "<ul>";
+        while($sub = $submissionsResult->fetch_assoc()){
+            echo "<li>";
+            echo "<strong>" . htmlspecialchars($sub['title']) . ":</strong> ";
+            if(!empty($sub['file_path'])){
+                echo '<a href="'.htmlspecialchars($sub['file_path']).'" target="_blank">'.basename($sub['file_path']).'</a> - ';
+            }
+            echo htmlspecialchars($sub['comments']) ?: "<em>Δεν υπάρχουν σχόλια.</em>";
+            echo " <small>(" . date("d/m/Y H:i", strtotime($sub['uploaded_at'])) . ")</small>";
+            echo "</li>";
+        }
+        echo "</ul>";
+    } else {
+        echo "<p>Δεν έχεις κάνει ακόμα υποβολές για αυτό το θέμα.</p>";
+    }
+    ?>
+</div>
+
+
+
+
+
       </div>
     </div>
   </div>

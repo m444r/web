@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_topic_id'])) {
     $teacher_id = $_SESSION['userid']; 
 
     // Έλεγχος αν το θέμα ανήκει στον καθηγητή
-    $stmt = $db->prepare("SELECT id FROM topics WHERE id = ? AND teacher_id = ?");
+    $stmt = $db->prepare("SELECT id FROM topics WHERE id = ? AND teacher_id = ? AND (status='awaiting_committee'||status='available')");
     $stmt->bind_param("ii", $topic_id, $teacher_id);
     $stmt->execute();
     $stmt->store_result();
@@ -101,24 +101,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_topic_delay_id
             header("Location: TeacherThesisList.php");       
     }
 }
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
     $topic_id   = intval($_POST['topic_id']);
     $teacher_id = $_SESSION['userid']; // ο logged-in επιβλέπων
 
     if (isset($_POST['set_for_examination'])) {
-        // Μόνο αν ο teacher_id είναι ο επιβλέπων
-        $stmt = $db->prepare("UPDATE topics SET status='for examination' 
-                              WHERE id=? AND teacher_id=?");
+        // Μόνο αν ο teacher_id είναι ο επιβλέπων ΚΑΙ το status είναι 'available'
+        $stmt = $db->prepare("UPDATE topics 
+                              SET status='for examination' 
+                              WHERE id=? AND teacher_id=? AND status='available'");
         $stmt->bind_param("ii", $topic_id, $teacher_id);
         $stmt->execute();
 
         if ($stmt->affected_rows > 0) {
-            // ενημερώθηκε επιτυχώς
             $_SESSION['success_msg'] = "Η διπλωματική τέθηκε υπό εξέταση.";
         } else {
-            // δεν ενημερώθηκε (δεν είναι επιβλέπων ή λάθος id)
-            $_SESSION['error_msg'] = "Δεν έχετε δικαίωμα να θέσετε αυτή τη διπλωματική υπό εξέταση.";
+            $_SESSION['error_msg'] = "Δεν μπορείτε να θέσετε αυτή τη διπλωματική υπό εξέταση (ίσως δεν είναι διαθέσιμη ή δεν είστε επιβλέπων).";
         }
 
         $stmt->close();
@@ -127,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
     header("Location: TeacherThesisList.php?ypoeksetasi");
     exit;
 }
+
 
 
 ?>

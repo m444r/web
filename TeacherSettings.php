@@ -2,27 +2,28 @@
 session_start();
 require 'config.php';
 
-if (!isset($_SESSION["userid"])) {
+// Έλεγχος login καθηγητή
+if (!isset($_SESSION["userid"]) || $_SESSION["role"] !== "teacher") {
     header("Location: register.php");
     exit;
 }
 
-$student_id = $_SESSION["userid"];
+$teacher_id = $_SESSION["userid"];
 $message = "";
 
-$studentName = "";
-$stmt = $db->prepare("SELECT name, surname, am , email, mobile_telephone , landline_telephone, street, number,city, postcode  FROM users WHERE id = ?");
-$stmt->bind_param("i", $student_id);
+$teacherName = "";
+$stmt = $db->prepare("SELECT name, surname,  email, mobile_telephone , landline_telephone, street, number,city, postcode  FROM users WHERE id = ?");
+$stmt->bind_param("i", $teacher_id);
 $stmt->execute();
 $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
-    $studentName = $row['name'] . " " . $row['surname'];
-    $am_student = $row['am'];
-    $email_student = $row['email'];
-    $phone_student = $row['mobile_telephone'];
-    $phone_landline_student = $row['landline_telephone'];
-    $address_student = $row['street'] . " " . $row['number'] . ", " . $row['city'] . " " . $row['postcode'];
+    $teacherName = $row['name'] . " " . $row['surname'];
+    $email_teacher = $row['email'];
+    $phone_teacher = $row['mobile_telephone'];
+    $phone_landline_teacher = $row['landline_telephone'];
+    $address_teacher = $row['street'] . " " . $row['number'] . ", " . $row['city'] . " " . $row['postcode'];
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $email = $_POST['email'] ?? '';
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $postcode = $_POST['postcode'] ?? '';
 
     $stmt = $db->prepare("UPDATE users SET email=?, mobile_telephone=?, landline_telephone=?, street=?, number=?, city=?, postcode=? WHERE id=?");
-    $stmt->bind_param("sssssssi", $email, $phone_mobile, $phone_landline, $street, $number, $city, $postcode, $student_id);
+    $stmt->bind_param("sssssssi", $email, $phone_mobile, $phone_landline, $street, $number, $city, $postcode, $teacher_id);
     $stmt->execute();
     $stmt->close();
 
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Προφίλ Φοιτητή</title>
+    <title>Το Προφίλ Μου</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -68,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
       <div class="sidebar-container">
         
         <!-- Profile pic -->
-        <img src="icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='StudentProfile.php'">
+        <img src="icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='TeacherProfile.php'">
         
         <!-- User name link -->
         <div class="user-name">
-          <?= htmlspecialchars($studentName) ?>
+          <?= htmlspecialchars($teacherName) ?>
         </div>
         
         <!-- Name separator -->
@@ -80,30 +81,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
 
         <ul class="nav nav-pills flex-column mb-auto w-100">
           <li class="nav-item nav-spacing">
-            <a href="StudentDashboard.php">
+            <a href="TeacherDashboard.php">
               <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
               Dashboard
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="StudentTopics.php">
-              <img src="icons/file.png" alt="Topics" class="nav-icon">
-              Θέματα ΔΕ
+            <a href="TeacherStats.php">
+              <img src="icons/stats.png" alt="Statistics" class="nav-icon">
+              Στατιστικα
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="StudentManageThesis.php">
-              <img src="icons/stats.png" alt="Manage Thesis" class="nav-icon">
-              Διαχείριση ΔΕ
+            <a href="TeacherCreateThesis.php">
+              <img src="icons/file.png" alt="Thesis Topics" class="nav-icon">
+              Θεματα ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="TeacherThesisList.php">
+              <img src="list.png" alt="Thesis List" class="nav-icon">
+              Λιστα ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="TeacherInvites.php">
+              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλησεις
+            </a>
+          </li>
+          <li class="nav-spacing" class="active">
+            <a href="TeacherNotes.php">
+              <img src="list.png" alt="Thesis List" class="nav-icon">
+              Οι σημειώσεις μου
             </a>
           </li>
           
           <div class="nav-separator"></div>
           
           <li class="nav-spacing">
-            <a href="StudentProfile.php" class="active">
-              <img src="icons/setting.png" alt="Profile" class="nav-icon">
-              Προφίλ
+            <a href="TeacherSettings.php">
+              <img src="icons/setting.png" alt="Settings" class="nav-icon">
+              Ρυθμισεις
             </a>
           </li>
           <li class="nav-spacing">
@@ -116,17 +135,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="col py-3">
-      <!-- Mobile toggle button -->
-      <button class="mobile-menu-btn d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-        <i class="fas fa-bars"></i> Μενού
-      </button>
-
-      <!-- Student Profile Content -->
+     <!-- Student Profile Content -->
       <div class="container">
         <header>
-            <h1>Προφίλ Φοιτητή</h1>
+            <h1>Προφίλ Διδάσκοντα</h1>
         </header>
         <hr class="hr">
 
@@ -135,8 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
                 <div class="profile-header">
                     <img src="icons/account.png" alt="Profile Picture" class="profile-picture">
                     <div class="profile-info">
-                        <h2><?= htmlspecialchars($studentName) ?></h2>
-                        <p class="student-id">ΑΜ: <?= htmlspecialchars($am_student) ?></p>
+                        <h2><?= htmlspecialchars($teacherName) ?></h2>
+                        
                         <p class="department">Τμήμα Πληροφορικής</p>
                     </div>
                 </div>
@@ -145,15 +157,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     <div class="profile-details">
         <div class="detail-item">
             <label class="label" for="email">Email:</label>
-            <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($email_student) ?>" required>
+            <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($email_teacher) ?>" required>
         </div>
         <div class="detail-item">
             <label class="label" for="phone_mobile">Κινητό Τηλέφωνο:</label>
-            <input type="text" id="phone_mobile" name="phone_mobile" class="form-control" value="<?= htmlspecialchars($phone_student) ?>">
+            <input type="text" id="phone_mobile" name="phone_mobile" class="form-control" value="<?= htmlspecialchars($phone_teacher) ?>">
         </div>
         <div class="detail-item">
             <label class="label" for="phone_landline">Σταθερό Τηλέφωνο:</label>
-            <input type="text" id="phone_landline" name="phone_landline" class="form-control" value="<?= htmlspecialchars($phone_landline_student) ?>">
+            <input type="text" id="phone_landline" name="phone_landline" class="form-control" value="<?= htmlspecialchars($phone_landline_teacher) ?>">
         </div>
         <div class="detail-item">
             <label class="label" for="street">Οδός:</label>
@@ -177,25 +189,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
 </form>
 
             </div>
-        </div>
-      </div>
-    </div>
-  </div>
+            </div>
+            </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // Mobile menu toggle
-  document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const sidebar = document.querySelector('.sidebar');
-    
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('show');
-      });
-    }
-  });
-</script>
+</div>
 </body>
 </html>

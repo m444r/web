@@ -64,18 +64,25 @@ WHERE (t.teacher_id = ?
 $types  = "ii";  
 $params = [$teacher_id, $teacher_id];
 
-// --- Φίλτρο ρόλου --- 
-if ($role_filter === 'committee') {
-  $query .= " AND EXISTS (
-      SELECT 1 
-      FROM committee_requests cr3
-      WHERE cr3.topic_id = t.id 
-        AND cr3.teacher_id = ? 
-        AND cr3.status = 'accepted'
-  )";
-  $types  .= "i";
-  $params[] = $teacher_id;
+
+// --- Φίλτρο ρόλου ---
+if ($role_filter === 'supervisor') {
+    $query .= " AND t.teacher_id = ? ";
+    $types  .= "i";
+    $params[] = $teacher_id;
 }
+elseif ($role_filter === 'committee') {
+    $query .= " AND EXISTS (
+        SELECT 1 
+        FROM committee_requests cr3
+        WHERE cr3.topic_id = t.id 
+          AND cr3.teacher_id = ? 
+          AND cr3.status = 'accepted'
+    )";
+    $types  .= "i";
+    $params[] = $teacher_id;
+}
+
 
 // --- Φίλτρο κατάστασης --- 
 if ($status_filter !== 'all') {
@@ -94,6 +101,57 @@ if (!$stmt) {
 $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activate_grading'])) {
+    $topic_id = intval($_POST['topic_id']);
+    $teacher_id = $_SESSION['userid']; // ο logged-in καθηγητής
+
+    if ($topic_id <= 0) {
+        echo "<div class='alert alert-danger'>❌ Άκυρο topic_id: $topic_id</div>";
+    } else {
+        // Μόνο αν ο επιβλέπων είναι ο ίδιος
+        $stmt = $db->prepare("
+            UPDATE topics 
+            SET status = 'for_grade' 
+            WHERE id = ? AND status = 'for examination' AND teacher_id = ?
+        ");
+        if (!$stmt) {
+            die("Prepare failed: " . $db->error);
+        }
+
+        $stmt->bind_param("ii", $topic_id, $teacher_id);
+
+        if (!$stmt->execute()) {
+            die("Execute failed: " . $stmt->error);
+        }
+
+        if ($stmt->affected_rows > 0) {
+            echo "<div class='alert alert-success'>✅ Η υποβολή βαθμού ενεργοποιήθηκε!</div>";
+        } else {
+            echo "<div class='alert alert-danger'>❌ Δεν έχετε δικαίωμα ή το topic δεν είναι για εξέταση!</div>";
+        }
+    }
+}
+
+if (isset($_GET['action']) && $_GET['action'] === 'get_grades' && isset($_GET['topic_id'])) {
+    $tid = intval($_GET['topic_id']);
+    $stmtGrades = $db->prepare("
+        SELECT u.name, u.surname, cg.grade
+        FROM committee_grades cg
+        JOIN users u ON u.id = cg.teacher_id
+        WHERE cg.topic_id = ?
+    ");
+    $stmtGrades->bind_param("i", $tid);
+    $stmtGrades->execute();
+    $resGrades = $stmtGrades->get_result();
+    $gradesArr = [];
+    while ($g = $resGrades->fetch_assoc()) {
+        $gradesArr[] = htmlspecialchars($g['name'].' '.$g['surname']).': '.round($g['grade'],2);
+    }
+    echo implode('<br>', $gradesArr);
+    exit;
+}
+
 
 
 ?>
@@ -149,7 +207,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
       <div class="sidebar-container">
         
         <!-- Profile pic -->
-        <img src="icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='profile.php'">
+        <img src="icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='TeacherProfile.php'">
         
         <!-- User name link -->
         <div class="user-name">
@@ -190,11 +248,17 @@ document.getElementById("saveBtn").addEventListener("click", function () {
               Προσκλησεις
             </a>
           </li>
+          <li class="nav-spacing">
+            <a href="TeacherNotes.php">
+              <img src="list.png" alt="Thesis List" class="nav-icon">
+              Οι σημειώσεις μου
+            </a>
+          </li>
           
           <div class="nav-separator"></div>
           
           <li class="nav-spacing">
-            <a href="settings.php">
+            <a href="TeacherSettings.php">
               <img src="icons/setting.png" alt="Settings" class="nav-icon">
               Ρυθμισεις
             </a>
@@ -260,6 +324,21 @@ document.getElementById("saveBtn").addEventListener("click", function () {
           <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
               <div class="thesis-card">
+                  <?php
+                  
+                  $topic_id = $row['id'];
+                  $stmtSub = $db->prepare("
+                      SELECT s.student_id, u.name, u.surname, s.file_path, s.comments, s.uploaded_at
+                      FROM student_submissions s
+                      JOIN users u ON u.id = s.student_id
+                      WHERE s.topic_id = ?
+                      ORDER BY s.uploaded_at DESC
+                  ");
+                  $stmtSub->bind_param("i", $topic_id);
+                  $stmtSub->execute();
+                  $submissionsResult = $stmtSub->get_result();
+                  ?>
+
                 <div class="d-flex justify-content-between align-items-center">
                   <h3><?= htmlspecialchars($row['title']) ?></h3>
                   <span class="status-badge status-<?= htmlspecialchars($row['status']) ?>">
@@ -278,37 +357,44 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                   <h4>Χρονολόγιο Ενεργειών</h4>
                   <ul>
                     <li><?= htmlspecialchars($row['confirmed_time']) ?> - Έναρξη διπλωματικής</li>
-                    <li>15/02/2024 - Υποβολή πρώτου κεφαλαίου</li>
-                  </ul>
+                    <?php if ($submissionsResult->num_rows > 0): ?>
+                        <?php while ($sub = $submissionsResult->fetch_assoc()): ?>
+                            <li>
+                                <strong><?= htmlspecialchars($sub['name'] . ' ' . $sub['surname']) ?>:</strong>
+                                <?php if (!empty($sub['file_path'])): ?>
+                                    <a href="<?= htmlspecialchars($sub['file_path']) ?>" target="_blank"><?= basename($sub['file_path']) ?></a> - 
+                                <?php endif; ?>
+                                <?= htmlspecialchars($sub['comments'])  ?>
+                                <small>(<?= date("d/m/Y H:i", strtotime($sub['uploaded_at'])) ?>)</small>
+                            </li>
+                        <?php endwhile; ?>
+                        </ul>
+                    <?php endif; ?>
+
+               
                 </div>
                 <div class="thesis-actions">
                   <!-- Κουμπί -->
-                <button type="button" class="action-btn view-btn"
-                  data-bs-toggle="modal"
-                  data-bs-target="#detailsModal"
-                  data-id="<?= $row['id'] ?>"
-                  data-title="<?= htmlspecialchars($row['title']) ?>"
-                  data-student="<?= htmlspecialchars($row['student_name'].' '.$row['student_surname']) ?>"
-                  data-supervisor="<?= htmlspecialchars($row['supervisor_name'].' '.$row['supervisor_surname']) ?>"
-                  data-committee="<?= htmlspecialchars($row['committee_members'] ?? '') ?>"
-                  data-confirmed="<?= htmlspecialchars($row['confirmed_time'] ?? '') ?>"
-                  data-deadline="<?= $row['deadline'] ? htmlspecialchars(date('Y-m-d', strtotime($row['deadline']))) : '' ?>">
-              <i class="fas fa-eye"></i> Προβολή Λεπτομερειών
-          </button>
-
-         <form method="post" action="addNote.php">
-<input type="hidden" name="topic_id" value="<?= $row['id'] ?>">
-    <textarea name="note_text" maxlength="300" placeholder="Προσθήκη σημείωσης..." required></textarea>
-    <button type="submit">Αποθήκευση</button>
-</form>
-
-
-
-                  <button class="action-btn download-btn">
-                    <i class="fas fa-download"></i> Λήψη Αρχείου
+                  <button type="button" class="action-btn view-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#detailsModal"
+                    data-id="<?= $row['id'] ?>"
+                    data-title="<?= htmlspecialchars($row['title']) ?>"
+                    data-student="<?= htmlspecialchars($row['student_name'].' '.$row['student_surname']) ?>"
+                    data-supervisor="<?= htmlspecialchars($row['supervisor_name'].' '.$row['supervisor_surname']) ?>"
+                    data-committee="<?= htmlspecialchars($row['committee_members'] ?? '') ?>"
+                    data-confirmed="<?= htmlspecialchars($row['confirmed_time'] ?? '') ?>"
+                    data-deadline="<?= $row['deadline'] ? htmlspecialchars(date('Y-m-d', strtotime($row['deadline']))) : '' ?>">
+                    <i class="fas fa-eye"></i> Προβολή Λεπτομερειών
                   </button>
+
+                  <form method="post" action="addNote.php" class="status-badge status">
+                    <input type="hidden" name="topic_id" value="<?= $row['id'] ?>">
+                        <textarea name="note_text" maxlength="300" placeholder="Προσθήκη σημείωσης..." required></textarea>
+                        <button type="submit">Αποθήκευση</button>
+                  </form>
                 </div> 
-              </div>
+            </div>
             <?php endwhile; ?>
           <?php else: ?>
             <p>Δεν βρέθηκαν διπλωματικές με τα επιλεγμένα φίλτρα.</p>
@@ -331,10 +417,14 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     <p><strong>Επιβλέπων:</strong> <span id="modal-supervisor"></span></p>
                     <p><strong>Τριμελής:</strong> <span id="modal-committee"></span></p>
                     <p><strong>Επιβεβαιώθηκε:</strong> <span id="modal-confirmed"></span></p>
+                    <p><strong>Βαθμοί Τριμελούς:</strong> 
+                        <span id="modal-grades">Φόρτωση...</span>
+                    </p>
+
 
                   
                     <div class="mb-3">
-                      <label for="deadline" class="form-label">Προθεσμία Υποβολής</label>
+                      <label for="deadline" class="form-label"><strong>Προθεσμία Υποβολής</strong></label>
                       <input type="date" class="form-control" name="deadline" id="modal-deadline">
                     </div>
                   </div>
@@ -343,16 +433,19 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     <button type="submit" class="btn btn-primary">Αποθήκευση</button>
                   </div> 
 
+
                 </form>
-
-
-
+                
+              <div class="modal-body">
+              
+                <p><strong>Διαχείριση Διπλωματικής:</strong> </p>
+                <div class="d-flex gap-2 mt-2">
                 <!-- ===== Ακύρωση ανάθεσης ===== -->
                 <form method="post" action="updateExam.php" 
                       onsubmit="return confirm('Επιβεβαιώνετε την ακύρωση της ανάθεσης;');" 
                       class="mt-2">
-                  <input type="hidden" name="cancel_topic_id" id="cancel-topic-id">
-                <button type="submit" name="cancel_topic_id" value="" class="btn btn-warning w-100">Ακύρωση Ανάθεσης</button>
+                <input type="hidden" name="cancel_topic_id" id="cancel-topic-id">
+                <button type="submit" name="cancel_topic_id" value="" class="btn btn-secondary ">Ακύρωση Ανάθεσης</button>
                 </form>
 
                 <?php if (!empty($_SESSION['cancel_message'])): ?>
@@ -360,31 +453,41 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                   <?php unset($_SESSION['cancel_message']); ?>
                 <?php endif; ?>
 
+                 <form method="post" action="updateExam.php" class="mt-2">
+                    <input type="hidden" name="topic_id" id="for-examination-topic-id">
+                    <input type="hidden" name="set_for_examination" value="1">
+                    <button type="submit" class="btn btn-secondary">Υπό Εξέταση</button>
+                  </form>
 
-<!-- ===== Ακύρωση λόγω καθυστέρησης ===== -->
-<form method="post" action="updateExam.php" 
-      onsubmit="return confirm('Επιβεβαιώνετε την ακύρωση λόγω καθυστέρησης;');" 
-      class="mt-2">
-<input type="hidden" name="cancel_topic_delay_id" id="cancel-topic-delay-id">
-  
-  <div class="mb-2">
-    <label for="assembly_number" class="form-label">Αριθμός Γ.Σ.</label>
-    <input type="text" class="form-control" name="assembly_number" id="assembly_number" required>
-  </div>
-  <div class="mb-2">
-    <label for="assembly_year" class="form-label">Έτος Γ.Σ.</label>
-    <input type="text" class="form-control" name="assembly_year" id="assembly_year" required>
-  </div>
-  
-  <button type="submit" class="btn btn-danger w-100">Ακύρωση λόγω Καθυστέρησης</button>
-</form>
- </button>
-        
-          <form method="post" action="updateExam.php" class="mt-2">
-            <input type="hidden" name="topic_id" id="for-examination-topic-id">
-            <input type="hidden" name="set_for_examination" value="1">
-            <button type="submit" class="btn btn-warning w-100">Υπό Εξέταση</button>
-          </form>
+                  <form method="post" class="mt-2">
+                      <input type="hidden" name="topic_id" id="modal-activate-topic-id">
+                      <input type="hidden" name="activate_grading" value="1">
+                      <button type="submit" class="btn btn-secondary" id="activate-grading-btn">Ενεργοποίηση Υποβολής Βαθμού</button>
+                  </form>
+                  </div>
+
+
+                  <!-- ===== Ακύρωση λόγω καθυστέρησης ===== -->
+                  <form method="post" action="updateExam.php" 
+                        onsubmit="return confirm('Επιβεβαιώνετε την ακύρωση λόγω καθυστέρησης;');" 
+                        class="mt-2">
+                  <input type="hidden" name="cancel_topic_delay_id" id="cancel-topic-delay-id">
+                    
+                    <div class="mb-2">
+                      <label for="assembly_number" class="form-label">Αριθμός Γ.Σ.</label>
+                      <input type="text" class="form-control" name="assembly_number" id="assembly_number" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="assembly_year" class="form-label">Έτος Γ.Σ.</label>
+                      <input type="text" class="form-control" name="assembly_year" id="assembly_year" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-secondary">Ακύρωση λόγω Καθυστέρησης</button>
+                  </form>
+          
+              
+              </div>
+
 
 
               </div>
@@ -498,8 +601,31 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('modal-deadline').value = deadline;
 
     detailsModal.querySelector("button[name='cancel_topic_id']").value = topicId;
+
+    document.getElementById('activate-grading-btn').onclick = function() {
+        document.getElementById('modal-activate-topic-id').value = topicId;
+    };
+
   });
 });
+
+detailsModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    const topicId = button.getAttribute('data-id');
+
+    document.getElementById('modal-grades').innerHTML = 'Φόρτωση...';
+
+    fetch(`?action=get_grades&topic_id=${topicId}`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('modal-grades').innerHTML = data || '—';
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('modal-grades').innerHTML = 'Σφάλμα φόρτωσης';
+        });
+});
+
 
   /*
 document.addEventListener("DOMContentLoaded", () => {

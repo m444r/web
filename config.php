@@ -13,7 +13,7 @@ $db = mysqli_connect(DBSERVER, DBUSERNAME, DBPASSWORD, DBNAME);
 if($db === false){
     die("Error: connection error. " . mysqli_connect_error());
 }
-echo "Σύνδεση με τη βάση πέτυχε!";
+
 
 /*$sql = "SELECT * FROM users";
 $result = mysqli_query($db, $sql);

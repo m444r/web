@@ -44,6 +44,12 @@ $stmt = $db->prepare("
     JOIN topics t ON cr.topic_id = t.id
     JOIN users u ON t.assigned_to = u.id
     WHERE cr.teacher_id = ?
+    ORDER BY 
+          CASE cr.status 
+            WHEN 'pending' THEN 1
+            ELSE 2
+          END,
+          cr.requested_at DESC
 ");
 $stmt->bind_param("i", $teacher_id);
 $stmt->execute();
@@ -113,7 +119,7 @@ if (isset($_POST['action']) && isset($_POST['request_id'])) {
       <div class="sidebar-container">
         
         <!-- Profile pic -->
-        <img src="icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='profile.php'">
+        <img src="icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='TeacherProfile.php'">
         
         <!-- User name link -->
         <div class="user-name">
@@ -154,11 +160,17 @@ if (isset($_POST['action']) && isset($_POST['request_id'])) {
               Προσκλησεις
             </a>
           </li>
+          <li class="nav-spacing">
+            <a href="TeacherNotes.php">
+              <img src="list.png" alt="Thesis List" class="nav-icon">
+              Οι σημειώσεις μου
+            </a>
+          </li>
           
           <div class="nav-separator"></div>
           
           <li class="nav-spacing">
-            <a href="settings.php">
+            <a href="TeacherSettings.php">
               <img src="icons/setting.png" alt="Settings" class="nav-icon">
               Ρυθμισεις
             </a>
@@ -184,8 +196,8 @@ if (isset($_POST['action']) && isset($_POST['request_id'])) {
       <div class="container">
     <header class="mb-4">
       <h1><i class="fas fa-envelope-open-text"></i> Προσκλήσεις Τριμελών Επιτροπών</h1>
-      <p class="subtitle">Διαχείριση προσκλήσεων συμμετοχής σε τριμελείς επιτροπές</p>
     </header>
+    <hr class="hr">
 
     <?php if ($message): ?>
       <div class="alert alert-info"><?= htmlspecialchars($message) ?></div>
