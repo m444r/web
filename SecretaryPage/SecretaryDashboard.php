@@ -67,6 +67,7 @@
           <li class="nav-spacing">
             <a href="../login_page.html" class="logout">
               <img src="../icons/logout.png" alt="Logout" class="nav-icon">
+                <a href="logout.php">
               Αποσυνδεση
             </a>
           </li>
