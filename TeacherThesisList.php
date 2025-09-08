@@ -219,7 +219,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
 
         <ul class="nav nav-pills flex-column mb-auto w-100">
           <li class="nav-item nav-spacing">
-            <a href="TeacherDashboard.php">
+            <a href="#" >
               <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
               Dashboard
             </a>
@@ -243,15 +243,21 @@ document.getElementById("saveBtn").addEventListener("click", function () {
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherInvites.php">
-              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
-              Προσκλησεις
+            <a href="TeacherNotes.php">
+              <img src="icons/wirte.png" alt="Notes" class="nav-icon">
+              Σημειωσεις
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherNotes.php">
-              <img src="list.png" alt="Thesis List" class="nav-icon">
-              Οι σημειώσεις μου
+            <a href="TeacherAssignTopic.php">
+              <img src="icons/invitation.png" alt="Assign Topic" class="nav-icon">
+              Αναθεση Θεματος
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="TeacherInvites.php">
+              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλησεις
             </a>
           </li>
           
@@ -388,11 +394,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     <i class="fas fa-eye"></i> Προβολή Λεπτομερειών
                   </button>
 
-                  <form method="post" action="addNote.php" class="status-badge status">
-                    <input type="hidden" name="topic_id" value="<?= $row['id'] ?>">
-                        <textarea name="note_text" maxlength="300" placeholder="Προσθήκη σημείωσης..." required></textarea>
-                        <button type="submit">Αποθήκευση</button>
-                  </form>
+                  
                 </div> 
             </div>
             <?php endwhile; ?>

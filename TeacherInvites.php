@@ -127,11 +127,11 @@ if (isset($_POST['action']) && isset($_POST['request_id'])) {
         </div>
         
         <!-- Name separator -->
-        <div class="name-separator"></div>
+         <div class="name-separator"></div>
 
         <ul class="nav nav-pills flex-column mb-auto w-100">
           <li class="nav-item nav-spacing">
-            <a href="TeacherDashboard.php">
+            <a href="#" >
               <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
               Dashboard
             </a>
@@ -155,15 +155,21 @@ if (isset($_POST['action']) && isset($_POST['request_id'])) {
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherInvites.php" class="active">
-              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
-              Προσκλησεις
+            <a href="TeacherNotes.php" >
+              <img src="icons/wirte.png" alt="Notes" class="nav-icon">
+              Σημειωσεις
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherNotes.php">
-              <img src="list.png" alt="Thesis List" class="nav-icon">
-              Οι σημειώσεις μου
+            <a href="TeacherAssignTopic.php">
+              <img src="icons/invitation.png" alt="Assign Topic" class="nav-icon">
+              Αναθεση Θεματος
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="TeacherInvites.php" class="active">
+              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλησεις
             </a>
           </li>
           

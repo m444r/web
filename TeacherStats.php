@@ -176,10 +176,10 @@ $avg_completion_committee = floatval($avg_completion_committee);
               Προσκλησεις
             </a>
           </li>
-          <li class="nav-spacing">
+           <li class="nav-spacing">
             <a href="TeacherNotes.php">
-              <img src="list.png" alt="Thesis List" class="nav-icon">
-              Οι σημειώσεις μου
+              <img src="icons/wirte.png" alt="Notes" class="nav-icon">
+              Σημειωσεις
             </a>
           </li>
           

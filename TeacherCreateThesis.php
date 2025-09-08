@@ -83,35 +83,67 @@ $topicsResult = $stmt->get_result();
         <div class="user-name">
           <?= htmlspecialchars($teacherName) ?>
         </div>
-        <div class="name-separator"></div>
+
+
+         <div class="name-separator"></div>
+
         <ul class="nav nav-pills flex-column mb-auto w-100">
           <li class="nav-item nav-spacing">
-            <a href="TeacherDashboard.php"><img src="icons/menu.png" class="nav-icon"> Dashboard</a>
+            <a href="#" >
+              <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
+              Dashboard
+            </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherStats.php"><img src="icons/stats.png" class="nav-icon"> Στατιστικα</a>
+            <a href="TeacherStats.php">
+              <img src="icons/stats.png" alt="Statistics" class="nav-icon">
+              Στατιστικα
+            </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherCreateThesis.php" class="active"><img src="icons/file.png" class="nav-icon"> Θεματα ΔΕ</a>
+            <a href="TeacherCreateThesis.php" class="active">
+              <img src="icons/file.png" alt="Thesis Topics" class="nav-icon">
+              Θεματα ΔΕ
+            </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherThesisList.php"><img src="list.png" class="nav-icon"> Λιστα ΔΕ</a>
-          </li>
-          <li class="nav-spacing">
-            <a href="TeacherInvites.php"><img src="icons/invitation.png" class="nav-icon"> Προσκλησεις</a>
+            <a href="TeacherThesisList.php">
+              <img src="list.png" alt="Thesis List" class="nav-icon">
+              Λιστα ΔΕ
+            </a>
           </li>
           <li class="nav-spacing">
             <a href="TeacherNotes.php">
-              <img src="list.png" alt="Thesis List" class="nav-icon">
-              Οι σημειώσεις μου
+              <img src="icons/wirte.png" alt="Notes" class="nav-icon">
+              Σημειωσεις
             </a>
           </li>
-          <div class="nav-separator"></div>
           <li class="nav-spacing">
-            <a href="TeacherSettings.php"><img src="icons/setting.png" class="nav-icon"> Ρυθμισεις</a>
+            <a href="TeacherAssignTopic.php">
+              <img src="icons/invitation.png" alt="Assign Topic" class="nav-icon">
+              Αναθεση Θεματος
+            </a>
           </li>
           <li class="nav-spacing">
-            <a href="logout.php" class="logout"><img src="icons/logout.png" class="nav-icon"> Αποσυνδεση</a>
+            <a href="TeacherInvites.php">
+              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλησεις
+            </a>
+          </li>
+          
+          <div class="nav-separator"></div>
+          
+          <li class="nav-spacing">
+            <a href="TeacherSettings.php">
+              <img src="icons/setting.png" alt="Settings" class="nav-icon">
+              Ρυθμισεις
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="logout.php" class="logout">
+              <img src="icons/logout.png" alt="Logout" class="nav-icon">
+              Αποσυνδεση
+            </a>
           </li>
         </ul>
       </div>
@@ -125,7 +157,7 @@ $topicsResult = $stmt->get_result();
 
       <div class="container">
         <header class="header">
-          <div class="header-title">Θέματα Διπλωματικών</div>
+          <div class="header-title">Θέματα Διπλωματικών Προς Ανάθεση</div>
         </header>
         <hr class="hr">
 

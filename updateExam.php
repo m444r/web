@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
         // Μόνο αν ο teacher_id είναι ο επιβλέπων ΚΑΙ το status είναι 'available'
         $stmt = $db->prepare("UPDATE topics 
                               SET status='for examination' 
-                              WHERE id=? AND teacher_id=? AND status='available'");
+                              WHERE id=? AND teacher_id=? AND status='confirmed'");
         $stmt->bind_param("ii", $topic_id, $teacher_id);
         $stmt->execute();
 

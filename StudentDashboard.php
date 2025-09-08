@@ -126,16 +126,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
               Dashboard
             </a>
           </li>
+          <li class="nav-item nav-spacing">
+            <a href="StudentThesis.php" >
+              <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
+              Τρέχουσα Διπλωματικη
+            </a>
+          </li>
           <li class="nav-spacing">
             <a href="StudentTopics.php">
               <img src="icons/file.png" alt="Topics" class="nav-icon">
-              Θέματα ΔΕ
+              Ανάρτηση Αρχείων
             </a>
           </li>
           <li class="nav-spacing">
             <a href="StudentManageThesis.php">
-              <img src="icons/stats.png" alt="Manage Thesis" class="nav-icon">
-              Διαχείριση ΔΕ
+              <img src="icons/invitation.png" alt="Manage Thesis" class="nav-icon">
+              Προσκλήσεις
             </a>
           </li>
           

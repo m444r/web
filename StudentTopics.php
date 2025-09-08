@@ -84,13 +84,13 @@ $topicsResult = $stmt->get_result();
           <li class="nav-spacing">
             <a href="StudentTopics.php" class="active">
               <img src="icons/file.png" alt="Topics" class="nav-icon">
-              Θέματα ΔΕ
+              Ανάρτηση Αρχείων
             </a>
           </li>
           <li class="nav-spacing">
             <a href="StudentManageThesis.php">
-              <img src="icons/stats.png" alt="Manage Thesis" class="nav-icon">
-              Διαχείριση ΔΕ
+              <img src="icons/invitation.png" alt="Manage Thesis" class="nav-icon">
+              Προσκλήσεις
             </a>
           </li>
           
@@ -122,15 +122,15 @@ $topicsResult = $stmt->get_result();
       <!-- Student Topics Content -->
       <div class="container">
         <header>
-            <h1>Ανάρτηση Αρχείων</h1>
+            <h1>Ανάρτηση Αρχείων ΔΕ</h1>
         </header>
         <hr class="hr">
 
 <div class="topics-container">
     <?php while($row = $topicsResult->fetch_assoc()): ?>
         <div class="topic-card">
-            <h3><?= htmlspecialchars($row['title']) ?></h3>
-            <p><?= htmlspecialchars($row['summary']) ?></p>
+            <h3>Θέμα: <?= htmlspecialchars($row['title']) ?></h3>
+            
             <?php if(!empty($row['pdf_path'])): ?>
                 <a href="<?= htmlspecialchars($row['pdf_path']) ?>" target="_blank" class="btn btn-sm btn-primary">Προβολή PDF</a>
             <?php endif; ?>
@@ -156,6 +156,8 @@ $topicsResult = $stmt->get_result();
         </div>
     <?php endwhile; ?>
 </div>
+
+
 <div class="topic-submissions mt-2">
     <h5>Προηγούμενες υποβολές:</h5>
     <?php

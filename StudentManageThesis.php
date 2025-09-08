@@ -20,17 +20,7 @@ if ($row = $result->fetch_assoc()) {
     $studentName = $row['name'] . " " . $row['surname'];
 }
 
-// Φέρνουμε τη διπλωματική του φοιτητή
-$stmt = $db->prepare("
-    SELECT t.id, t.title, t.status, u.name as supervisor_name, u.surname as supervisor_surname, t.deadline
-    FROM topics t
-    JOIN users u ON t.teacher_id = u.id
-    WHERE t.assigned_to = ?
-    ORDER BY t.id DESC LIMIT 1
-");
-$stmt->bind_param("i", $assigned_to);
-$stmt->execute();
-$topic = $stmt->get_result()->fetch_assoc();
+
 
 // Φόρτωση καθηγητών
 $teachers = $db->query("SELECT id, name, surname FROM users WHERE role='teacher'");
@@ -54,15 +44,30 @@ if (isset($_POST['teacher_id']) && $topic) {
 }
 
 // Φόρτωση διπλωματικών με awaiting_committee
+$topics = [];
 $topics_stmt = $db->prepare("
-    SELECT id, title 
-    FROM topics 
-    WHERE assigned_to = ? AND status = 'awaiting_committee'
-    ORDER BY id DESC
+    SELECT t.id, t.title, t.status, t.deadline, u.name, u.surname , t.summary , t.pdf_path
+    FROM topics t
+    JOIN users u ON t.teacher_id = u.id
+    WHERE t.assigned_to = ? AND t.status = 'awaiting_committee'
+    ORDER BY t.id DESC
 ");
 $topics_stmt->bind_param("i", $assigned_to);
 $topics_stmt->execute();
-$topics = $topics_stmt->get_result();
+$topics_stmt->bind_result($tid, $ttitle, $tstatus, $tdeadline, $supname, $supsurname, $summary, $pdf_path);
+while ($topics_stmt->fetch()) {
+    $topics[] = [
+        'id' => $tid,
+        'title' => $ttitle,
+        'status' => $tstatus,
+        'deadline' => $tdeadline,
+        'supervisor_name' => $supname,
+        'supervisor_surname' => $supsurname,
+        'summary' => $summary,
+        'pdf_path' => $pdf_path
+    ];
+}
+$topics_stmt->close();
 
 // Αν ο φοιτητής έστειλε προσκλήσεις
 if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
@@ -138,13 +143,13 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
           <li class="nav-spacing">
             <a href="StudentTopics.php">
               <img src="icons/file.png" alt="Topics" class="nav-icon">
-              Θέματα ΔΕ
+              Ανάρτηση Αρχείων
             </a>
           </li>
           <li class="nav-spacing">
             <a href="StudentManageThesis.php" class="active">
-              <img src="icons/stats.png" alt="Manage Thesis" class="nav-icon">
-              Διαχείριση ΔΕ
+              <img src="icons/invitation.png" alt="Manage Thesis" class="nav-icon">
+              Προσκλήσεις
             </a>
           </li>
           
@@ -176,49 +181,77 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
       <!-- Student Manage Thesis Content -->
       <div class="container">
         <header>
-            <h1>Διαχείριση Διπλωματικής Εργασίας</h1>
+            <h1>Διαχείριση Προσκλήσεων</h1>
         </header>
         <hr class="hr">
 
-        <div class="thesis-status">
-          <div class="status-card">
-              <h3>Κατάσταση Διπλωματικής</h3>
-              <div class="status-info">
-                  <span class="status-label">Τίτλος:</span>
-                  <span class="status-value"><?= htmlspecialchars($topic['title']) ?></span>
-              </div>
-              <div class="status-info">
-                  <span class="status-label">Επιβλέπων:</span>
-                  <span class="status-value"><?= htmlspecialchars($topic['supervisor_name']." ".$topic['supervisor_surname']) ?></span>
-              </div>
-              <div class="status-info">
-                  <span class="status-label">Κατάσταση:</span>
-                  <span class="status-badge <?= ($topic['status']=='confirmed'?'active':'pending') ?>">
-                      <?= htmlspecialchars($topic['status']) ?>
-                  </span>
-              </div>
-              <?php if (!empty($topic['deadline'])): ?>
-              <div class="status-info">
-                  <span class="status-label">Προθεσμία:</span>
-                  <span class="status-value">
-                    <?= date("d/m/Y", strtotime($topic['deadline'])) ?>
-                  </span>
-              </div>
+       <div class="thesis-status">
+  <?php if (!empty($topics)): ?>
+      <?php foreach ($topics as $topic): ?>
+        <div class="status-card">
+            <h3> Διπλωματική Προς Ανάθεση</h3>
+            
+            <div class="status-info">
+                <span class="status-label">Τίτλος:</span>
+                <span class="status-value"><?= htmlspecialchars($topic['title']) ?></span>
+            </div>
 
-              
+            <div class="status-info">
+                <span class="status-label">Περίληψη:</span>
+                <span class="status-badge"> <?= htmlspecialchars($topic['summary']) ?></span>
+            </div>
+
+            <div class="status-info">
+                <span class="status-label">Επιβλέπων:</span>
+                <span class="status-value"><?= htmlspecialchars($topic['supervisor_name']." ".$topic['supervisor_surname']) ?></span>
+            </div>
+
+            <div class="status-info">
+                <span class="status-label">Κατάσταση:</span>
+                <span class="status-badge <?= ($topic['status']=='confirmed'?'active':'pending') ?>">
+                    <?= htmlspecialchars($topic['status']) ?>
+                </span>
+            </div>
+
+            <div class="status-info">
+              <span class="status-label">Προβολή PDF :</span>
+              <?php if (!empty($topic['pdf_path'])): ?>
+                  <a href="<?= htmlspecialchars($topic['pdf_path']) ?>" 
+                    target="_blank" 
+                    class="status-badge">
+                      Άνοιγμα PDF
+                  </a>
+              <?php else: ?>
+                  <span class="status-badge">Δεν έχει ανέβει PDF</span>
               <?php endif; ?>
           </div>
 
-          <div class="invite-teachers mt-4">
+
+            <?php if (!empty($topic['deadline'])): ?>
+            <div class="status-info">
+                <span class="status-label">Προθεσμία:</span>
+                <span class="status-value"><?= date("d/m/Y", strtotime($topic['deadline'])) ?></span>
+            </div>
+            <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+  
+  <?php endif; ?>
+</div>
+
+
+
+
+     <div class="invite-teachers mt-4">
     <h3>Πρόσκληση Καθηγητών</h3>
     <form method="POST">
         <div class="mb-3">
             <label for="topic" class="form-label">Επιλέξτε Διπλωματική</label>
             <select name="topic_id" id="topic" class="form-select" required>
                 <option value="">-- Επιλέξτε Διπλωματική --</option>
-                <?php while ($t = $topics->fetch_assoc()): ?>
+                <?php foreach ($topics as $t): ?>
                     <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['title']) ?></option>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </select>
         </div>
 
@@ -300,3 +333,47 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
 </script>
 </body>
 </html>
+
+
+<div class="thesis-status">
+  
+
+  <?php if ($result->num_rows > 0): ?>
+      <?php while ($topic = $result->fetch_assoc()): ?>
+        <div class="status-card">
+            <h3>Κατάσταση Διπλωματικής</h3>
+            
+            <div class="status-info">
+                <span class="status-label">Τίτλος:</span>
+                <span class="status-value"><?= htmlspecialchars($topic['title']) ?></span>
+            </div>
+
+            <div class="status-info">
+                <span class="status-label">Επιβλέπων:</span>
+                <span class="status-value">
+                  <?= htmlspecialchars($topic['supervisor_name']." ".$topic['supervisor_surname']) ?>
+                </span>
+            </div>
+
+            <div class="status-info">
+                <span class="status-label">Κατάσταση:</span>
+                <span class="status-badge <?= ($topic['status']=='confirmed'?'active':'pending') ?>">
+                    <?= htmlspecialchars($topic['status']) ?>
+                </span>
+            </div>
+
+            <?php if (!empty($topic['deadline'])): ?>
+            <div class="status-info">
+                <span class="status-label">Προθεσμία:</span>
+                <span class="status-value">
+                  <?= date("d/m/Y", strtotime($topic['deadline'])) ?>
+                </span>
+            </div>
+            <?php endif; ?>
+        </div>
+      <?php endwhile; ?>
+  <?php else: ?>
+      <p>Δεν έχετε διπλωματικές σε κατάσταση "awaiting_committee".</p>
+  <?php endif; ?>
+  
+</div>

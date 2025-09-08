@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'], $_POST['n
 
     if (strlen($note_text) > 300) {
         $_SESSION['error_msg'] = "Η σημείωση δεν μπορεί να ξεπερνά τους 300 χαρακτήρες.";
-        header("Location: TeacherThesisList.php");
+        header("Location: TeacherNotes.php");
         exit;
     }
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'], $_POST['n
     $stmt->close();
 
     $_SESSION['success_msg'] = "Η σημείωση προστέθηκε επιτυχώς.";
-    header("Location: TeacherThesisList.php");
+    header("Location: TeacherNotes.php");
     exit;
 }
 ?>

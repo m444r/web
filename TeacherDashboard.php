@@ -245,15 +245,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_grade'])) {
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherInvites.php">
-              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
-              Προσκλησεις
+            <a href="TeacherNotes.php" >
+              <img src="icons/wirte.png" alt="Notes" class="nav-icon">
+              Σημειωσεις
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="TeacherNotes.php">
-              <img src="list.png" alt="Thesis List" class="nav-icon">
-              Οι σημειώσεις μου
+            <a href="TeacherAssignTopic.php">
+              <img src="icons/invitation.png" alt="Assign Topic" class="nav-icon">
+              Αναθεση Θεματος
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="TeacherInvites.php">
+              <img src="icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλησεις
             </a>
           </li>
           
@@ -276,11 +282,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_grade'])) {
     </div>
 
     <!-- Main Content -->
-        <div class="col py-3">
-              <!-- Mobile toggle button -->
-              <button class="mobile-menu-btn d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
-                <i class="fas fa-bars"></i> Μενού
-              </button>
+         <div class="col py-3">
+      <!-- Mobile toggle button -->
+      <button class="mobile-menu-btn d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+        <i class="fas fa-bars"></i> Μενού
+      </button>
+
+      <!-- Teacher Dashboard Content -->
+      <div class="container">
+        <header>
+            <h1>Καλώς ήρθες,<?= htmlspecialchars($teacherName) ?>!</h1>
+        </header>
+        <hr class="hr">
+
+
+              
 
             <div class="content-box">
             <h3 class="main-heading">Τα θεματα μου</h3>
