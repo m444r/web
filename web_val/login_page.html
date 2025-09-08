@@ -10,10 +10,8 @@
 <body>
   <form class="login-container" id="loginForm" novalidate>
     <div class="login-icon">
-      
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M12 14c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z"/></svg>
+      <img src="icons/account.png" alt="Profile" class="profile-icon">
     </div>
-    <div class="roles-label">Roles:</div>
     <div class="roles">
       <label><input type="radio" name="role" value="student" checked> Student</label>
       <label><input type="radio" name="role" value="teacher"> Teacher</label>
@@ -26,6 +24,9 @@
     <div class="form-group">
       <input type="password" id="password" name="password" class="form-input" placeholder=" " required autocomplete="current-password" minlength="4">
       <label for="password" class="form-label">Password</label>
+      <button type="button" class="password-toggle" id="passwordToggle" onclick="togglePassword()">
+        <img src="icons/hidden.png" alt="Show Password" class="toggle-icon" id="toggleIcon">
+      </button>
     </div>
     <button type="submit" class="login-btn">LOGIN</button>
     <div class="error-message" id="errorMsg"></div>
@@ -33,6 +34,22 @@
   <script>
     const form = document.getElementById('loginForm');
     const errorMsg = document.getElementById('errorMsg');
+    
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const toggleIcon = document.getElementById('toggleIcon');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.src = 'icons/show.png';
+        toggleIcon.alt = 'Hide Password';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.src = 'icons/hidden.png';
+        toggleIcon.alt = 'Show Password';
+      }
+    }
+    
     form.addEventListener('submit', function(e) {
       errorMsg.textContent = '';
       if (!form.checkValidity()) {

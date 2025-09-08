@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #f7faff;
+    background-color: #F0F8FF;
     min-height: 100vh;
     padding: 40px 20px;
     color: #222;
@@ -59,7 +59,7 @@ h1 {
 .action-list li {
     margin: 15px 0;
     padding: 20px;
-    background-color: #f7faff;
+    background-color: #F0F8FF;
     border-radius: 8px;
     transition: all 0.3s ease;
     border: 1px solid #e0e7ef;
@@ -143,7 +143,7 @@ h1 {
     resize: vertical;
     font-family: inherit;
     color: #222;
-    background-color: #f7faff;
+    background-color: #F0F8FF;
 }
 
 .notes-section textarea:focus {
@@ -179,7 +179,7 @@ h1 {
     border-radius: 6px;
     font-size: 1em;
     color: #222;
-    background-color: #f7faff;
+    background-color: #F0F8FF;
 }
 
 .grade-section input[type="number"]:focus {

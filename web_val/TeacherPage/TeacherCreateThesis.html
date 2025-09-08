@@ -77,9 +77,9 @@
           <div class="nav-separator"></div>
           
           <li class="nav-spacing">
-            <a href="settings.html">
+            <a href="TeacherProfile.html">
               <img src="../icons/setting.png" alt="Settings" class="nav-icon">
-              Ρυθμισεις
+              Προφίλ
             </a>
           </li>
           <li class="nav-spacing">
@@ -101,10 +101,11 @@
 
       <!-- Thesis Creation Content -->
       <div class="container">
-        <header class="header">
-            <div class="header-title">Θέματα Διπλωματικών</div>
+        <header>
+            <h1>Θέματα Διπλωματικών</h1>
         </header>
         <hr class="hr">
+       
         <!-- Form for creating new topic -->
         <div class="create-topic">
             <h2>Δημιουργία Νέου Θέματος</h2>
@@ -131,23 +132,38 @@
         
         <!-- List of existing topics -->
         <div class="topics-list">
-            <h2>Τα Θέματά μου</h2>
-            <!-- Example topic card - Temporary for styling preview -->
-            <div class="topic-card">
-                <h3>Παράδειγμα Τίτλου Θέματος 1</h3>
-                <p>Παράδειγμα περιγραφής θέματος. Εδώ θα εμφανίζεται η περιγραφή του θέματος. Αυτό είναι ένα παράδειγμα κειμένου για να δούμε πώς φαίνεται η παράγραφος μέσα στην κάρτα.</p>
-                <a href="#" target="_blank">Προβολή PDF</a>
-                <!-- Edit Icon -->
-                <i class="fas fa-edit edit-icon" data-topic-id="1"></i>
+            <div class="section-header-with-arrows">
+                <h2>Τα Θέματά μου</h2>
+                <div class="section-arrows">
+                    <button class="pagination-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="pagination-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
             
-            <!-- Another example topic card - Temporary for styling preview -->
-            <div class="topic-card">
-                <h3>Άλλο Παράδειγμα Τίτλου Θέματος 2</h3>
-                <p>Μια άλλη περιγραφή θέματος για παράδειγμα. Και εδώ λίγο περισσότερο κείμενο για να γεμίσει η κάρτα.</p>
-                <a href="#" target="_blank">Προβολή PDF</a>
-                <!-- Edit Icon -->
-                <i class="fas fa-edit edit-icon" data-topic-id="2"></i>
+            <div class="topics-grid">
+                <!-- Example topic card - Temporary for styling preview -->
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <h3>Τίτλος Θεματος</h3>
+                        <i class="fas fa-edit edit-icon" data-topic-id="1"></i>
+                    </div>
+                    <p>Περιγραφή Θεματος. Εδώ θα εμφανίζεται η περιγραφή του θέματος. Αυτό είναι ένα παράδειγμα κειμένου για να δούμε πώς φαίνεται η παράγραφος μέσα στην κάρτα.</p>
+                    <a href="#" target="_blank">Προβολή PDF</a>
+                </div>
+                
+                <!-- Another example topic card - Temporary for styling preview -->
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <h3>Τίτλος Θεματος</h3>
+                        <i class="fas fa-edit edit-icon" data-topic-id="2"></i>
+                    </div>
+                    <p>Περιγραφή Θεματος. Εδώ θα εμφανίζεται η περιγραφή του θέματος. Αυτό είναι ένα παράδειγμα κειμένου για να δούμε πώς φαίνεται η παράγραφος μέσα στην κάρτα.</p>
+                    <a href="#" target="_blank">Προβολή PDF</a>
+                </div>
             </div>
             <!-- The dynamic content will replace these examples -->
         </div>

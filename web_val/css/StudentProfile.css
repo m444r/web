@@ -1,7 +1,7 @@
 /* Sidebar Styles from TeacherDashboard */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background-color: #F0F0F0;
+  background-color: #F0F8FF;
   margin: 0;
   padding: 0;
 }
@@ -29,6 +29,7 @@ body {
   border: none;
   object-fit: cover;
   transition: transform 0.2s ease;
+  filter: brightness(0) invert(1);
 }
 
 .profile-avatar:hover {
@@ -36,11 +37,12 @@ body {
 }
 
 .user-name {
-  color: #292D32;
-  font-weight: bold;
+  color: white;
+  font-weight: 600;
   text-align: center;
   margin-bottom: 30px;
   font-size: 18px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .name-separator {
@@ -50,49 +52,56 @@ body {
 }
 
 .sidebar a {
-  color: #292D32;
+  color: #E0E0E0;
   text-decoration: none;
-  padding: 10px 12px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  border-radius: 6px;
-  margin-bottom: 3px;
-  transition: all 0.15s ease;
+  gap: 16px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
   font-size: 15px;
-  margin-left: -12px;
-  margin-right: -12px;
-  padding-left: 24px;
-  padding-right: 12px;
-  font-weight: bold;
+  margin-left: 8px;
+  margin-right: 8px;
+  font-weight: 500;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  white-space: nowrap;
+  min-height: 44px;
+  height: 44px;
 }
 
 .sidebar a:hover {
-  color: #292D32;
-  font-size: 16px;
+  color: white;
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
 }
 
 .sidebar a:hover .nav-icon {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .sidebar a.active {
-  background-color: rgba(255,255,255,0.3);
-  font-weight: normal;
-  border-left: 3px solid white;
-  margin-left: -20px;
-  margin-right: -20px;
-  padding-left: 32px;
-  padding-right: 20px;
-  border-radius: 0;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: 600;
+  transform: translateX(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar a.logout {
-  color: #B04F4F;
+  color: #FF6B6B;
 }
 
 .sidebar a.logout:hover {
-  font-size: 16px;
+  color: #FF5252;
+  background-color: rgba(255, 107, 107, 0.15);
+  transform: translateX(4px);
+}
+
+.sidebar a.logout .nav-icon {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
 }
 
 .nav-spacing {
@@ -115,6 +124,7 @@ body {
   object-fit: contain;
   flex-shrink: 0;
   transition: transform 0.15s ease;
+  filter: brightness(0) invert(1);
 }
 
 .mobile-menu-btn {

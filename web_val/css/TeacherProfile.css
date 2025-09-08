@@ -29,7 +29,6 @@ body {
   border: none;
   object-fit: cover;
   transition: transform 0.2s ease;
-  filter: brightness(0) invert(1);
 }
 
 .profile-avatar:hover {
@@ -37,8 +36,8 @@ body {
 }
 
 .user-name {
-  color: white;
-  font-weight: 600;
+  color: #34495e;
+  font-weight: 500;
   text-align: center;
   margin-bottom: 30px;
   font-size: 18px;
@@ -153,7 +152,7 @@ body {
   }
 }
 
-/* Secretary Dashboard Specific Styles */
+/* Teacher Profile Specific Styles */
 .container {
     max-width: 1000px;
     margin: 20px auto;
@@ -188,85 +187,12 @@ header h1 {
     margin: 0 40px 40px 40px;
 }
 
-/* Stats Section */
-.stats-section {
-    margin-left: 40px;
-    margin-right: 40px;
-    margin-bottom: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
-
-.stat-card {
-    background: #fff;
-    border: 1.5px solid #e0e7ef;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    padding: 28px 32px 18px 32px;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    transition: transform 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #6A90C7, #8fbc8f);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.stat-icon i {
-    font-size: 1.5rem;
-    color: white;
-}
-
-.stat-content h3 {
-    font-size: 0.9rem;
-    color: #6A90C7;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #292D32;
-    margin-bottom: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: #6a7a8c;
-    margin: 0;
-}
-
-/* Activities Section */
-.activities-section {
+.profile-section {
     margin-left: 40px;
     margin-right: 40px;
 }
 
-.activities-section h2 {
-    font-size: 1.1rem;
-    color: #000000;
-    font-weight: 500;
-    margin-bottom: 18px;
-    border-bottom: none;
-    padding-bottom: 6px;
-    width: fit-content;
-}
-
-.activities-list {
+.profile-card {
     background: #fff;
     border: 1.5px solid #e0e7ef;
     border-radius: 16px;
@@ -275,50 +201,178 @@ header h1 {
     margin-bottom: 0;
 }
 
-.activity-item {
+.profile-header {
     display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem 0;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
     border-bottom: 1px solid #e0e7ef;
 }
 
-.activity-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: rgba(106, 144, 199, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.activity-icon i {
-    font-size: 1rem;
-    color: #6A90C7;
-}
-
-.activity-content h4 {
-    font-size: 0.9rem;
-    color: #292D32;
+.profile-info h2 {
+    font-size: 1.5rem;
+    color: #000000;
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
-.activity-content p {
-    font-size: 0.8rem;
-    color: #6a7a8c;
-    margin-bottom: 0.25rem;
-}
-
-.activity-time {
-    font-size: 0.7rem;
-    color: #8fbc8f;
+.teacher-id {
+    color: #6A90C7;
     font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.department {
+    color: #222;
+    font-weight: 500;
+}
+
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: rgba(224, 231, 239, 0.3);
+    border-radius: 8px;
+}
+
+.label {
+    font-weight: 600;
+    color: #222;
+    min-width: 120px;
+}
+
+.form-input {
+    background: #f8f9fa;
+    border: 1px solid #e0e7ef;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #6A90C7;
+    font-weight: 500;
+    width: 200px;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #6A90C7;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(106, 144, 199, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e7ef;
+}
+
+.btn-cancel, .btn-save {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-cancel {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #e0e7ef;
+}
+
+.btn-cancel:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.btn-save {
+    background: #6A90C7;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-save:hover {
+    background: #5a7fb7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-save:active {
+    background: #4a6fa5;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    header {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    
+    .hr {
+        margin: 0 20px 40px 20px;
+    }
+    
+    .profile-section {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    
+    .profile-card {
+        padding: 20px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .profile-details {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .form-input {
+        width: 100%;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-cancel, .btn-save {
+        width: 100%;
+    }
 }

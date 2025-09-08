@@ -78,9 +78,9 @@
           <div class="nav-separator"></div>
           
           <li class="nav-spacing">
-            <a href="settings.html">
+            <a href="TeacherProfile.html">
               <img src="../icons/setting.png" alt="Settings" class="nav-icon">
-              Ρυθμισεις
+              Προφίλ
             </a>
           </li>
           <li class="nav-spacing">
@@ -153,8 +153,8 @@
       datasets: [{
           label: 'Μέσος Χρόνος (μήνες)',
           data: [15, 13],
-          backgroundColor: ['#8fbc8f', '#6a7a8c'],
-          borderColor: ['#8fbc8f', '#6a7a8c'],
+          backgroundColor: ['#6A90C7', '#8B9DC3'],
+          borderColor: ['#6A90C7', '#8B9DC3'],
           borderWidth: 1,
           maxBarThickness: 28
       }]
@@ -164,8 +164,8 @@
       datasets: [{
           label: 'Μέσος Βαθμός',
           data: [8, 5],
-          backgroundColor: ['#8fbc8f', '#6a7a8c'],
-          borderColor: ['#8fbc8f', '#6a7a8c'],
+          backgroundColor: ['#6A90C7', '#8B9DC3'],
+          borderColor: ['#6A90C7', '#8B9DC3'],
           borderWidth: 1,
           maxBarThickness: 28
       }]
@@ -175,8 +175,8 @@
       datasets: [{
           label: 'Πλήθος Διπλωματικών',
           data: [9, 11],
-          backgroundColor: ['#8fbc8f', '#6a7a8c'],
-          borderColor: ['#8fbc8f', '#6a7a8c'],
+          backgroundColor: ['#6A90C7', '#8B9DC3'],
+          borderColor: ['#6A90C7', '#8B9DC3'],
           borderWidth: 1,
           maxBarThickness: 28
       }]
@@ -242,32 +242,32 @@
       });
   }
   // Colors for active/inactive
-  const sageGreen = '#8fbc8f', dustyBlue = '#6a7a8c';
-  const sageGreenFaded = 'rgba(143, 188, 143, 0.5)', dustyBlueFaded = 'rgba(106, 122, 140, 0.5)';
+  const primaryBlue = '#6A90C7', secondaryBlue = '#8B9DC3';
+  const primaryBlueFaded = 'rgba(106, 144, 199, 0.5)', secondaryBlueFaded = 'rgba(139, 157, 195, 0.5)';
   // Add effect for each chart
   addLegendHoverEffect(
       document.querySelectorAll('.legend-centered')[0],
       completionTimeChart,
-      [sageGreen, dustyBlue],
-      [sageGreenFaded, dustyBlueFaded],
-      [sageGreen, dustyBlue],
-      [sageGreenFaded, dustyBlueFaded]
+      [primaryBlue, secondaryBlue],
+      [primaryBlueFaded, secondaryBlueFaded],
+      [primaryBlue, secondaryBlue],
+      [primaryBlueFaded, secondaryBlueFaded]
   );
   addLegendHoverEffect(
       document.querySelectorAll('.legend-centered')[1],
       gradeChart,
-      [sageGreen, dustyBlue],
-      [sageGreenFaded, dustyBlueFaded],
-      [sageGreen, dustyBlue],
-      [sageGreenFaded, dustyBlueFaded]
+      [primaryBlue, secondaryBlue],
+      [primaryBlueFaded, secondaryBlueFaded],
+      [primaryBlue, secondaryBlue],
+      [primaryBlueFaded, secondaryBlueFaded]
   );
   addLegendHoverEffect(
       document.querySelectorAll('.legend-centered')[2],
       totalThesesChart,
-      [sageGreen, dustyBlue],
-      [sageGreenFaded, dustyBlueFaded],
-      [sageGreen, dustyBlue],
-      [sageGreenFaded, dustyBlueFaded]
+      [primaryBlue, secondaryBlue],
+      [primaryBlueFaded, secondaryBlueFaded],
+      [primaryBlue, secondaryBlue],
+      [primaryBlueFaded, secondaryBlueFaded]
   );
 
   // Mobile menu toggle

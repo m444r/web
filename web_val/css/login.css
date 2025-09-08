@@ -18,11 +18,11 @@ body {
   font-family: 'Spotify Mix Regular', Arial, sans-serif;
   font-weight: 700;
   font-style: normal;
-  background: #f7faff;
+  background: #F0F8FF;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 2rem 0;
+  padding: 4rem 0 2rem 0;
 }
 .login-container {
   background: #ffffff;
@@ -38,29 +38,16 @@ body {
   border: 1px solid #e0e7ef;
 }
 .login-icon {
-  background: #e0e7ef;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
 }
-.login-icon svg {
-  width: 36px;
-  height: 36px;
-  fill: #6a7a8c;
-}
-.roles-label {
-  color: #222;
-  font-size: 15px;
-  margin-bottom: 0.5rem;
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-  height: 20px;
-  margin-left: 0;
+.profile-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(42%) sepia(8%) saturate(1234%) hue-rotate(201deg) brightness(95%) contrast(86%);
 }
 .roles {
   display: flex;
@@ -78,17 +65,38 @@ body {
   gap: 0.3rem;
 }
 .roles input[type="radio"] {
-  accent-color: #8fbc8f;
+  accent-color: #6A90C7;
 }
 .form-group {
   position: relative;
   width: 100%;
   margin-bottom: 1.8rem;
 }
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(42%) sepia(8%) saturate(1234%) hue-rotate(201deg) brightness(95%) contrast(86%);
+}
 .form-input {
   width: 100%;
   padding: 1.4rem 1rem 0.6rem 1rem;
-  background: #f7faff;
+  background: #F0F8FF;
   border: 1px solid #cdd4da;
   border-radius: 8px;
   text-align: left;
@@ -98,6 +106,10 @@ body {
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
   height: 50px;
+}
+
+#password {
+  padding-right: 3rem;
 }
 .form-input:hover {
   border-color: #6a7a8c;
@@ -133,7 +145,7 @@ body {
   padding: 0.9rem 0;
   border: none;
   border-radius: 8px;
-  background: #8fbc8f;
+  background: #6A90C7;
   color: #fff;
   font-family: 'Spotify Mix Bold';
   font-size: 0.9rem;
@@ -144,10 +156,10 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .login-btn:hover {
-  background: #7ba87b;
+  background: #5a7fb7;
 }
 .login-btn:active {
-  background: #6a966a;
+  background: #4a6fa7;
   transform: scale(0.98);
 }
 .error-message {
