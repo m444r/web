@@ -35,16 +35,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
                     // Redirect based on the user's role
                     if ($role == 'student') {
-                        header("Location: StudentPage/StudentDashboard.php"); // Redirect to student's page
+                        header("Location: StudentPage/StudentDashboard.html"); // Redirect to student's page
                     } elseif ($role == 'teacher') {
                         header("Location: TeacherPage/TeacherDashboard.php"); // Redirect to teacher's page
+                        exit; // Make sure to exit after redirect
                     } elseif ($role == 'secretary') {
-                        header("Location: SecretaryPage/SecretaryDashboard.php"); // Redirect to secretary's page
+                        header("Location: SecretaryPage/SecretaryDashboard.html"); // Redirect to secretary's page
                     }
                     else {
                         $error = 'Your selected role does not match your account role.';
                     }
 
+                } else {
+                    $error = 'Selected role (' . $role . ') does not match account role (' . $row['role'] . ').';
                 } 
      
             } else {

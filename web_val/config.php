@@ -1,27 +1,17 @@
 <?php
-// Simple database configuration
-$host = 'localhost';
-$dbname = 'thesis_management';
-$username = 'root';
-$password = '';
+define('DBSERVER', 'localhost'); // Database server
+define('DBUSERNAME', 'root'); // Database username
+define('DBPASSWORD', ''); // Database password
+define('DBNAME', 'web'); // Database name
 
-try {
-    $db = new mysqli($host, $username, $password, $dbname);
-    
-    // Check connection
-    if ($db->connect_error) {
-        // If database doesn't exist, create a mock connection for testing
-        $db = new mysqli($host, $username, $password);
-        if ($db->connect_error) {
-            die("Connection failed: " . $db->connect_error);
-        }
-    }
-    
-    // Set charset to utf8
-    $db->set_charset("utf8");
-    
-} catch (Exception $e) {
-    // For now, just continue without database
-    $db = null;
+/* connect to MySQL database */
+$db = mysqli_connect(DBSERVER, DBUSERNAME, DBPASSWORD, DBNAME);
+
+// Check db connection
+if($db === false){
+    die("Error: connection error. " . mysqli_connect_error());
 }
+
+// Set charset to utf8
+mysqli_set_charset($db, "utf8");
 ?>

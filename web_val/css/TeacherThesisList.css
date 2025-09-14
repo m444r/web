@@ -202,6 +202,7 @@ header {
     position: relative;
     margin-left: 40px;
     margin-right: 40px;
+    margin-top: 20px;
 }
 
 header h1 {
@@ -209,7 +210,7 @@ header h1 {
   font-weight: 700;
   font-size: 20px;
   margin-bottom: 35px;
-    margin-top: 20px;
+    margin-top: 0;
     margin-left: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
@@ -258,6 +259,169 @@ header h1 {
     color: #222;
 }
 
+/* Modal Styling - Minimalist */
+.modal-dialog {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100vh !important;
+    margin: 0 auto !important;
+    padding: 40px !important;
+    width: 100% !important;
+}
+
+.modal-content {
+    border-radius: 16px !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    width: 100% !important;
+    max-width: 500px !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    background-color: white !important;
+}
+
+.modal-header {
+    background-color: white !important;
+    color: #1f2937 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    padding: 2rem 2rem 1rem 2rem !important;
+    margin: 0 !important;
+}
+
+.modal-title {
+    font-size: 1.5rem !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    color: #111827 !important;
+}
+
+.btn-close {
+    opacity: 0.5 !important;
+    font-size: 1.5rem !important;
+    color: #6b7280 !important;
+}
+
+.btn-close:hover {
+    opacity: 0.8 !important;
+    color: #374151 !important;
+}
+
+.modal-body {
+    padding: 0 2rem 2rem 2rem !important;
+    background-color: white !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+.modal-body::-webkit-scrollbar {
+    display: none !important;
+}
+
+.modal-body p {
+    margin-bottom: 1.5rem !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    padding-bottom: 1rem !important;
+}
+
+.modal-body strong {
+    color: #374151 !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    display: block !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.modal-body span {
+    color: #6b7280 !important;
+    font-weight: 400 !important;
+    font-size: 0.95rem !important;
+}
+
+.form-label {
+    color: #374151 !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 0.5rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+.form-control {
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.2s ease !important;
+    background-color: white !important;
+    font-size: 0.95rem !important;
+}
+
+.form-control:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    outline: none !important;
+}
+
+.modal-footer {
+    background-color: #f9fafb !important;
+    border-top: 1px solid #f3f4f6 !important;
+    border-radius: 0 0 16px 16px !important;
+    padding: 1.5rem 2rem !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.75rem !important;
+}
+
+/* Modal Button Overrides - Minimalist */
+.btn-primary {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 0.625rem 1.25rem !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    background-color: #5a7fb7 !important;
+    border-color: #5a7fb7 !important;
+    color: white !important;
+    transform: none !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn-secondary {
+    background-color: #f3f4f6 !important;
+    border-color: #f3f4f6 !important;
+    color: #374151 !important;
+    border-radius: 8px !important;
+    padding: 0.625rem 1.25rem !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.btn-secondary:hover {
+    background-color: #e5e7eb !important;
+    border-color: #d1d5db !important;
+    color: #374151 !important;
+    transform: none !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
 /* Export Buttons */
 .export-buttons {
     display: flex;
@@ -288,6 +452,7 @@ header h1 {
     gap: 2rem;
     margin-left: 40px;
     margin-right: 40px;
+    align-items: stretch;
 }
 
 /* Thesis Card */
@@ -299,6 +464,9 @@ header h1 {
     padding: 28px 32px 18px 32px;
     margin-bottom: 0;
     transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .thesis-card:hover {
@@ -353,12 +521,19 @@ header h1 {
 /* Thesis Details */
 .thesis-details {
     margin-bottom: 1rem;
+    flex: 1;
 }
 
 .thesis-details p {
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
     color: #222;
+}
+
+/* Thesis Summary */
+.thesis-summary {
+    margin-bottom: 1rem;
+    flex: 1;
 }
 
 /* Timeline */
@@ -396,6 +571,8 @@ header h1 {
 .thesis-actions {
     display: flex;
     gap: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
 }
 
 .action-btn {
@@ -456,4 +633,258 @@ header h1 {
     .thesis-list {
         grid-template-columns: 1fr;
     }
+}
+
+/* Modal Styling */
+.thesis-detail-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #6A90C7;
+    font-size: 1.1rem;
+}
+
+.thesis-detail-item {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    border-left: 3px solid #6A90C7;
+    padding-left: 1rem;
+    background-color: white;
+    border-radius: 4px;
+}
+
+.thesis-detail-item strong {
+    color: #2c3e50;
+}
+
+.thesis-detail-item .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+/* Category Styling */
+.thesis-category {
+    margin-bottom: 30px;
+}
+
+.category-title {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+/* Pagination Styles - Matching Create Thesis Style */
+.topics-pagination {
+    flex-shrink: 0; /* Never shrink */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+    height: 60px; /* Fixed height for pagination */
+    margin-top: 20px; /* Ensure consistent spacing from cards */
+    clear: both; /* Clear any floating elements */
+}
+
+.pagination-btn {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #6A90C7;
+    font-size: 14px;
+    box-shadow: none;
+    outline: none;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #6A90C7;
+    color: white;
+}
+
+.pagination-btn:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination-info {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+    .topics-pagination {
+        gap: 10px;
+        padding: 15px 0;
+    }
+    
+    .pagination-btn {
+        font-size: 16px;
+        padding: 6px 10px;
+    }
+    
+    .pagination-info {
+        font-size: 12px;
+    }
+}
+
+/* Improved thesis card content styling */
+.thesis-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.thesis-details {
+    margin-bottom: 15px;
+}
+
+.thesis-details p {
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #555;
+}
+
+.thesis-details strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.thesis-timeline {
+    margin-bottom: 15px;
+    max-height: 150px;
+    overflow: hidden;
+}
+
+.thesis-timeline h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 5px;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+.thesis-timeline ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 120px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Custom scrollbar for timeline */
+.thesis-timeline ul::-webkit-scrollbar {
+    width: 6px;
+}
+
+.thesis-timeline ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.thesis-timeline ul::-webkit-scrollbar-thumb {
+    background: #6A90C7;
+    border-radius: 3px;
+}
+
+.thesis-timeline ul::-webkit-scrollbar-thumb:hover {
+    background: #5a7bb8;
+}
+
+.thesis-timeline li {
+    margin-bottom: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #666;
+    border-left: 3px solid #e9ecef;
+    padding-left: 10px;
+    background-color: #f8f9fa;
+    border-radius: 0 4px 4px 0;
+}
+
+.thesis-timeline li strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.thesis-timeline li a {
+    color: #6A90C7;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.thesis-timeline li a:hover {
+    text-decoration: underline;
+}
+
+.thesis-timeline li small {
+    color: #888;
+    font-size: 11px;
+    display: block;
+    margin-top: 2px;
+}
+
+.status-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status badge colors */
+.status-badge.status-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.status-completed {
+    background-color: #cce5ff;
+    color: #004085;
 } 
