@@ -120,16 +120,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
         <div class="name-separator"></div>
 
         <ul class="nav nav-pills flex-column mb-auto w-100">
-          <li class="nav-item nav-spacing">
-            <a href="StudentDashboard.php" class="active">
+         <li class="nav-item nav-spacing">
+            <a href="StudentDashboard.php"  class="active">
               <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
               Dashboard
             </a>
           </li>
-          <li class="nav-item nav-spacing">
+          <li class="nav-spacing">
             <a href="StudentThesis.php" >
-              <img src="icons/menu.png" alt="Dashboard" class="nav-icon">
-              Τρέχουσα Διπλωματικη
+              <img src="icons/list.png" alt="Dashboard" class="nav-icon">
+              Λίστα ΔΕ
             </a>
           </li>
           <li class="nav-spacing">
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
             <h1>Καλώς ήρθες, <?= htmlspecialchars($studentName) ?>!</h1>
         </header>
         <hr class="hr">
-
+        
         <!-- Quick Stats Section -->
         <div class="stats-section">
             <div class="stat-card">

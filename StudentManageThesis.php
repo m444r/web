@@ -141,6 +141,12 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
             </a>
           </li>
           <li class="nav-spacing">
+            <a href="StudentThesis.php" >
+              <img src="icons/list.png" alt="Dashboard" class="nav-icon">
+              Λίστα ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
             <a href="StudentTopics.php">
               <img src="icons/file.png" alt="Topics" class="nav-icon">
               Ανάρτηση Αρχείων
@@ -237,13 +243,13 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
       <?php endforeach; ?>
   
   <?php endif; ?>
-</div>
+
+  </div>
 
 
 
-
-     <div class="invite-teachers mt-4">
-    <h3>Πρόσκληση Καθηγητών</h3>
+     <div class="thesis-section">
+        <h2>Προσκλήσεις Καθηγητών</h2>
     <form method="POST">
         <div class="mb-3">
             <label for="topic" class="form-label">Επιλέξτε Διπλωματική</label>
@@ -271,8 +277,8 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
 
           
 
-          <div class="committee-status mt-4">
-    <h3>Κατάσταση Προσκλήσεων</h3>
+          <div class="thesis-section">
+        <h2>Κατάσταση Προσκλήσεων</h2>
     <?php 
     $stmt = $db->prepare("
         SELECT ci.status, u.name, u.surname, t.title 
@@ -286,24 +292,23 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
     $committee = $stmt->get_result();
 
     if ($committee->num_rows > 0): ?>
-        <ul class="list-group">
-            <?php while ($c = $committee->fetch_assoc()): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong><?= htmlspecialchars($c['title']) ?></strong><br>
-                        <?= htmlspecialchars($c['name']." ".$c['surname']) ?>
-                    </div>
-                    <span class="badge 
-                        <?= $c['status']=='accepted'?'bg-success':($c['status']=='rejected'?'bg-danger':'bg-warning text-dark') ?>">
-                        <?= htmlspecialchars($c['status']) ?>
-                    </span>
-                </li>
-            <?php endwhile; ?>
-        </ul>
-    <?php else: ?>
-        <p>Δεν έχουν σταλεί προσκλήσεις ακόμα.</p>
-    <?php endif; ?>
-</div>
+         <div class="committee-list">
+              <?php while ($c = $committee->fetch_assoc()): ?>
+                <div class="committee-card">
+                  <div class="committee-info">
+                    <span class="committee-title"><?= htmlspecialchars($c['title']) ?></span>
+                    <span class="committee-teacher"><?= htmlspecialchars($c['name']." ".$c['surname']) ?></span>
+                  </div>
+                  <span class="status-badge <?= $c['status']=='accepted'?'active':($c['status']=='rejected'?'rejected':'pending') ?>">
+                    <?= htmlspecialchars($c['status']) ?>
+                  </span>
+                </div>
+              <?php endwhile; ?>
+            </div>
+          <?php else: ?>
+            <p>Δεν έχουν σταλεί προσκλήσεις ακόμα.</p>
+          <?php endif; ?>
+        </div>
 
          
 

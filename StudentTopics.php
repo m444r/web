@@ -82,6 +82,12 @@ $topicsResult = $stmt->get_result();
             </a>
           </li>
           <li class="nav-spacing">
+            <a href="StudentThesis.php">
+              <img src="icons/list.png" alt="Dashboard" class="nav-icon">
+              Λίστα ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
             <a href="StudentTopics.php" class="active">
               <img src="icons/file.png" alt="Topics" class="nav-icon">
               Ανάρτηση Αρχείων
@@ -94,7 +100,7 @@ $topicsResult = $stmt->get_result();
             </a>
           </li>
           
-          <div class="nav-separator"></div>
+          <li class="nav-separator"></li>
           
           <li class="nav-spacing">
             <a href="StudentProfile.php">
@@ -126,7 +132,7 @@ $topicsResult = $stmt->get_result();
         </header>
         <hr class="hr">
 
-<div class="topics-container">
+  <div class="topics-container">
     <?php while($row = $topicsResult->fetch_assoc()): ?>
         <div class="topic-card">
             <h3>Θέμα: <?= htmlspecialchars($row['title']) ?></h3>
@@ -158,8 +164,8 @@ $topicsResult = $stmt->get_result();
 </div>
 
 
-<div class="topic-submissions mt-2">
-    <h5>Προηγούμενες υποβολές:</h5>
+<div class="thesis-section">
+    <h2 >Προηγούμενες υποβολές:</h2>
     <?php
     $stmt2 = $db->prepare("
         SELECT s.file_path, s.uploaded_at, t.title, s.comments
@@ -173,18 +179,21 @@ $topicsResult = $stmt->get_result();
     $submissionsResult = $stmt2->get_result();
 
     if($submissionsResult->num_rows > 0){
-        echo "<ul>";
+        echo '<div class="submissions-grid">';
         while($sub = $submissionsResult->fetch_assoc()){
-            echo "<li>";
-            echo "<strong>" . htmlspecialchars($sub['title']) . ":</strong> ";
+            echo '<div class="submission-card">';
+            echo '<div class="submission-title">' . htmlspecialchars($sub['title']) . '</div>';
             if(!empty($sub['file_path'])){
-                echo '<a href="'.htmlspecialchars($sub['file_path']).'" target="_blank">'.basename($sub['file_path']).'</a> - ';
+                echo 'Αρχείο: <a class="submission-link" href="'.htmlspecialchars($sub['file_path']).'" target="_blank">'.basename($sub['file_path']).'</a>';
+            } else {
+                echo '<span class="submission-meta">Δεν έχει ανέβει αρχείο</span>';
             }
-            echo htmlspecialchars($sub['comments']) ?: "<em>Δεν υπάρχουν σχόλια.</em>";
-            echo " <small>(" . date("d/m/Y H:i", strtotime($sub['uploaded_at'])) . ")</small>";
-            echo "</li>";
+            $comments = trim($sub['comments']) !== '' ? htmlspecialchars($sub['comments']) : '<em>Δεν υπάρχουν σχόλια.</em>';
+            echo 'Σχόλια: <div>' .  $comments . '</div>';
+            echo '<div class="submission-meta">' . date('d/m/Y H:i', strtotime($sub['uploaded_at'])) . '</div>';
+            echo '</div>';
         }
-        echo "</ul>";
+        echo '</div>';
     } else {
         echo "<p>Δεν έχεις κάνει ακόμα υποβολές για αυτό το θέμα.</p>";
     }

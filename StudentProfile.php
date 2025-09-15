@@ -87,6 +87,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
           </li>
           <li class="nav-spacing">
             <a href="StudentTopics.php">
+              <img src="icons/list.png" alt="Dashboard" class="nav-icon">
+              Λίστα ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="StudentTopics.php" >
               <img src="icons/file.png" alt="Topics" class="nav-icon">
               Ανάρτηση Αρχείων
             </a>
