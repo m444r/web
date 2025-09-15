@@ -29,54 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && $_POST['
     }
 }
 
-// Handle note creation
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['note_title'], $_POST['note_content'])) {
-    $title = trim($_POST['note_title']);
-    $content = trim($_POST['note_content']);
-    $category = $_POST['note_category'] ?? 'general';
-    $thesis_id = $_POST['thesis_id'] ?? null;
-    
-    // Debug: Log what we received
-    error_log("Form submitted - Title: $title, Content: $content, Thesis ID: $thesis_id, Teacher ID: $teacher_id");
-    
-    if (empty($title)) {
-        $message = "Παρακαλώ εισάγετε τίτλο σημείωσης.";
-    } elseif (empty($content)) {
-        $message = "Παρακαλώ εισάγετε περιεχόμενο σημείωσης.";
-    } elseif (empty($thesis_id)) {
-        $message = "Παρακαλώ επιλέξτε διπλωματική για τη σημείωση.";
-    } else {
-        try {
-            // Try to insert note into database
-            // First check what columns exist
-            $stmt = $db->prepare("DESCRIBE notes");
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $columns = [];
-            while ($row = $result->fetch_assoc()) {
-                $columns[] = $row['Field'];
-            }
-            
-            // Use the correct column names from your database
-            $stmt = $db->prepare("INSERT INTO notes (topic_id, teacher_id, note_text, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->bind_param("iis", $thesis_id, $teacher_id, $content);
-            
-            error_log("Attempting INSERT with columns: topic_id, teacher_id, note_text, created_at");
-            error_log("Values: thesis_id=$thesis_id, teacher_id=$teacher_id, content=$content");
-            
-            if ($stmt->execute()) {
-                $message = "Η σημείωση αποθηκεύτηκε επιτυχώς!";
-                error_log("Note inserted successfully");
-            } else {
-                $message = "Σφάλμα κατά την αποθήκευση της σημείωσης: " . $stmt->error;
-                error_log("Note insert failed: " . $stmt->error);
-            }
-        } catch (Exception $e) {
-            $message = "Σφάλμα: Η πίνακας σημειώσεων δεν υπάρχει ή έχει διαφορετική δομή.";
-            error_log("Notes insert error: " . $e->getMessage());
-        }
-    }
-}
+// Note creation is now handled by addNote.php
 
 // Get teacher name
 $teacherName = "";
@@ -369,18 +322,18 @@ try {
         <div class="notes-section">
             <h2>Νέα Σημείωση</h2>
             
-            <form class="note-form" method="POST">
+            <form class="note-form" method="POST" action="../addNote.php">
                 <div class="form-group">
                     <label for="note-title">Τίτλος:</label>
                     <input type="text" id="note-title" name="note_title" placeholder="Εισάγετε τίτλο σημείωσης..." required>
                 </div>
                 <div class="form-group">
                     <label for="note-content">Περιεχόμενο:</label>
-                    <textarea id="note-content" name="note_content" rows="6" placeholder="Γράψτε τη σημείωσή σας εδώ..." required></textarea>
+                    <textarea id="note-content" name="note_text" rows="6" placeholder="Γράψτε τη σημείωσή σας εδώ..." required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="thesis-select">Σχετική Διπλωματική:</label>
-                    <select id="thesis-select" name="thesis_id" required>
+                    <select id="thesis-select" name="topic_id" required>
                         <option value="">Επιλέξτε διπλωματική...</option>
                         <?php foreach ($theses as $thesis): ?>
                             <option value="<?= $thesis['thesis_id'] ?>">

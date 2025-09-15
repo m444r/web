@@ -10,79 +10,34 @@ if (!isset($_SESSION["userid"])) {
 $teacher_id = $_SESSION["userid"];
 $message = "";
 
-// Handle AJAX request for getting topic data
-if (isset($_GET['action']) && $_GET['action'] === 'get_topic' && isset($_GET['topic_id'])) {
-    $topic_id = intval($_GET['topic_id']);
-    $stmt = $db->prepare("SELECT * FROM topics WHERE id = ? AND teacher_id = ?");
-    $stmt->bind_param("ii", $topic_id, $teacher_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($row = $result->fetch_assoc()) {
-        header('Content-Type: application/json');
-        echo json_encode($row);
-        exit;
-    } else {
-        header('Content-Type: application/json');
-        echo json_encode(['error' => 'Topic not found']);
-        exit;
+// Handle success/error messages from update_topic.php
+if (isset($_GET['updated']) && $_GET['updated'] == '1') {
+    $message = "Το θέμα ενημερώθηκε επιτυχώς!";
+} elseif (isset($_GET['error'])) {
+    switch ($_GET['error']) {
+        case 'title_empty':
+            $message = "Παρακαλώ εισάγετε τίτλο θέματος.";
+            break;
+        case 'summary_empty':
+            $message = "Παρακαλώ εισάγετε περιγραφή θέματος.";
+            break;
+        case 'upload_failed':
+            $message = "Σφάλμα κατά την αποθήκευση του αρχείου.";
+            break;
+        case 'invalid_file':
+            $message = "Μόνο αρχεία PDF επιτρέπονται.";
+            break;
+        case 'update_failed':
+            $message = "Σφάλμα κατά την ενημέρωση του θέματος.";
+            break;
+        default:
+            $message = "Παρουσιάστηκε σφάλμα.";
     }
 }
 
-// Handle form submission for editing topic
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['edit_topic'], $_POST['topic_id'], $_POST['title'], $_POST['description'])) {
-    $topic_id = intval($_POST['topic_id']);
-    $edit_title = trim($_POST['title']);
-    $edit_description = trim($_POST['description']);
-    
-    if (empty($edit_title)) {
-        $message = "Παρακαλώ εισάγετε τίτλο θέματος.";
-    } elseif (empty($edit_description)) {
-        $message = "Παρακαλώ εισάγετε περιγραφή θέματος.";
-    } else {
-        // Handle file upload for editing
-        $pdf_path = null;
-        if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = '../uploads/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-            
-            $file_extension = strtolower(pathinfo($_FILES['pdf_file']['name'], PATHINFO_EXTENSION));
-            if ($file_extension === 'pdf') {
-                $filename = uniqid() . '_' . basename($_FILES['pdf_file']['name']);
-                $target_path = $upload_dir . $filename;
-                
-                if (move_uploaded_file($_FILES['pdf_file']['tmp_name'], $target_path)) {
-                    $pdf_path = $target_path;
-                } else {
-                    $message = "Σφάλμα κατά την αποθήκευση του αρχείου.";
-                }
-            } else {
-                $message = "Μόνο αρχεία PDF επιτρέπονται.";
-            }
-        }
-        
-        if (empty($message)) {
-            // Update topic in database
-            if ($pdf_path) {
-                $stmt = $db->prepare("UPDATE topics SET title = ?, summary = ?, pdf_path = ? WHERE id = ? AND teacher_id = ?");
-                $stmt->bind_param("sssii", $edit_title, $edit_description, $pdf_path, $topic_id, $teacher_id);
-            } else {
-                $stmt = $db->prepare("UPDATE topics SET title = ?, summary = ? WHERE id = ? AND teacher_id = ?");
-                $stmt->bind_param("ssii", $edit_title, $edit_description, $topic_id, $teacher_id);
-            }
-            
-            if ($stmt->execute()) {
-                $message = "Το θέμα ενημερώθηκε επιτυχώς!";
-                // Clear create form data after editing
-                $title = $description = "";
-            } else {
-                $message = "Σφάλμα κατά την ενημέρωση του θέματος.";
-            }
-        }
-    }
-}
+// AJAX request for getting topic data is now handled by get_topic.php
+
+// Topic editing is now handled by update_topic.php
 
 // Handle form submission for creating new topic
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_topic'], $_POST['title'], $_POST['description'])) {
@@ -453,7 +408,10 @@ while ($row = $result->fetch_assoc()) {
         <div class="create-topic">
             <h2>Δημιουργία Νέου Θέματος</h2>
             <?php if (!empty($message)): ?>
-                <div class="alert alert-info alert-top"><?= htmlspecialchars($message) ?></div>
+                <?php 
+                $alert_class = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'alert-success' : 'alert-danger';
+                ?>
+                <div class="alert <?= $alert_class ?> alert-top"><?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
             <form action="" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
@@ -545,23 +503,23 @@ while ($row = $result->fetch_assoc()) {
         <h5 class="modal-title" id="editTopicModalLabel">Επεξεργασία Θέματος</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" enctype="multipart/form-data">
+      <form method="POST" action="../update_topic.php" enctype="multipart/form-data">
         <div class="modal-body">
-          <input type="hidden" id="edit_topic_id" name="topic_id">
+          <input type="hidden" id="edit_topic_id" name="id">
           <div class="form-group">
             <label for="edit_title">Τίτλος Θέματος:</label>
             <input type="text" id="edit_title" name="title" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="edit_description">Περιγραφή:</label>
-            <textarea id="edit_description" name="description" class="form-control" rows="4" required></textarea>
+            <textarea id="edit_description" name="summary" class="form-control" rows="4" required></textarea>
           </div>
           <div class="form-group">
             <label for="edit_pdf_file">Νέο Αρχείο PDF (Προαιρετικά):</label>
             <div id="current_pdf_info" class="mb-2" style="display: none;">
               <small class="text-muted">Τρέχον αρχείο: <span id="current_pdf_name"></span></small>
             </div>
-            <input type="file" id="edit_pdf_file" name="pdf_file" class="form-control" accept=".pdf">
+            <input type="file" id="edit_pdf_file" name="pdf" class="form-control" accept=".pdf">
             <small class="form-text text-muted">Αφήστε κενό για να διατηρήσετε το υπάρχον αρχείο</small>
           </div>
         </div>
@@ -611,7 +569,7 @@ while ($row = $result->fetch_assoc()) {
 
   function openEditModal(topicId) {
     // Fetch topic data from server
-    fetch(`?action=get_topic&topic_id=${topicId}`)
+    fetch(`../get_topic.php?id=${topicId}`)
       .then(response => response.json())
       .then(data => {
         if (data.error) {

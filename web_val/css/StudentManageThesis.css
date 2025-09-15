@@ -6,6 +6,15 @@ body {
   padding: 0;
 }
 
+/* Ensure main content area has same background */
+.col {
+  background-color: #F0F8FF !important;
+}
+
+.py-3 {
+  background-color: #F0F8FF !important;
+}
+
 .sidebar {
   background-color: #6A90C7;
   color: black;
@@ -29,7 +38,6 @@ body {
   border: none;
   object-fit: cover;
   transition: transform 0.2s ease;
-  filter: brightness(0) invert(1);
 }
 
 .profile-avatar:hover {
@@ -37,13 +45,14 @@ body {
 }
 
 .user-name {
-  color: white;
-  font-weight: 600;
+  color: #34495e;
+  font-weight: 500;
   text-align: center;
   margin-bottom: 30px;
   font-size: 18px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
+
 
 .name-separator {
   border-top: 1px solid #ccc;
@@ -153,22 +162,21 @@ body {
   }
 }
 
-/* Student Manage Thesis Specific Styles */
 .container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 0 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    position: relative;
-    margin-left: 40px;
-    margin-right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
 header h1 {
@@ -241,6 +249,80 @@ header h1 {
 .status-badge.active {
     background-color: #8fbc8f;
     color: white;
+}
+
+/* Unified section title (match dashboard h1 style) */
+.section-title {
+    color: #292D32;
+    font-weight: 1000;
+    font-size: 20px;
+    margin-bottom: 18px;
+}
+.thesis-section {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+
+}
+
+.thesis-section h2 {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
+    /* Align with titles inside .status-card which has 28px left padding */
+   /* margin-left: 8px;*/
+}
+
+/* Previous submissions / committee invitations list as cards */
+.committee-list {
+    margin-left: 40px;
+    margin-right: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.committee-card {
+    background: #fff;
+    border: 1.5px solid #e0e7ef;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.committee-card .committee-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.committee-card .committee-title {
+    font-weight: 600;
+    color: #000000;
+}
+
+.committee-card .committee-teacher {
+    color: #6a7a8c;
+    font-size: 0.9rem;
+}
+
+/* Status badge variants for committee cards */
+.status-badge.pending {
+    background-color: rgba(224, 231, 239, 0.8);
+    color: #6a7a8c;
+}
+
+.status-badge.rejected {
+    background-color: #FF6B6B;
+    color: #ffffff;
 }
 
 .thesis-progress {

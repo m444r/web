@@ -6,6 +6,15 @@ body {
   padding: 0;
 }
 
+/* Ensure main content area has same background */
+.col {
+  background-color: #F0F8FF !important;
+}
+
+.py-3 {
+  background-color: #F0F8FF !important;
+}
+
 .sidebar {
   background-color: #6A90C7;
   color: black;
@@ -29,7 +38,6 @@ body {
   border: none;
   object-fit: cover;
   transition: transform 0.2s ease;
-  filter: brightness(0) invert(1);
 }
 
 .profile-avatar:hover {
@@ -37,8 +45,8 @@ body {
 }
 
 .user-name {
-  color: white;
-  font-weight: 600;
+  color: #34495e;
+  font-weight: 500;
   text-align: center;
   margin-bottom: 30px;
   font-size: 18px;
@@ -154,21 +162,22 @@ body {
 }
 
 /* Student Topics Specific Styles */
+
 .container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 0 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    position: relative;
-    margin-left: 40px;
-    margin-right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
 header h1 {
@@ -252,4 +261,61 @@ header h1 {
 
 .apply-btn:hover {
     background-color: #7aac7a;
+}
+
+/* Previous submissions as cards */
+.submissions-grid {
+    margin-left: 40px;
+    margin-right: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.submission-card {
+    background: #fff;
+    border: 1.5px solid #e0e7ef;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.submission-title {
+    font-weight: 600;
+    color: #000000;
+}
+
+.submission-meta {
+    color: #6a7a8c;
+    font-size: 0.85rem;
+}
+
+.submission-link {
+    color: #6A90C7;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.submission-link:hover {
+    text-decoration: underline;
+}
+.thesis-section {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+
+}
+
+.thesis-section h2 {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 500;
+    margin-bottom: 18px;
+    border-bottom: none;
+    padding-bottom: 6px;
+    width: fit-content;
 }

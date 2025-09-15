@@ -172,60 +172,9 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activate_grading'])) {
-    $topic_id = intval($_POST['topic_id']);
-    $teacher_id = $_SESSION['userid']; // ο logged-in καθηγητής
+// Grading activation is now handled by updateExam.php
 
-    if ($topic_id <= 0) {
-        echo "<div class='alert alert-danger alert-top'>Άκυρο topic_id: $topic_id</div>";
-    } else {
-        // Μόνο αν ο επιβλέπων είναι ο ίδιος
-        $stmt = $db->prepare("
-            UPDATE topics 
-            SET status = 'for_grade' 
-            WHERE id = ? AND status = 'for examination' AND teacher_id = ?
-        ");
-        if (!$stmt) {
-            die("Prepare failed: " . $db->error);
-        }
-
-        $stmt->bind_param("ii", $topic_id, $teacher_id);
-
-        if (!$stmt->execute()) {
-            die("Execute failed: " . $stmt->error);
-        }
-
-        if ($stmt->affected_rows > 0) {
-            echo "<div class='alert alert-success alert-top'>Η υποβολή βαθμού ενεργοποιήθηκε!</div>";
-        } else {
-            echo "<div class='alert alert-danger alert-top'>Δεν έχετε δικαίωμα ή το topic δεν είναι για εξέταση!</div>";
-        }
-    }
-}
-
-// Handle grade submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_grade'])) {
-    $topic_id = intval($_POST['topic_id']);
-    $teacher_id = intval($_SESSION['userid']);
-    $c1 = floatval($_POST['criterion1']);
-    $c2 = floatval($_POST['criterion2']);
-    $c3 = floatval($_POST['criterion3']);
-    $c4 = floatval($_POST['criterion4']);
-
-    // Υπολογισμός τελικού σταθμισμένου βαθμού
-    $final_grade = $c1 * 0.6 + $c2 * 0.15 + $c3 * 0.15 + $c4 * 0.1;
-
-    // Ενημέρωση στον πίνακα committee_grades
-    $stmt2 = $db->prepare("
-        INSERT INTO committee_grades (topic_id, teacher_id, grade, submitted_at)
-        VALUES (?, ?, ?, NOW())
-        ON DUPLICATE KEY UPDATE grade = VALUES(grade), submitted_at = NOW()
-    ");
-    $stmt2->bind_param("iid", $topic_id, $teacher_id, $final_grade);
-    $stmt2->execute();
-
-    echo "<div class='alert alert-success alert-top'>Βαθμός καταχωρήθηκε: ".round($final_grade,2)."</div>";
-}
+// Grade submission is now handled by updateExam.php
 
 if (isset($_GET['action']) && $_GET['action'] === 'get_grades' && isset($_GET['topic_id'])) {
     $tid = intval($_GET['topic_id']);
@@ -314,7 +263,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
     let deadline = document.getElementById("modal-deadline").value;
     let exam_mode = document.getElementById("modal-exam-mode").value;
 
-    fetch("updateExam.php", {
+    fetch("../updateExam.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -547,7 +496,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
          <div class="modal fade" id="detailsModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
-                <form method="post" action="updateExam.php">
+                <form method="post" action="../updateExam.php">
                   <div class="modal-header">
                     <h5 class="modal-title">Λεπτομέρειες Διπλωματικής</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -583,7 +532,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 <p><strong>Διαχείριση Διπλωματικής:</strong> </p>
                 <div class="d-flex gap-2 mt-2">
                 <!-- ===== Ακύρωση ανάθεσης ===== -->
-                <form method="post" action="updateExam.php" 
+                <form method="post" action="../updateExam.php" 
                       onsubmit="return confirm('Επιβεβαιώνετε την ακύρωση της ανάθεσης;');" 
                       class="mt-2">
                 <input type="hidden" name="cancel_topic_id" id="cancel-topic-id">
@@ -595,7 +544,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                   <?php unset($_SESSION['cancel_message']); ?>
                 <?php endif; ?>
 
-                 <form method="post" action="updateExam.php" class="mt-2">
+                 <form method="post" action="../updateExam.php" class="mt-2">
                     <input type="hidden" name="topic_id" id="for-examination-topic-id">
                     <input type="hidden" name="set_for_examination" value="1">
                     <button type="submit" class="btn btn-secondary">Υπό Εξέταση</button>
@@ -643,7 +592,7 @@ document.getElementById("saveBtn").addEventListener("click", function () {
 
 
                   <!-- ===== Ακύρωση λόγω καθυστέρησης ===== -->
-                  <form method="post" action="updateExam.php" 
+                  <form method="post" action="../updateExam.php" 
                         onsubmit="return confirm('Επιβεβαιώνετε την ακύρωση λόγω καθυστέρησης;');" 
                         class="mt-2">
                   <input type="hidden" name="cancel_topic_delay_id" id="cancel-topic-delay-id">

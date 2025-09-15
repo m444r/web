@@ -6,6 +6,15 @@ body {
   padding: 0;
 }
 
+/* Ensure main content area has same background */
+.col {
+  background-color: #F0F8FF !important;
+}
+
+.py-3 {
+  background-color: #F0F8FF !important;
+}
+
 .sidebar {
   background-color: #6A90C7;
   color: black;
@@ -29,7 +38,6 @@ body {
   border: none;
   object-fit: cover;
   transition: transform 0.2s ease;
-  filter: brightness(0) invert(1);
 }
 
 .profile-avatar:hover {
@@ -37,13 +45,14 @@ body {
 }
 
 .user-name {
-  color: white;
-  font-weight: 600;
+  color: #34495e;
+  font-weight: 500;
   text-align: center;
   margin-bottom: 30px;
   font-size: 18px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
+
 
 .name-separator {
   border-top: 1px solid #ccc;
@@ -153,22 +162,21 @@ body {
   }
 }
 
-/* Student Profile Specific Styles */
 .container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 0 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    position: relative;
-    margin-left: 40px;
-    margin-right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
 header h1 {
@@ -180,7 +188,6 @@ header h1 {
     margin-left: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
-
 /* Horizontal Line */
 .hr {
     border: none;

@@ -21,9 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
     if (empty($error)) {
         // Παίρνουμε τον χρήστη από τη βάση
-        $sql = "SELECT * FROM users WHERE email = '$email'";
-        $result = mysqli_query($db, $sql);
-        $row = mysqli_fetch_assoc($result);
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
         if ($row) {
             if (password_verify($password, $row['password'])) {
                 $_SESSION["userid"] = $row['id'];
@@ -35,12 +37,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
                     // Redirect based on the user's role
                     if ($role == 'student') {
-                        header("Location: StudentPage/StudentDashboard.html"); // Redirect to student's page
+                        header("Location: StudentPage/StudentDashboard.php"); // Redirect to student's page
+                        exit;
                     } elseif ($role == 'teacher') {
                         header("Location: TeacherPage/TeacherDashboard.php"); // Redirect to teacher's page
-                        exit; // Make sure to exit after redirect
+                        exit;
                     } elseif ($role == 'secretary') {
                         header("Location: SecretaryPage/SecretaryDashboard.html"); // Redirect to secretary's page
+                        exit;
                     }
                     else {
                         $error = 'Your selected role does not match your account role.';
