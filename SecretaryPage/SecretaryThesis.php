@@ -1,13 +1,13 @@
 <?php
 session_start();
-require_once "../config.php"; // adjust path if needed
+require_once "config.php"; // adjust path if needed
 
 // Development debug flag - set to false on production
 $debug = true;
 
 // Protect page: only secretary allowed
 if (!isset($_SESSION['userid']) || $_SESSION['role'] !== 'secretary') {
-    header("Location: ../login_page.html");
+    header("Location: ../login_page.php");
     exit();
 }
 
@@ -123,18 +123,61 @@ $cstmt = $db->prepare("
 <body>
 <div class="container-fluid">
   <div class="row flex-nowrap">
-    <div class="col-auto col-md-3 col-xl-2 sidebar collapse d-md-block" id="sidebarMenu">
-      <div class="sidebar-container p-3">
-        <img src="../icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='SecretaryProfile.php'">
-        <div class="user-name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'Γραμματεία'); ?></div>
-        <hr>
+    <!-- Sidebar -->
+    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar collapse d-md-block" id="sidebarMenu">
+      <div class="sidebar-container">
+        
+        <!-- Profile pic -->
+        <img src="../icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='SecretaryProfile.html'">
+        
+        <!-- User name link -->
+        <div class="user-name">
+          Γραμματεία
+        </div>
+        
+        <!-- Name separator -->
+        <div class="name-separator"></div>
+
         <ul class="nav nav-pills flex-column mb-auto w-100">
-          <li class="nav-item"><a href="SecretaryDashboard.php" class="nav-link">Dashboard</a></li>
-          <li class="nav-item"><a href="SecretaryThesis.php" class="nav-link active">Προβολή ΔΕ</a></li>
-          <li class="nav-item"><a href="SecretaryDataInput.php" class="nav-link">Εισαγωγή δεδομένων</a></li>
-          <li class="nav-item"><a href="SecretaryManageThesis.php" class="nav-link">Διαχείριση ΔΕ</a></li>
-          <li class="nav-item mt-3"><a href="SecretaryProfile.php" class="nav-link">Προφίλ</a></li>
-          <li class="nav-item"><a href="../logout.php" class="nav-link">Αποσύνδεση</a></li>
+          <li class="nav-item nav-spacing">
+            <a href="SecretaryDashboard.html" class="active">
+              <img src="../icons/menu.png" alt="Dashboard" class="nav-icon">
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="SecretaryThesis.php">
+              <img src="../icons/file.png" alt="Thesis View" class="nav-icon">
+              Προβολή ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="SecretaryDataInput.html">
+              <img src="../icons/graph.png" alt="Data Input" class="nav-icon">
+              Εισαγωγή δεδομένων
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="SecretaryManageThesis.html">
+              <img src="../icons/stats.png" alt="Manage Thesis" class="nav-icon">
+              Διαχείριση ΔΕ
+            </a>
+          </li>
+          
+          <div class="nav-separator"></div>
+          
+          <li class="nav-spacing">
+            <a href="SecretaryProfile.html">
+              <img src="../icons/setting.png" alt="Profile" class="nav-icon">
+              Προφίλ
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="../login_page.php" class="logout">
+              <img src="../icons/logout.png" alt="Logout" class="nav-icon">
+              Αποσυνδεση
+            </a>
+          </li>
         </ul>
       </div>
     </div>
