@@ -5,7 +5,7 @@ session_start();
 // Destroy the session.
 if (session_destroy()) {
     // redirect to the login page
-    header("Location: register.php");
+    header("Location: login_page.php");
     exit;
 }
 ?>

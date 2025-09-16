@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     } elseif ($role == 'teacher') {
                         header("Location: TeacherDashboard.php");
                     } elseif ($role == 'secretary') {
-                        header("Location: secretary.php");
+                        header("Location: SecretaryDataInput.html");
                     }
                     exit;
                 } else {
