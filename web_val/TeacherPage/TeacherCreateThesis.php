@@ -10,9 +10,72 @@ if (!isset($_SESSION["userid"])) {
 $teacher_id = $_SESSION["userid"];
 $message = "";
 
+// Handle form submission for creating new topic
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_topic'], $_POST['title'], $_POST['description'])) {
+    $title = trim($_POST['title']);
+    $description = trim($_POST['description']);
+    
+    // Debug: Log the form submission
+    error_log("Topic creation attempt - Title: " . $title . ", Description: " . $description);
+    
+    if (empty($title)) {
+        $message = "Παρακαλώ εισάγετε τίτλο θέματος.";
+    } elseif (empty($description)) {
+        $message = "Παρακαλώ εισάγετε περιγραφή θέματος.";
+    } else {
+        // Handle file upload
+        $pdf_path = null;
+        if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = '../uploads/';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+            
+            $file_extension = strtolower(pathinfo($_FILES['pdf_file']['name'], PATHINFO_EXTENSION));
+            if ($file_extension === 'pdf') {
+                $filename = uniqid() . '_' . $_FILES['pdf_file']['name'];
+                $target_path = $upload_dir . $filename;
+                
+                if (move_uploaded_file($_FILES['pdf_file']['tmp_name'], $target_path)) {
+                    $pdf_path = $target_path;
+                } else {
+                    $message = "Σφάλμα κατά την αποθήκευση του αρχείου.";
+                }
+            } else {
+                $message = "Μόνο αρχεία PDF επιτρέπονται.";
+            }
+        }
+        
+        if (empty($message)) {
+            // Insert new topic into database
+            $stmt = $db->prepare("INSERT INTO topics (title, summary, pdf_path, teacher_id, status, created_at) VALUES (?, ?, ?, ?, 'available', NOW())");
+            if (!$stmt) {
+                $message = "Σφάλμα στην προετοιμασία του query: " . $db->error;
+            } else {
+                $stmt->bind_param("sssi", $title, $description, $pdf_path, $teacher_id);
+                
+                if ($stmt->execute()) {
+                    // Debug: Log successful insertion
+                    error_log("Topic created successfully - ID: " . $db->insert_id);
+                    // Redirect to refresh the page and show the new topic
+                    header("Location: " . $_SERVER['PHP_SELF'] . "?created=1");
+                    exit;
+                } else {
+                    // Debug: Log database error
+                    error_log("Database error: " . $db->error);
+                    $message = "Σφάλμα κατά τη δημιουργία του θέματος: " . $db->error;
+                }
+                $stmt->close();
+            }
+        }
+    }
+}
+
 // Handle success/error messages from update_topic.php
 if (isset($_GET['updated']) && $_GET['updated'] == '1') {
     $message = "Το θέμα ενημερώθηκε επιτυχώς!";
+} elseif (isset($_GET['created']) && $_GET['created'] == '1') {
+    $message = "Το θέμα δημιουργήθηκε επιτυχώς!";
 } elseif (isset($_GET['error'])) {
     switch ($_GET['error']) {
         case 'title_empty':
@@ -39,54 +102,91 @@ if (isset($_GET['updated']) && $_GET['updated'] == '1') {
 
 // Topic editing is now handled by update_topic.php
 
-// Handle form submission for creating new topic
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_topic'], $_POST['title'], $_POST['description'])) {
-    $title = trim($_POST['title']);
-    $description = trim($_POST['description']);
+// Handle topic deletion
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_topic'], $_POST['topic_id'])) {
+    $topic_id = intval($_POST['topic_id']);
     
-    if (empty($title)) {
-        $message = "Παρακαλώ εισάγετε τίτλο θέματος.";
-    } elseif (empty($description)) {
-        $message = "Παρακαλώ εισάγετε περιγραφή θέματος.";
-    } else {
-        // Handle file upload
-        $pdf_path = null;
-        if (isset($_FILES['pdf_file']) && $_FILES['pdf_file']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = '../uploads/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-            
-            $file_extension = strtolower(pathinfo($_FILES['pdf_file']['name'], PATHINFO_EXTENSION));
-            if ($file_extension === 'pdf') {
-                $filename = uniqid() . '_' . basename($_FILES['pdf_file']['name']);
-                $target_path = $upload_dir . $filename;
-                
-                if (move_uploaded_file($_FILES['pdf_file']['tmp_name'], $target_path)) {
-                    $pdf_path = $target_path;
-                } else {
-                    $message = "Σφάλμα κατά την αποθήκευση του αρχείου.";
-                }
-            } else {
-                $message = "Μόνο αρχεία PDF επιτρέπονται.";
-            }
-        }
+    // Debug: Log deletion attempt
+    error_log("Topic deletion attempt - ID: " . $topic_id . ", Teacher ID: " . $teacher_id);
+    
+    // Verify the topic belongs to this teacher
+    $verify_stmt = $db->prepare("SELECT id, pdf_path FROM topics WHERE id = ? AND teacher_id = ?");
+    $verify_stmt->bind_param("ii", $topic_id, $teacher_id);
+    $verify_stmt->execute();
+    $topic = $verify_stmt->get_result()->fetch_assoc();
+    
+    if ($topic) {
+        // Start transaction to ensure all deletions succeed or none do
+        $db->begin_transaction();
         
-        if (empty($message)) {
-            // Insert new topic into database
-            $stmt = $db->prepare("INSERT INTO topics (title, summary, pdf_path, teacher_id, status, created_at) VALUES (?, ?, ?, ?, 'available', NOW())");
-            $stmt->bind_param("sssi", $title, $description, $pdf_path, $teacher_id);
+        try {
+            // Delete related records first (in order of foreign key dependencies)
             
-            if ($stmt->execute()) {
-                $message = "Το θέμα δημιουργήθηκε επιτυχώς!";
-                // Clear form data
-                $title = $description = "";
-            } else {
-                $message = "Σφάλμα κατά τη δημιουργία του θέματος.";
+            // Delete from committee_grades table
+            $delete_grades = $db->prepare("DELETE FROM committee_grades WHERE topic_id = ?");
+            $delete_grades->bind_param("i", $topic_id);
+            $delete_grades->execute();
+            $delete_grades->close();
+            
+            // Delete from committee_requests table
+            $delete_requests = $db->prepare("DELETE FROM committee_requests WHERE topic_id = ?");
+            $delete_requests->bind_param("i", $topic_id);
+            $delete_requests->execute();
+            $delete_requests->close();
+            
+            // Delete from notes table
+            $delete_notes = $db->prepare("DELETE FROM notes WHERE topic_id = ?");
+            $delete_notes->bind_param("i", $topic_id);
+            $delete_notes->execute();
+            $delete_notes->close();
+            
+            // Finally delete the topic itself
+            $delete_stmt = $db->prepare("DELETE FROM topics WHERE id = ? AND teacher_id = ?");
+            $delete_stmt->bind_param("ii", $topic_id, $teacher_id);
+            $delete_stmt->execute();
+            $delete_stmt->close();
+            
+            // Commit the transaction
+            $db->commit();
+            
+            // Debug: Log successful deletion
+            error_log("Topic deleted successfully - ID: " . $topic_id);
+            
+            // Delete associated PDF file if it exists
+            if (!empty($topic['pdf_path']) && file_exists($topic['pdf_path'])) {
+                unlink($topic['pdf_path']);
             }
+            $message = "Το θέμα διαγράφηκε επιτυχώς!";
+            
+        } catch (Exception $e) {
+            // Rollback the transaction if any deletion fails
+            $db->rollback();
+            $message = "Σφάλμα κατά τη διαγραφή του θέματος: " . $e->getMessage();
         }
+    } else {
+        $message = "Το θέμα δεν βρέθηκε ή δεν έχετε δικαίωμα να το διαγράψετε.";
     }
+    $verify_stmt->close();
 }
+
+
+// Pagination settings
+$topics_per_page = 6;
+$current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($current_page - 1) * $topics_per_page;
+
+// Debug: Show database info on page
+$debug_info = "";
+$debug_count_stmt = $db->prepare("SELECT COUNT(*) as total FROM topics WHERE teacher_id = ?");
+$debug_count_stmt->bind_param("i", $teacher_id);
+$debug_count_stmt->execute();
+$debug_total = $debug_count_stmt->get_result()->fetch_assoc()['total'];
+$debug_count_stmt->close();
+
+$debug_info .= "Total topics in DB: " . $debug_total . "<br>";
+$debug_info .= "Current page: " . $current_page . "<br>";
+$debug_info .= "Offset: " . $offset . "<br>";
+
 
 // Get teacher name
 $teacherName = "";
@@ -112,11 +212,6 @@ if ($row = $result->fetch_assoc()) {
     }
 }
 
-// Pagination settings
-$topics_per_page = 6;
-$current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$offset = ($current_page - 1) * $topics_per_page;
-
 // Get total count of topics
 $count_stmt = $db->prepare("SELECT COUNT(*) as total FROM topics WHERE teacher_id = ?");
 $count_stmt->bind_param("i", $teacher_id);
@@ -124,15 +219,39 @@ $count_stmt->execute();
 $total_topics = $count_stmt->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_topics / $topics_per_page);
 
+// Debug: Log total topics count
+error_log("Total topics in database for teacher " . $teacher_id . ": " . $total_topics);
+
+// Debug: Get all topics for this teacher to see what's in the database
+$debug_stmt = $db->prepare("SELECT id, title, created_at FROM topics WHERE teacher_id = ? ORDER BY created_at DESC");
+$debug_stmt->bind_param("i", $teacher_id);
+$debug_stmt->execute();
+$debug_result = $debug_stmt->get_result();
+$all_topics = [];
+while ($row = $debug_result->fetch_assoc()) {
+    $all_topics[] = $row;
+}
+error_log("All topics in database: " . print_r($all_topics, true));
+
 // Get teacher's topics for display with pagination
 $topics = [];
 $stmt = $db->prepare("SELECT * FROM topics WHERE teacher_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?");
 $stmt->bind_param("iii", $teacher_id, $topics_per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
+
+// Debug: Log the query parameters and results
+error_log("Topics query - Teacher ID: " . $teacher_id . ", Limit: " . $topics_per_page . ", Offset: " . $offset);
+$topic_count = 0;
 while ($row = $result->fetch_assoc()) {
     $topics[] = $row;
+    $topic_count++;
 }
+error_log("Found " . $topic_count . " topics for display");
+
+// Debug: Add to debug info
+$debug_info .= "Topics query executed - Found: " . $topic_count . " topics<br>";
+$debug_info .= "Topics array after query: " . print_r($topics, true) . "<br>";
 ?>
 <!DOCTYPE html>
 <html lang="el">
@@ -194,27 +313,8 @@ while ($row = $result->fetch_assoc()) {
             padding: 10px 20px;
             font-weight: 600;
         }
-        .edit-icon {
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .edit-icon:hover {
-            color: #6A90C7 !important;
-            transform: scale(1.1);
-        }
         
         /* Pagination Styles */
-        .topics-list {
-            display: flex;
-            flex-direction: column;
-            height: 600px; /* Fixed height - never changes */
-        }
-        
-        .topics-grid {
-            flex: 1;
-            overflow-y: auto; /* Allow scrolling if content exceeds space */
-            padding-bottom: 20px;
-        }
         
         /* Custom scrollbar styling - invisible by default, visible on hover */
         .topics-grid::-webkit-scrollbar {
@@ -413,6 +513,7 @@ while ($row = $result->fetch_assoc()) {
                 ?>
                 <div class="alert <?= $alert_class ?> alert-top"><?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
+            
             <form action="" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">Τίτλος Θέματος:</label>
@@ -441,6 +542,7 @@ while ($row = $result->fetch_assoc()) {
             </div>
             
             <div class="topics-grid">
+                
                 <?php if (empty($topics)): ?>
                     <div class="no-topics">
                         <p>Δεν έχετε δημιουργήσει ακόμα θέματα διπλωματικών.</p>
@@ -450,8 +552,9 @@ while ($row = $result->fetch_assoc()) {
                         <div class="topic-card">
                             <div class="topic-header">
                                 <h3><?= htmlspecialchars($topic['title']) ?></h3>
-                                <i class="fas fa-edit edit-icon" data-topic-id="<?= $topic['id'] ?>"></i>
                             </div>
+                            <i class="fas fa-edit edit-icon" data-topic-id="<?= $topic['id'] ?>" title="Επεξεργασία"></i>
+                            <i class="fas fa-trash delete-icon" data-topic-id="<?= $topic['id'] ?>" title="Διαγραφή"></i>
                             <p><?= htmlspecialchars($topic['summary']) ?></p>
                             <?php if (!empty($topic['pdf_path'])): ?>
                                 <?php 
@@ -565,6 +668,16 @@ while ($row = $result->fetch_assoc()) {
         openEditModal(topicId);
       });
     });
+
+    // Handle delete icon clicks
+    const deleteIcons = document.querySelectorAll('.delete-icon');
+    deleteIcons.forEach(icon => {
+      icon.addEventListener('click', function() {
+        const topicId = this.getAttribute('data-topic-id');
+        const topicTitle = this.closest('.topic-card').querySelector('h3').textContent;
+        confirmDelete(topicId, topicTitle);
+      });
+    });
   });
 
   function openEditModal(topicId) {
@@ -599,6 +712,30 @@ while ($row = $result->fetch_assoc()) {
         console.error('Error:', error);
         alert('Σφάλμα κατά τη φόρτωση των δεδομένων του θέματος.');
       });
+  }
+
+  function confirmDelete(topicId, topicTitle) {
+    if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε το θέμα "${topicTitle}";\n\nΑυτή η ενέργεια δεν μπορεί να αναιρεθεί!`)) {
+      // Create a form to submit the delete request
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '';
+      
+      const topicIdInput = document.createElement('input');
+      topicIdInput.type = 'hidden';
+      topicIdInput.name = 'topic_id';
+      topicIdInput.value = topicId;
+      
+      const deleteInput = document.createElement('input');
+      deleteInput.type = 'hidden';
+      deleteInput.name = 'delete_topic';
+      deleteInput.value = '1';
+      
+      form.appendChild(topicIdInput);
+      form.appendChild(deleteInput);
+      document.body.appendChild(form);
+      form.submit();
+    }
   }
 
   function goToPage(page) {

@@ -26,13 +26,57 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['student_query'], $_PO
         $student = $result->fetch_assoc();
         $student_id = $student['id'];
 
-        $stmt = $db->prepare("UPDATE topics SET assigned_to = ?, status = 'awaiting_committee', assigned_time = NOW() WHERE id = ? AND teacher_id = ?");
-        $stmt->bind_param("iii", $student_id, $topic_id, $teacher_id);
+        // Debug: Check all topics assigned to this student
+        $debug_stmt = $db->prepare("SELECT id, title, status FROM topics WHERE assigned_to = ?");
+        $debug_stmt->bind_param("i", $student_id);
+        $debug_stmt->execute();
+        $all_assignments = $debug_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        error_log("All assignments for student " . $student_id . ": " . print_r($all_assignments, true));
+        
+        // Check if student already has a thesis assigned (excluding cancelled topics)
+        $stmt = $db->prepare("SELECT id, title, status FROM topics WHERE assigned_to = ? AND status NOT IN ('cancelled', 'completed', 'available')");
+        $stmt->bind_param("i", $student_id);
+        $stmt->execute();
+        $existing_thesis = $stmt->get_result()->fetch_assoc();
+        
+        // Debug: Log the existing thesis info
+        if ($existing_thesis) {
+            error_log("Student " . $student_id . " has existing thesis: " . print_r($existing_thesis, true));
+        }
 
-        if ($stmt->execute()) {
-            $message = "Το θέμα ανατέθηκε προσωρινά.";
+        if ($existing_thesis) {
+            $message = "Ο φοιτητής έχει ήδη ανατεθεί σε άλλο θέμα: '" . htmlspecialchars($existing_thesis['title']) . "' (Status: " . $existing_thesis['status'] . "). Κάθε φοιτητής μπορεί να έχει μόνο μία διπλωματική εργασία.";
+            $message .= "<br><br>DEBUG: Existing thesis details: " . print_r($existing_thesis, true);
         } else {
-            $message = "Σφάλμα κατά την ανάθεση.";
+            // Proceed with assignment
+            try {
+                // First, clear any existing cancelled assignments for this student
+                $clear_stmt = $db->prepare("UPDATE topics SET assigned_to = NULL WHERE assigned_to = ? AND status = 'cancelled'");
+                $clear_stmt->bind_param("i", $student_id);
+                $clear_stmt->execute();
+                $clear_stmt->close();
+                
+                // Now assign the new topic
+                $stmt = $db->prepare("UPDATE topics SET assigned_to = ?, status = 'awaiting_committee', assigned_time = NOW() WHERE id = ? AND teacher_id = ?");
+                $stmt->bind_param("iii", $student_id, $topic_id, $teacher_id);
+
+                if ($stmt->execute()) {
+                    $message = "Το θέμα ανατέθηκε προσωρινά.";
+                } else {
+                    // Check if it's a unique constraint violation
+                    if ($db->errno === 1062) {
+                        $message = "Ο φοιτητής έχει ήδη ανατεθεί σε άλλο θέμα. Κάθε φοιτητής μπορεί να έχει μόνο μία διπλωματική εργασία.";
+                    } else {
+                        $message = "Σφάλμα κατά την ανάθεση: " . $db->error;
+                    }
+                }
+            } catch (mysqli_sql_exception $e) {
+                if ($e->getCode() === 1062) {
+                    $message = "Ο φοιτητής έχει ήδη ανατεθεί σε άλλο θέμα. Κάθε φοιτητής μπορεί να έχει μόνο μία διπλωματική εργασία.";
+                } else {
+                    $message = "Σφάλμα κατά την ανάθεση: " . $e->getMessage();
+                }
+            }
         }
     }
 }
@@ -131,12 +175,19 @@ $stmt->close();
 $stmt = $db->prepare("
     SELECT t.id, t.title
     FROM topics t
-    LEFT JOIN committee_requests cm ON cm.topic_id = t.id
-    WHERE t.status = 'for_grade' 
-      AND (t.teacher_id = ? OR cm.teacher_id = ?)
+    LEFT JOIN committee_requests cm 
+        ON cm.topic_id = t.id 
+        AND cm.teacher_id = ? 
+        AND cm.status='accepted'
+    LEFT JOIN committee_grades cg 
+        ON cg.topic_id = t.id 
+        AND cg.teacher_id = ?
+    WHERE t.status = 'for examination'
+      AND (t.teacher_id = ? OR cm.teacher_id IS NOT NULL)
+      AND cg.teacher_id IS NULL
     GROUP BY t.id
 ");
-$stmt->bind_param("ii", $teacher_id, $teacher_id);
+$stmt->bind_param("iii", $teacher_id, $teacher_id, $teacher_id);
 $stmt->execute();
 $exam_topics = $stmt->get_result();
 
@@ -161,6 +212,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_grade'])) {
     $stmt2->execute();
 
     echo "<div class='alert alert-success'>Βαθμός καταχωρήθηκε: ".round($final_grade,2)."</div>";
+    header("Location: TeacherDashboard.php");
+}
+
+// Βρίσκουμε όλους τους καθηγητές που πρέπει να βαθμολογήσουν (unique)
+$stmt3 = $db->prepare("
+    SELECT DISTINCT teacher_id
+    FROM (
+        SELECT teacher_id FROM committee_requests WHERE topic_id = ? AND status='accepted'
+        UNION
+        SELECT teacher_id FROM topics WHERE id = ?
+    ) AS all_teachers
+");
+$stmt3->bind_param("ii", $topic_id, $topic_id);
+$stmt3->execute();
+$result = $stmt3->get_result();
+
+$teachers_to_grade = [];
+while ($row = $result->fetch_assoc()) {
+    $teachers_to_grade[] = $row['teacher_id'];
+}
+$stmt3->close();
+
+// Πόσοι έχουν υποβάλει βαθμό
+$stmt4 = $db->prepare("
+    SELECT COUNT(DISTINCT teacher_id) as total_grades
+    FROM committee_grades
+    WHERE topic_id = ?
+");
+$stmt4->bind_param("i", $topic_id);
+$stmt4->execute();
+$total_grades = $stmt4->get_result()->fetch_assoc()['total_grades'];
+$stmt4->close();
+
+// Αν όλοι οι καθηγητές έχουν υποβάλει βαθμό
+if (count($teachers_to_grade) == $total_grades) {
+    // Υπολογισμός μέσου όρου
+    $stmt5 = $db->prepare("
+        SELECT AVG(grade) as avg_grade
+        FROM committee_grades
+        WHERE topic_id = ?
+    ");
+    $stmt5->bind_param("i", $topic_id);
+    $stmt5->execute();
+    $avg_grade = $stmt5->get_result()->fetch_assoc()['avg_grade'];
+    $stmt5->close();
+
+    // Ενημέρωση του Topic
+    $stmt6 = $db->prepare("
+        UPDATE topics
+        SET status='completed', final_grade=?
+        WHERE id=?
+    ");
+    $stmt6->bind_param("di", $avg_grade, $topic_id);
+    $stmt6->execute();
+    $stmt6->close();
 }
 ?>
 <!DOCTYPE html>

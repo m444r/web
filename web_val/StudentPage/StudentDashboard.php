@@ -11,12 +11,26 @@ $student_id = $_SESSION["userid"];
 $message = "";
 
 $studentName = "";
-$stmt = $db->prepare("SELECT name, surname FROM users WHERE id = ?");
+$studentProfilePicture = "../icons/account.png"; // Default profile picture
+
+// Check if profile_picture column exists
+$check_column = $db->query("SHOW COLUMNS FROM users LIKE 'profile_picture'");
+$has_profile_picture = $check_column->num_rows > 0;
+
+if ($has_profile_picture) {
+    $stmt = $db->prepare("SELECT name, surname, profile_picture FROM users WHERE id = ?");
+} else {
+    $stmt = $db->prepare("SELECT name, surname FROM users WHERE id = ?");
+}
+
 $stmt->bind_param("i", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
     $studentName = $row['name'] . " " . $row['surname'];
+    if ($has_profile_picture) {
+        $studentProfilePicture = (!empty($row['profile_picture'])) ? "../" . $row['profile_picture'] : "../icons/account.png";
+    }
 }
 
 $theses = [];
@@ -24,7 +38,8 @@ if ($student_id) {
     $stmt = $db->prepare("SELECT t.*, u.name AS teacher_name, u.surname AS teacher_surname  
                           FROM topics t 
                           JOIN users u ON t.teacher_id = u.id 
-                          WHERE t.assigned_to = ? AND (t.status = 'confirmed' OR t.status='for examination')");
+                          WHERE t.assigned_to = ? AND t.status IN ('awaiting_committee', 'confirmed', 'for examination', 'for_grade', 'completed')
+                          ORDER BY t.id DESC");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -109,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
       <div class="sidebar-container">
         
         <!-- Profile pic -->
-        <img src="../icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='StudentProfile.php'">
+        <img src="<?= htmlspecialchars($studentProfilePicture) ?>" alt="Profile" class="profile-avatar" onclick="window.location.href='StudentProfile.php'">
         
         <!-- User name link -->
         <div class="user-name">
@@ -128,20 +143,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
           </li>
           <li class="nav-spacing">
             <a href="StudentThesis.php" >
-              <img src="../icons/list.png" alt="Dashboard" class="nav-icon">
-              Λίστα ΔΕ
+              <img src="../icons/thesis.png" alt="Thesis" class="nav-icon">
+              Διπλωματική Εργασία
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="StudentTopics.php">
-              <img src="../icons/file.png" alt="Topics" class="nav-icon">
-              Ανάρτηση Αρχείων
+            <a href="StudentInvites.php">
+              <img src="../icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλήσεις
             </a>
           </li>
           <li class="nav-spacing">
             <a href="StudentManageThesis.php">
-              <img src="../icons/invitation.png" alt="Manage Thesis" class="nav-icon">
-              Προσκλήσεις
+              <img src="../icons/project.png" alt="Manage Thesis" class="nav-icon">
+              Διαχείριση ΔΕ
             </a>
           </li>
           
@@ -177,132 +192,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
         </header>
         <hr class="hr">
         
-        <!-- Quick Stats Section -->
-        <div class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>Διπλωματική Εργασία</h3>
-                  <p class="stat-number"><?= $active_count ?></p>
-                  <p class="stat-label">Ενεργή</p>
-              </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>Πρόοδος</h3>
-                    <p class="stat-number">65%</p>
-                    <p class="stat-label">Ολοκληρώθηκε</p>
-                </div>
-            </div>
-            
-            
-        </div>
 
         <!-- Current Thesis Section -->
        <div class="thesis-section">
-        <h2>Η Τρέχουσα Διπλωματική μου</h2>
+        <h2>Η Διπλωματική μου</h2>
 
         <?php if(empty($theses)): ?>
-            <p>Δεν υπάρχουν ενεργές διπλωματικές με status confirmed.</p>
+            <div class="no-thesis-card">
+                <h3>Δεν έχετε ανατεθεί σε καμία διπλωματική εργασία</h3>
+                <p>Επικοινωνήστε με τον επιβλέποντα καθηγητή σας για να σας ανατεθεί θέμα διπλωματικής εργασίας.</p>
+            </div>
         <?php else: ?>
             <?php foreach($theses as $thesis): ?>
+                <?php
+                $status_info = [
+                    'awaiting_committee' => ['title' => 'Υπό Ανάθεση - Επιλογή Επιτροπής', 'class' => 'warning', 'icon' => 'fas fa-users'],
+                    'confirmed' => ['title' => 'Ενεργή Διπλωματική', 'class' => 'active', 'icon' => 'fas fa-play'],
+                    'for examination' => ['title' => 'Υπό Εξέταση', 'class' => 'info', 'icon' => 'fas fa-search'],
+                    'for_grade' => ['title' => 'Υπό Βαθμολόγηση', 'class' => 'info', 'icon' => 'fas fa-chart-line'],
+                    'completed' => ['title' => 'Περατωμένη Διπλωματική', 'class' => 'success', 'icon' => 'fas fa-check-circle']
+                ];
+                $current_status = $status_info[$thesis['status']] ?? ['title' => 'Διπλωματική Εργασία', 'class' => 'pending', 'icon' => 'fas fa-file'];
+                ?>
                 <div class="thesis-card">
                     <div class="thesis-header">
                         <h3><?= htmlspecialchars($thesis['title']) ?></h3>
-                        <span class="status-badge <?= $thesis['status']=='confirmed'?'active':'warning' ?>">
-                            <?= htmlspecialchars($thesis['status']) ?>
+                        <span class="status-badge <?= $current_status['class'] ?>">
+                            <i class="<?= $current_status['icon'] ?>"></i>
+                            <?= $current_status['title'] ?>
                         </span>
-                       
                     </div>
                     <div class="thesis-details">
                         <p><strong>Επιβλέπων:</strong> <?= htmlspecialchars($thesis['teacher_name'].' '.$thesis['teacher_surname']) ?></p>
-                        <p><strong>Ημερομηνία Έναρξης:</strong> <?= htmlspecialchars($thesis['confirmed_time']) ?></p>
-                        <p><strong>Προθεσμία Υποβολής:</strong> <?= htmlspecialchars($thesis['deadline'] ?? '-') ?></p>
-                        <p><strong>Αίθουσα Εξέτασης:</strong> <?= htmlspecialchars($thesis['exam_location'] ?? '-') ?></p>
+                        <?php if (!empty($thesis['confirmed_time'])): ?>
+                            <p><strong>Ημερομηνία Έναρξης:</strong> <?= date('d/m/Y', strtotime($thesis['confirmed_time'])) ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($thesis['deadline'])): ?>
+                            <p><strong>Προθεσμία Υποβολής:</strong> <?= date('d/m/Y', strtotime($thesis['deadline'])) ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($thesis['exam_datetime'])): ?>
+                            <p><strong>Ημερομηνία Εξέτασης:</strong> <?= date('d/m/Y H:i', strtotime($thesis['exam_datetime'])) ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($thesis['exam_location'])): ?>
+                            <p><strong>Τοποθεσία Εξέτασης:</strong> <?= htmlspecialchars($thesis['exam_location']) ?></p>
+                        <?php endif; ?>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: <?= intval($thesis['progress'] ?? 0) ?>%"></div>
+
+                    <!-- Status-based actions -->
+                    <div class="thesis-actions">
+                        <?php if ($thesis['status'] == 'awaiting_committee'): ?>
+                            <a href="StudentInvites.php" class="btn btn-primary">
+                                <i class="fas fa-users"></i> Επιλογή Επιτροπής
+                            </a>
+                        <?php elseif ($thesis['status'] == 'confirmed'): ?>
+                            <a href="StudentInvites.php" class="btn btn-success">
+                                <i class="fas fa-upload"></i> Ανάρτηση Πρόχειρου
+                            </a>
+                            <a href="StudentManageThesis.php#exam-section" class="btn btn-info">
+                                <i class="fas fa-calendar"></i> Καταχώρηση Εξέτασης
+                            </a>
+                        <?php elseif ($thesis['status'] == 'for examination'): ?>
+                            <a href="StudentInvites.php" class="btn btn-success">
+                                <i class="fas fa-upload"></i> Ανάρτηση Αρχείων
+                            </a>
+                            <a href="StudentManageThesis.php#exam-section" class="btn btn-info">
+                                <i class="fas fa-edit"></i> Ενημέρωση Εξέτασης
+                            </a>
+                        <?php elseif ($thesis['status'] == 'for_grade'): ?>
+                            <a href="StudentManageThesis.php#library-section" class="btn btn-warning">
+                                <i class="fas fa-link"></i> Σύνδεσμος Βιβλιοθήκης
+                            </a>
+                        <?php elseif ($thesis['status'] == 'completed'): ?>
+                            <a href="StudentManageThesis.php#protocol-section" class="btn btn-secondary">
+                                <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
+                            </a>
+                        <?php endif; ?>
                     </div>
-                    <p class="progress-text">Πρόοδος: <?= intval($thesis['progress'] ?? 0) ?>%</p>
-
-                   <?php if($thesis['status'] === 'for examination'): ?>
-    <form method="POST" class="mt-2">
-        <input type="hidden" name="topic_id" value="<?= $thesis['id'] ?>">
-
-        <div class="mb-2">
-            <label for="exam_mode_<?= $thesis['id'] ?>">Τρόπος Εξέτασης</label>
-            <select name="exam_mode" id="exam_mode_<?= $thesis['id'] ?>" class="form-select" required>
-                <option value="">Επιλογή τρόπου</option>
-                <option value="onsite" <?= ($thesis['exam_mode']==='onsite') ? 'selected' : '' ?>>Onsite</option>
-                <option value="online" <?= ($thesis['exam_mode']==='online') ? 'selected' : '' ?>>Online</option>
-            </select>
-        </div>
-
-        <div class="mb-2">
-            <label for="exam_datetime_<?= $thesis['id'] ?>">Ημερομηνία & Ώρα Εξέτασης</label>
-            <input type="datetime-local" name="exam_datetime" 
-                   id="exam_datetime_<?= $thesis['id'] ?>" 
-                   class="form-control" 
-                   value="<?= $thesis['exam_datetime'] ? date('Y-m-d\TH:i', strtotime($thesis['exam_datetime'])) : '' ?>" 
-                   required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
-    </form>
-<?php endif; ?>
-
-
-
-
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
 
-        <!-- Recent Activities Section -->
-        <div class="activities-section">
-            <h2>Πρόσφατες Ενεργειες</h2>
-            <div class="activities-list">
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-upload"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h4>Υποβολή Κεφαλαίου 3</h4>
-                        <p>Ανεβάσατε το τρίτο κεφάλαιο της διπλωματικής σας</p>
-                        <span class="activity-time">Πριν 2 ώρες</span>
-                    </div>
+        <!-- Calendar Section -->
+        <div class="calendar-section">
+            <h2>Ημερολόγιο Διπλωματικής</h2>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button id="prevMonth" class="calendar-nav-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h3 id="currentMonth"></h3>
+                    <button id="nextMonth" class="calendar-nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
-                
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-comment"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h4>Σχόλιο από Επιβλέπων</h4>
-                        <p>Η Δρ. Κωνσταντίνου έστειλε σχόλια για το κεφάλαιο 2</p>
-                        <span class="activity-time">Πριν 1 ημέρα</span>
-                    </div>
-                </div>
-                
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="activity-content">
-                        <h4>Εγκρίθηκε Κεφάλαιο 2</h4>
-                        <p>Το δεύτερο κεφάλαιο εγκρίθηκε από τον επιβλέπων</p>
-                        <span class="activity-time">Πριν 3 ημέρες</span>
-                    </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Calendar will be populated by JavaScript -->
                 </div>
             </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -320,6 +309,142 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
         sidebar.classList.toggle('show');
       });
     }
+
+    // Calendar functionality
+    let currentDate = new Date();
+    const calendarGrid = document.getElementById('calendarGrid');
+    const currentMonthElement = document.getElementById('currentMonth');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+
+    // Thesis data from PHP
+    const thesisData = <?= json_encode($theses) ?>;
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // Update month display
+      const monthNames = [
+        'Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος',
+        'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'
+      ];
+      currentMonthElement.textContent = `${monthNames[month]} ${year}`;
+
+      // Clear calendar
+      calendarGrid.innerHTML = '';
+
+      // Add day headers
+      const dayHeaders = ['Δευ', 'Τρί', 'Τετ', 'Πέμ', 'Παρ', 'Σάβ', 'Κυρ'];
+      dayHeaders.forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-day-header';
+        dayHeader.textContent = day;
+        calendarGrid.appendChild(dayHeader);
+      });
+
+      // Get first day of month and number of days
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Monday = 0
+
+      // Add empty cells for days before month starts
+      for (let i = 0; i < startingDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyDay);
+      }
+
+      // Add days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
+
+        // Check if this day has thesis events
+        const dayDate = new Date(year, month, day);
+        const events = getEventsForDate(dayDate);
+        
+        if (events.length > 0) {
+          dayElement.classList.add('has-events');
+          events.forEach(event => {
+            const eventElement = document.createElement('div');
+            eventElement.className = `calendar-event ${event.type}`;
+            eventElement.textContent = event.title;
+            eventElement.title = event.description;
+            dayElement.appendChild(eventElement);
+          });
+        }
+
+        // Highlight today
+        const today = new Date();
+        if (dayDate.toDateString() === today.toDateString()) {
+          dayElement.classList.add('today');
+        }
+
+        calendarGrid.appendChild(dayElement);
+      }
+    }
+
+    function getEventsForDate(date) {
+      const events = [];
+      const dateString = date.toISOString().split('T')[0];
+
+      thesisData.forEach(thesis => {
+        // Check deadline
+        if (thesis.deadline) {
+          const deadline = new Date(thesis.deadline);
+          if (deadline.toDateString() === date.toDateString()) {
+            events.push({
+              type: 'deadline',
+              title: 'Προθεσμία',
+              description: `Προθεσμία υποβολής: ${thesis.title}`
+            });
+          }
+        }
+
+        // Check exam date
+        if (thesis.exam_datetime) {
+          const examDate = new Date(thesis.exam_datetime);
+          if (examDate.toDateString() === date.toDateString()) {
+            events.push({
+              type: 'exam',
+              title: 'Εξέταση',
+              description: `Εξέταση διπλωματικής: ${thesis.title}`
+            });
+          }
+        }
+
+        // Check confirmed time (start date)
+        if (thesis.confirmed_time) {
+          const startDate = new Date(thesis.confirmed_time);
+          if (startDate.toDateString() === date.toDateString()) {
+            events.push({
+              type: 'start',
+              title: 'Έναρξη',
+              description: `Έναρξη διπλωματικής: ${thesis.title}`
+            });
+          }
+        }
+      });
+
+      return events;
+    }
+
+    // Event listeners
+    prevMonthBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextMonthBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // Initial render
+    renderCalendar();
   });
 </script>
 </body>

@@ -100,11 +100,11 @@ body {
 }
 
 .sidebar a.logout {
-  color: #FF6B6B;
+  color: #FF0000;
 }
 
 .sidebar a.logout:hover {
-  color: #FF5252;
+  color: #FF0000;
   background-color: rgba(255, 107, 107, 0.15);
   transform: translateX(4px);
 }
@@ -197,57 +197,100 @@ header h1 {
 }
 
 .thesis-status {
-    margin-left: 40px;
-    margin-right: 40px;
-    margin-bottom: 2rem;
+    margin: 0 40px 2rem 40px;
 }
 
 .status-card {
-    background: #fff;
-    border: 1.5px solid #e0e7ef;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    padding: 28px 32px 18px 32px;
-    margin-bottom: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    padding: 40px;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.status-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #6A90C7, #4A7BC8);
+    border-radius: 0 0 0 20px;
 }
 
 .status-card h3 {
-    font-size: 1.1rem;
-    color: #000000;
-    font-weight: 500;
-    margin-bottom: 18px;
-    border-bottom: none;
-    padding-bottom: 6px;
-    width: fit-content;
+    font-size: 1.4rem;
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    position: relative;
+}
+
+.status-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #6A90C7, #4A7BC8);
 }
 
 .status-info {
     display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1.2rem;
     gap: 1rem;
+    padding: 0.5rem 0;
 }
 
 .status-label {
-    font-weight: 600;
-    color: #222;
-    min-width: 100px;
+    font-weight: 700;
+    color: #2c3e50;
+    min-width: 120px;
+    font-size: 0.95rem;
+    background: linear-gradient(135deg, #6A90C7, #4A7BC8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .status-value {
-    color: #6A90C7;
+    color: #495057;
+    font-size: 0.95rem;
+    flex: 1;
     font-weight: 500;
 }
 
 .status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.status-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .status-badge.active {
-    background-color: #8fbc8f;
+    background: linear-gradient(135deg, #8fbc8f, #7aac7a);
     color: white;
 }
 
@@ -363,6 +406,183 @@ header h1 {
     margin-bottom: 0;
 }
 
+/* Thesis Actions Styling */
+.thesis-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.thesis-actions .btn {
+    border-radius: 25px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.thesis-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.thesis-actions .btn-primary {
+    background: linear-gradient(135deg, #6A90C7, #4A7BC8);
+    border: none;
+}
+
+/* Exam registration button styling */
+.status-card .btn-primary {
+    background: linear-gradient(135deg, #6A90C7, #4A7BC8);
+    border: none;
+    border-radius: 25px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.status-card .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #5a7fb7, #4a6fa7);
+}
+
+.thesis-actions .btn-success {
+    background: linear-gradient(135deg, #8fbc8f, #7aac7a);
+    border: none;
+}
+
+.thesis-actions .btn-info {
+    background: linear-gradient(135deg, #DFAABC, #FFB6C1);
+    border: none;
+    color: #fff;
+}
+
+.thesis-actions .btn-warning {
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    border: none;
+    color: #212529;
+}
+
+.thesis-actions .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    border: none;
+}
+
+/* File upload section styling */
+.topic-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.topic-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.topic-card h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+.submissions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.submission-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.submission-card:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.submission-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.submission-link {
+    color: #6A90C7;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.submission-link:hover {
+    color: #4A7BC8;
+    text-decoration: underline;
+}
+
+        .submission-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* No thesis card styling */
+        .no-thesis-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin: 40px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+
+        .no-thesis-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .no-thesis-icon {
+            margin-bottom: 15px;
+        }
+
+        .no-thesis-icon i {
+            font-size: 2.5rem;
+            color: #6A90C7;
+            opacity: 0.8;
+        }
+
+        .no-thesis-card h4 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .no-thesis-card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
 .progress-item i {
     font-size: 1.2rem;
     width: 20px;
@@ -395,4 +615,120 @@ header h1 {
 .progress-item span {
     color: #222;
     font-weight: 500;
+}
+
+/* Standardized Button Styling - Override Bootstrap */
+.btn {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+    color: white !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.3s ease !important;
+    font-size: 0.9rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+.btn:hover {
+    background-color: #5a7fb7 !important;
+    border-color: #5a7fb7 !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(106, 144, 199, 0.3) !important;
+}
+
+.btn:focus {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.2rem rgba(106, 144, 199, 0.25) !important;
+}
+
+.btn i {
+    font-size: 0.85rem !important;
+}
+
+.btn-primary {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+}
+
+.btn-success {
+    background-color: #8fbc8f !important;
+    border-color: #8fbc8f !important;
+}
+
+.btn-info {
+    background-color: #DFAABC !important;
+    border-color: #DFAABC !important;
+}
+
+.btn-warning {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.btn-sm {
+    padding: 10px 20px !important;
+    font-size: 0.9rem !important;
+}
+
+.btn-lg {
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+}
+
+/* Thesis Actions Styling - Match Dashboard */
+.thesis-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    padding-top: 15px !important;
+    border-top: 1px solid #e9ecef !important;
+}
+
+.thesis-actions .btn {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+    color: white !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.3s ease !important;
+    font-size: 0.9rem !important;
+}
+
+.thesis-actions .btn:hover {
+    background-color: #5a7fb7 !important;
+    border-color: #5a7fb7 !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(106, 144, 199, 0.3) !important;
+}
+
+.thesis-actions .btn i {
+    font-size: 0.85rem !important;
 }

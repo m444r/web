@@ -11,7 +11,18 @@ $student_id = $_SESSION["userid"];
 $message = "";
 
 $studentName = "";
-$stmt = $db->prepare("SELECT name, surname, am , email, mobile_telephone , landline_telephone, street, number,city, postcode  FROM users WHERE id = ?");
+$studentProfilePicture = "../icons/account.png"; // Default profile picture
+
+// Check if profile_picture column exists
+$check_column = $db->query("SHOW COLUMNS FROM users LIKE 'profile_picture'");
+$has_profile_picture = $check_column->num_rows > 0;
+
+if ($has_profile_picture) {
+    $stmt = $db->prepare("SELECT name, surname, am, email, mobile_telephone, landline_telephone, street, number, city, postcode, profile_picture FROM users WHERE id = ?");
+} else {
+    $stmt = $db->prepare("SELECT name, surname, am, email, mobile_telephone, landline_telephone, street, number, city, postcode FROM users WHERE id = ?");
+}
+
 $stmt->bind_param("i", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -22,6 +33,9 @@ if ($row = $result->fetch_assoc()) {
     $phone_student = $row['mobile_telephone'];
     $phone_landline_student = $row['landline_telephone'];
     $address_student = $row['street'] . " " . $row['number'] . ", " . $row['city'] . " " . $row['postcode'];
+    if ($has_profile_picture) {
+        $studentProfilePicture = (!empty($row['profile_picture'])) ? "../" . $row['profile_picture'] : "../icons/account.png";
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
@@ -68,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
       <div class="sidebar-container">
         
         <!-- Profile pic -->
-        <img src="../icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='StudentProfile.php'">
+        <img src="<?= htmlspecialchars($studentProfilePicture) ?>" alt="Profile" class="profile-avatar" onclick="window.location.href='StudentProfile.php'">
         
         <!-- User name link -->
         <div class="user-name">
@@ -86,21 +100,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="StudentTopics.php">
-              <img src="../icons/list.png" alt="Dashboard" class="nav-icon">
-              Λίστα ΔΕ
+            <a href="StudentThesis.php">
+              <img src="../icons/thesis.png" alt="Thesis" class="nav-icon">
+              Διπλωματική Εργασία
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="StudentTopics.php" >
-              <img src="../icons/file.png" alt="Topics" class="nav-icon">
-              Ανάρτηση Αρχείων
+            <a href="StudentInvites.php" >
+              <img src="../icons/invitation.png" alt="Invitations" class="nav-icon">
+              Προσκλήσεις
             </a>
           </li>
           <li class="nav-spacing">
             <a href="StudentManageThesis.php">
-              <img src="../icons/invitation.png" alt="Manage Thesis" class="nav-icon">
-              Προσκλήσεις
+              <img src="../icons/project.png" alt="Manage Thesis" class="nav-icon">
+              Διαχείριση ΔΕ
             </a>
           </li>
           
@@ -139,7 +153,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         <div class="profile-section">
             <div class="profile-card">
                 <div class="profile-header">
-                    <img src="../icons/account.png" alt="Profile Picture" class="profile-picture">
+                    <div class="profile-picture-container">
+                        <img src="<?= htmlspecialchars($studentProfilePicture) ?>" alt="Profile Picture" class="profile-picture" id="profileImage">
+                        <div class="edit-overlay" onclick="document.getElementById('profileUpload').click()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <input type="file" id="profileUpload" accept="image/*" style="display: none;" onchange="handleProfileUpload(this)">
+                    </div>
                     <div class="profile-info">
                         <h2><?= htmlspecialchars($studentName) ?></h2>
                         <p class="student-id">ΑΜ: <?= htmlspecialchars($am_student) ?></p>
@@ -179,7 +199,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
         </div>
     </div>
 
-    <button type="submit" name="update_profile" class="btn btn-primary mt-3">Αποθήκευση Αλλαγών</button>
+    <div class="form-actions">
+        <button type="submit" name="update_profile" class="btn btn-primary">Αποθήκευση Αλλαγών</button>
+    </div>
 </form>
 
             </div>
@@ -202,6 +224,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
       });
     }
   });
+
+  // Profile upload function
+  window.handleProfileUpload = function(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      // Show loading state
+      const profileImg = document.getElementById('profileImage');
+      const originalSrc = profileImg.src;
+      profileImg.style.opacity = '0.5';
+      
+      // Create FormData to send file to server
+      const formData = new FormData();
+      formData.append('profile_picture', file);
+      
+      // Send to server
+      console.log('Sending file to server...');
+      fetch('upload_profile_picture.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log('Server response:', data);
+        if (data.success) {
+          // Update profile image with new path
+          profileImg.src = '../' + data.image_path;
+          profileImg.style.opacity = '1';
+          
+          // Show success message
+          alert('Profile picture updated successfully!');
+          
+          // Update all sidebar profile images on the page
+          updateSidebarProfileImages('../' + data.image_path);
+        } else {
+          // Show error message
+          alert('Error: ' + data.message);
+          profileImg.src = originalSrc;
+          profileImg.style.opacity = '1';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error uploading profile picture. Please try again.');
+        profileImg.src = originalSrc;
+        profileImg.style.opacity = '1';
+      });
+    }
+  };
+  
+  // Function to update sidebar profile images
+  function updateSidebarProfileImages(newImagePath) {
+    const sidebarImages = document.querySelectorAll('.profile-avatar');
+    console.log('Found sidebar images:', sidebarImages.length);
+    sidebarImages.forEach(img => {
+      console.log('Updating image from', img.src, 'to', newImagePath);
+      img.src = newImagePath;
+    });
+  }
 </script>
 </body>
 </html>

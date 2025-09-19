@@ -21,6 +21,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->bind_param("ii", $invitation_id, $teacher_id);
             if ($stmt->execute()) {
                 $message = "Αποδεχθήκατε την πρόσκληση.";
+                
+                // Get the topic_id for this invitation
+                $stmt = $db->prepare("SELECT topic_id FROM committee_requests WHERE id = ?");
+                $stmt->bind_param("i", $invitation_id);
+                $stmt->execute();
+                $result = $stmt->get_result()->fetch_assoc();
+                $topic_id = $result['topic_id'];
+                
+                // Check if we now have 2 accepted invitations for this topic
+                $stmt = $db->prepare("SELECT COUNT(*) as accepted_count FROM committee_requests WHERE topic_id = ? AND status = 'accepted'");
+                $stmt->bind_param("i", $topic_id);
+                $stmt->execute();
+                $result = $stmt->get_result()->fetch_assoc();
+                
+                if ($result['accepted_count'] >= 2) {
+                    // Update topic status to 'confirmed'
+                    $stmt = $db->prepare("UPDATE topics SET status = 'confirmed', confirmed_time = NOW() WHERE id = ?");
+                    $stmt->bind_param("i", $topic_id);
+                    $stmt->execute();
+                    
+                    // Cancel all remaining pending invitations for this topic
+                    $stmt = $db->prepare("UPDATE committee_requests SET status = 'cancelled' WHERE topic_id = ? AND status = 'pending'");
+                    $stmt->bind_param("i", $topic_id);
+                    $stmt->execute();
+                    
+                    $message = "Αποδεχθήκατε την πρόσκληση. Η διπλωματική εργασία είναι πλέον ενεργή! Ακυρώθηκαν οι υπόλοιπες προσκλήσεις.";
+                }
             } else {
                 $message = "Σφάλμα κατά την αποδοχή.";
             }
@@ -106,25 +133,16 @@ while ($row = $result->fetch_assoc()) {
         }
         
         .section-title {
-            color: #2c3e50;
-            font-size: 1.75rem;
+            color: #292D32;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+            margin-left: 40px;
+            margin-right: 40px;
             padding-bottom: 0.75rem;
-            border-bottom: 3px solid #6A90C7;
             position: relative;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, #6A90C7, #4a69a8);
-            border-radius: 2px;
         }
         
         .invitations-section {
@@ -188,8 +206,8 @@ while ($row = $result->fetch_assoc()) {
         }
         
         .status.pending {
-            background: linear-gradient(135deg, #ffc107, #ff8c00);
-            color: white;
+            background-color: #f4e4a6;
+            color: #6b5b00;
         }
         
         .status.accepted {
@@ -471,30 +489,41 @@ while ($row = $result->fetch_assoc()) {
                 <?php if (!empty($pending_invitations)): ?>
                     <div class="invitations-section">
                         <h2 class="section-title">Προσκλήσεις σε Εκκρεμότητα</h2>
-                        <?php foreach ($pending_invitations as $invitation): ?>
-                            <div class="invitation-card">
-                                <div class="invitation-header">
-                                    <h3><?= htmlspecialchars($invitation['title']) ?></h3>
-                                    <span class="status pending">Σε εκκρεμότητα</span>
+                        <div class="invitations-grid">
+                            <?php foreach ($pending_invitations as $invitation): ?>
+                                <div class="invitation-card pending">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><?= htmlspecialchars($invitation['title']) ?></h3>
+                                        <span class="status pending">Σε εκκρεμότητα</span>
+                                    </div>
+                                    <div class="card-details">
+                                        <p><i class="fas fa-user"></i> Φοιτητής: <?= htmlspecialchars($invitation['student_name'] . ' ' . $invitation['student_surname']) ?> (ΑΜ: <?= htmlspecialchars($invitation['student_am']) ?>)</p>
+                                        <p><i class="fas fa-calendar"></i> Ημερομηνία πρόσκλησης: <?= date('d/m/Y', strtotime($invitation['requested_at'])) ?></p>
+                                    </div>
+                                    <div class="card-actions">
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="invitation_id" value="<?= $invitation['id'] ?>">
+                                            <input type="hidden" name="action" value="accept">
+                                            <button type="submit" class="btn accept">Αποδοχή</button>
+                                        </form>
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="invitation_id" value="<?= $invitation['id'] ?>">
+                                            <input type="hidden" name="action" value="reject">
+                                            <button type="submit" class="btn reject">Απόρριψη</button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <div class="invitation-details">
-                                    <p><i class="fas fa-user"></i> Φοιτητής: <?= htmlspecialchars($invitation['student_name'] . ' ' . $invitation['student_surname']) ?> (ΑΜ: <?= htmlspecialchars($invitation['student_am']) ?>)</p>
-                                    <p><i class="fas fa-calendar"></i> Ημερομηνία πρόσκλησης: <?= date('d/m/Y', strtotime($invitation['requested_at'])) ?></p>
-                                </div>
-                                <div class="invitation-actions">
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="invitation_id" value="<?= $invitation['id'] ?>">
-                                        <input type="hidden" name="action" value="accept">
-                                        <button type="submit" class="btn accept"><i class="fas fa-check"></i> Αποδοχή</button>
-                                    </form>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="invitation_id" value="<?= $invitation['id'] ?>">
-                                        <input type="hidden" name="action" value="reject">
-                                        <button type="submit" class="btn reject"><i class="fas fa-times"></i> Απόρριψη</button>
-                                    </form>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="topics-pagination">
+                            <button class="pagination-btn" onclick="goToPage(1)">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="pagination-info">1/1</span>
+                            <button class="pagination-btn" onclick="goToPage(1)">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 <?php endif; ?>
 
@@ -502,19 +531,30 @@ while ($row = $result->fetch_assoc()) {
                 <?php if (!empty($accepted_invitations)): ?>
                     <div class="invitations-section">
                         <h2 class="section-title">Αποδεκτές Προσκλήσεις</h2>
-                        <?php foreach ($accepted_invitations as $invitation): ?>
-                            <div class="invitation-card accepted">
-                                <div class="invitation-header">
-                                    <h3><?= htmlspecialchars($invitation['title']) ?></h3>
-                                    <span class="status accepted">Αποδεκτή</span>
+                        <div class="invitations-grid">
+                            <?php foreach ($accepted_invitations as $invitation): ?>
+                                <div class="invitation-card accepted">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><?= htmlspecialchars($invitation['title']) ?></h3>
+                                        <span class="status accepted">Αποδεκτή</span>
+                                    </div>
+                                    <div class="card-details">
+                                        <p><i class="fas fa-user"></i> Φοιτητής: <?= htmlspecialchars($invitation['student_name'] . ' ' . $invitation['student_surname']) ?> (ΑΜ: <?= htmlspecialchars($invitation['student_am']) ?>)</p>
+                                        <p><i class="fas fa-calendar"></i> Ημερομηνία πρόσκλησης: <?= date('d/m/Y', strtotime($invitation['requested_at'])) ?></p>
+                                        <p><i class="fas fa-check-circle"></i> Αποδεχθήκατε: <?= date('d/m/Y', strtotime($invitation['responded_at'])) ?></p>
+                                    </div>
                                 </div>
-                                <div class="invitation-details">
-                                    <p><i class="fas fa-user"></i> Φοιτητής: <?= htmlspecialchars($invitation['student_name'] . ' ' . $invitation['student_surname']) ?> (ΑΜ: <?= htmlspecialchars($invitation['student_am']) ?>)</p>
-                                    <p><i class="fas fa-calendar"></i> Ημερομηνία πρόσκλησης: <?= date('d/m/Y', strtotime($invitation['requested_at'])) ?></p>
-                                    <p><i class="fas fa-check-circle"></i> Αποδεχθήκατε: <?= date('d/m/Y', strtotime($invitation['responded_at'])) ?></p>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="topics-pagination">
+                            <button class="pagination-btn" onclick="goToPage(1)">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="pagination-info">1/1</span>
+                            <button class="pagination-btn" onclick="goToPage(1)">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 <?php endif; ?>
             <?php endif; ?>

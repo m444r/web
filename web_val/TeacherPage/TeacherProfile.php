@@ -8,10 +8,32 @@ if (!isset($_SESSION["userid"])) {
 }
 
 $teacher_id = $_SESSION["userid"];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
+    $email = $_POST['email'] ?? '';
+    $mobile_telephone = $_POST['mobile_telephone'] ?? '';
+    $landline_telephone = $_POST['landline_telephone'] ?? '';
+    $street = $_POST['street'] ?? '';
+    $number = $_POST['number'] ?? '';
+    $city = $_POST['city'] ?? '';
+    $postcode = $_POST['postcode'] ?? '';
 
-// Get teacher information - Updated to fix undefined variable error
+    $stmt = $db->prepare("UPDATE users SET  mobile_telephone=?, landline_telephone=?, street=?, number=?, city=?, postcode=? WHERE id=?");
+    $stmt->bind_param("ssssssi",  $mobile_telephone, $landline_telephone, $street, $number, $city, $postcode, $teacher_id);
+    $stmt->execute();
+    $stmt->close();
+
+    $message = "Οι αλλαγές αποθηκεύτηκαν επιτυχώς!";
+    // Φορτώνουμε ξανά τα δεδομένα
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// -----------------------------
+// Get teacher information
+// -----------------------------
 $teacherName = "";
 $teacherEmail = "";
+$teacherID = "";
 $teacherProfilePicture = "../icons/account.png"; // Default profile picture
 
 // Check if profile_picture column exists
@@ -19,22 +41,39 @@ $check_column = $db->query("SHOW COLUMNS FROM users LIKE 'profile_picture'");
 $has_profile_picture = $check_column->num_rows > 0;
 
 if ($has_profile_picture) {
-    $stmt = $db->prepare("SELECT name, surname, email, profile_picture FROM users WHERE id = ?");
+    $stmt = $db->prepare("SELECT name, surname, email, am, profile_picture,
+                                 mobile_telephone, landline_telephone, street, number, city, postcode
+                          FROM users WHERE id = ?");
 } else {
-    $stmt = $db->prepare("SELECT name, surname, email FROM users WHERE id = ?");
+    $stmt = $db->prepare("SELECT name, surname, email, am,   
+                                 mobile_telephone, landline_telephone, street, number, city, postcode
+                          FROM users WHERE id = ?");
 }
 
 $stmt->bind_param("i", $teacher_id);
 $stmt->execute();
 $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
-    $teacherName = $row['name'] . " " . $row['surname'];
+    $teacherName  = $row['name'] . " " . $row['surname'];
     $teacherEmail = $row['email'] ?? "";
+    $teacherID    = $row['am'];
+
+
+    $mobile       = $row['mobile_telephone'] ?? "";
+    $landline     = $row['landline_telephone'] ?? "";
+    $street       = $row['street'] ?? "";
+    $number       = $row['number'] ?? "";
+    $city         = $row['city'] ?? "";
+    $postcode     = $row['postcode'] ?? "";
+
     if ($has_profile_picture) {
         $teacherProfilePicture = (!empty($row['profile_picture'])) ? "../" . $row['profile_picture'] : "../icons/account.png";
+    } else {
+        $teacherProfilePicture = "../icons/account.png";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -149,21 +188,19 @@ if ($row = $result->fetch_assoc()) {
                     </div>
                     <div class="profile-info">
                         <h2><?= htmlspecialchars($teacherName) ?></h2>
-                        <p class="teacher-id">ID: T<?= str_pad($teacher_id, 3, '0', STR_PAD_LEFT) ?></p>
+                        <p class="teacher-id">ID: T<?=  htmlspecialchars($teacherID)  ?></p>
                         <p class="department">Τμήμα Πληροφορικής</p>
                     </div>
                 </div>
                 
-                <form class="profile-form" id="profileForm">
+                <form class="profile-form" id="profileForm" method="POST">
+
                     <div class="profile-details">
                         <div class="detail-item">
                             <span class="label">Email:</span>
                             <input type="email" class="form-input" value="<?= htmlspecialchars($teacherEmail) ?>" id="email">
                         </div>
-                        <div class="detail-item">
-                            <span class="label">Τηλέφωνο:</span>
-                            <input type="tel" class="form-input" value="" id="phone" placeholder="Δεν έχει καταχωρηθεί">
-                        </div>
+                        
                         <div class="detail-item">
                             <span class="label">Τίτλος:</span>
                             <input type="text" class="form-input" value="Αναπληρώτρια Καθηγήτρια" id="title">
@@ -180,11 +217,60 @@ if ($row = $result->fetch_assoc()) {
                             <span class="label">Ώρες Γραφείου:</span>
                             <input type="text" class="form-input" value="Τρίτη & Πέμπτη 14:00-16:00" id="officeHours">
                         </div>
+                        <div class="detail-item">
+                            <span class="label">Κινητό:</span>
+                            <input type="text" class="form-input" 
+                                  id="mobile_telephone" name="mobile_telephone" 
+                                  value="<?= htmlspecialchars($mobile) ?>" 
+                                  placeholder="Δεν έχει καταχωρηθεί">
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="label">Σταθερό:</span>
+                            <input type="text" class="form-input" 
+                                  id="landline_telephone" name="landline_telephone" 
+                                  value="<?= htmlspecialchars($landline) ?>" 
+                                  placeholder="Δεν έχει καταχωρηθεί">
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="label">Οδός:</span>
+                            <input type="text" class="form-input" 
+                                  id="street" name="street" 
+                                  value="<?= htmlspecialchars($street) ?>" 
+                                  placeholder="Δεν έχει καταχωρηθεί">
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="label">Αριθμός:</span>
+                            <input type="text" class="form-input" 
+                                  id="number" name="number" 
+                                  value="<?= htmlspecialchars($number) ?>" 
+                                  placeholder="Δεν έχει καταχωρηθεί">
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="label">Πόλη:</span>
+                            <input type="text" class="form-input" 
+                                  id="city" name="city" 
+                                  value="<?= htmlspecialchars($city) ?>">
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="label">Τ.Κ.:</span>
+                            <input type="text" class="form-input" 
+                                  id="postcode" name="postcode" 
+                                  value="<?= htmlspecialchars($postcode) ?>" 
+                                  placeholder="Δεν έχει καταχωρηθεί">
+                        </div>
+
+
                     </div>
                     
                     <div class="form-actions">
                         <button type="button" class="btn-cancel" onclick="resetForm()">Ακύρωση</button>
-                        <button type="submit" class="btn-save">Αποθήκευση Αλλαγών</button>
+                        <button type="submit" name="update_profile" class="btn-save">Αποθήκευση Αλλαγών</button>
+
                     </div>
                 </form>
             </div>
@@ -196,110 +282,78 @@ if ($row = $result->fetch_assoc()) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
   // Mobile menu toggle
-  document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const sidebar = document.querySelector('.sidebar');
-    
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('show');
-      });
-    }
+  const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+  const sidebar = document.querySelector('.sidebar');
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', function() {
+      sidebar.classList.toggle('show');
+    });
+  }
 
-    // Form handling
-    const form = document.getElementById('profileForm');
-    const originalValues = {};
+  // Form handling
+  const form = document.getElementById('profileForm');
+  const originalValues = {};
 
-    // Store original values
-    const inputs = form.querySelectorAll('.form-input');
+  // Store original values
+  const inputs = form.querySelectorAll('.form-input');
+  inputs.forEach(input => {
+    originalValues[input.id] = input.value;
+  });
+
+  // Reset form function
+  window.resetForm = function() {
     inputs.forEach(input => {
-      originalValues[input.id] = input.value;
+      input.value = originalValues[input.id] ?? '';
     });
+  };
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Here you would typically send the data to a server
-      // For now, we'll just show a success message
-      alert('Οι αλλαγές αποθηκεύτηκαν επιτυχώς!');
-      
-      // Update original values
-      inputs.forEach(input => {
-        originalValues[input.id] = input.value;
-      });
-    });
+  // Profile upload function (unchanged)
+  window.handleProfileUpload = function(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const profileImg = document.getElementById('profileImage');
+      const originalSrc = profileImg.src;
+      profileImg.style.opacity = '0.5';
+      const formData = new FormData();
+      formData.append('profile_picture', file);
 
-    // Reset form function
-    window.resetForm = function() {
-      inputs.forEach(input => {
-        input.value = originalValues[input.id];
-      });
-    };
-
-    // Profile upload function
-    window.handleProfileUpload = function(input) {
-      if (input.files && input.files[0]) {
-        const file = input.files[0];
-        
-        // Show loading state
-        const profileImg = document.getElementById('profileImage');
-        const originalSrc = profileImg.src;
-        profileImg.style.opacity = '0.5';
-        
-        // Create FormData to send file to server
-        const formData = new FormData();
-        formData.append('profile_picture', file);
-        
-        // Send to server
-        console.log('Sending file to server...');
-        fetch('upload_profile_picture.php', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => {
-          console.log('Response status:', response.status);
-          return response.json();
-        })
-        .then(data => {
-          console.log('Server response:', data);
-          if (data.success) {
-            // Update profile image with new path
-            profileImg.src = '../' + data.image_path;
-            profileImg.style.opacity = '1';
-            
-            // Show success message
-            alert('Profile picture updated successfully!');
-            
-            // Update all sidebar profile images on the page
-            updateSidebarProfileImages('../' + data.image_path);
-          } else {
-            // Show error message
-            alert('Error: ' + data.message);
-            profileImg.src = originalSrc;
-            profileImg.style.opacity = '1';
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Error uploading profile picture. Please try again.');
+      fetch('upload_profile_picture.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          profileImg.src = '../' + data.image_path;
+          profileImg.style.opacity = '1';
+          alert('Profile picture updated successfully!');
+          updateSidebarProfileImages('../' + data.image_path);
+        } else {
+          alert('Error: ' + data.message);
           profileImg.src = originalSrc;
           profileImg.style.opacity = '1';
-        });
-      }
-    };
-    
-    // Function to update sidebar profile images
-    function updateSidebarProfileImages(newImagePath) {
-      const sidebarImages = document.querySelectorAll('.profile-avatar');
-      console.log('Found sidebar images:', sidebarImages.length);
-      sidebarImages.forEach(img => {
-        console.log('Updating image from', img.src, 'to', newImagePath);
-        img.src = newImagePath;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error uploading profile picture. Please try again.');
+        profileImg.src = originalSrc;
+        profileImg.style.opacity = '1';
       });
     }
-  });
+  };
+
+  function updateSidebarProfileImages(newImagePath) {
+    const sidebarImages = document.querySelectorAll('.profile-avatar');
+    sidebarImages.forEach(img => {
+      img.src = newImagePath;
+    });
+  }
+
+}
 </script>
+
 </body>
 </html>

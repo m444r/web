@@ -100,17 +100,17 @@ body {
 }
 
 .sidebar a.logout {
-  color: #FF6B6B;
+  color: #FF0000;
 }
 
 .sidebar a.logout:hover {
-  color: #FF5252;
-  background-color: rgba(255, 107, 107, 0.15);
+  color: #FF0000;
+  background-color: rgba(255, 255, 255, 0.15);
   transform: translateX(4px);
 }
 
 .sidebar a.logout .nav-icon {
-  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(360deg) brightness(91%) contrast(118%);
 }
 
 .nav-spacing {
@@ -218,12 +218,43 @@ header h1 {
     border-bottom: 1px solid #e0e7ef;
 }
 
+.profile-picture-container {
+    position: relative;
+    display: inline-block;
+}
+
 .profile-picture {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #6A90C7;
+    border: none;
+    transition: opacity 0.3s ease;
+}
+
+.edit-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.profile-picture-container:hover .edit-overlay {
+    opacity: 1;
+}
+
+.edit-overlay i {
+    color: white;
+    font-size: 24px;
 }
 
 .profile-info h2 {
@@ -267,4 +298,115 @@ header h1 {
 .value {
     color: #6A90C7;
     font-weight: 500;
+}
+
+/* Form actions container */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e7ef;
+}
+
+/* Button styling to match sidebar color */
+.btn-primary {
+    background-color: #6A90C7;
+    border-color: #6A90C7;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #5a7fb7;
+    border-color: #5a7fb7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(106, 144, 199, 0.3);
+}
+
+.btn-primary:focus {
+    background-color: #6A90C7;
+    border-color: #6A90C7;
+    box-shadow: 0 0 0 0.2rem rgba(106, 144, 199, 0.25);
+}
+
+/* Standardized Button Styling - Override Bootstrap */
+.btn {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+    color: white !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.3s ease !important;
+    font-size: 0.9rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+.btn:hover {
+    background-color: #5a7fb7 !important;
+    border-color: #5a7fb7 !important;
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(106, 144, 199, 0.3) !important;
+}
+
+.btn:focus {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.2rem rgba(106, 144, 199, 0.25) !important;
+}
+
+.btn i {
+    font-size: 0.85rem !important;
+}
+
+.btn-primary {
+    background-color: #6A90C7 !important;
+    border-color: #6A90C7 !important;
+}
+
+.btn-success {
+    background-color: #8fbc8f !important;
+    border-color: #8fbc8f !important;
+}
+
+.btn-info {
+    background-color: #DFAABC !important;
+    border-color: #DFAABC !important;
+}
+
+.btn-warning {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.btn-sm {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+}
+
+.btn-lg {
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
 }
