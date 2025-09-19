@@ -236,6 +236,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
                         <?php if (!empty($thesis['exam_location'])): ?>
                             <p><strong>Τοποθεσία Εξέτασης:</strong> <?= htmlspecialchars($thesis['exam_location']) ?></p>
                         <?php endif; ?>
+                        <p><strong>Τελικός Βαθμός:</strong> <?= htmlspecialchars($thesis['final_grade']) ?></p>
+
                     </div>
 
                     <!-- Status-based actions -->

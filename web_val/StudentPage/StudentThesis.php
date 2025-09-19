@@ -214,6 +214,8 @@ $topics = $stmt->get_result();
                   <?php else: ?>
                     <p><strong>Αρχείο Περιγραφής:</strong> <span class="text-muted">Δεν έχει ανέβει αρχείο</span></p>
                   <?php endif; ?>
+                  <p><strong>Τελικός Βαθμός:</strong> <?= htmlspecialchars($row["final_grade"]) ?></p>
+
                 </div>
 
                 <div class="detail-section">
