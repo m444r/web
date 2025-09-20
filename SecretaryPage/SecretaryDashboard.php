@@ -1,13 +1,12 @@
 <?php
 session_start();
-require_once __DIR__ . "/../config.php"; // <-- Βεβαιώσου ότι το path είναι σωστό!
+require_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION['userid']) || $_SESSION['role'] !== 'secretary') {
     header("Location: ../login_page.php");
     exit();
 }
 
-// Helper function
 function getCount($db, $sql) {
     $res = mysqli_query($db, $sql);
     if ($res && $row = mysqli_fetch_assoc($res)) {
@@ -16,7 +15,6 @@ function getCount($db, $sql) {
     return 0;
 }
 
-// Fetch stats
 $students_count   = getCount($db, "SELECT COUNT(*) AS c FROM users WHERE role='student'");
 $teachers_count   = getCount($db, "SELECT COUNT(*) AS c FROM users WHERE role='teacher'");
 $total_thesis     = getCount($db, "SELECT COUNT(*) AS c FROM topics");
@@ -52,7 +50,7 @@ $completed_thesis = getCount($db, "SELECT COUNT(*) AS c FROM topics WHERE status
         <ul class="nav nav-pills flex-column mb-auto w-100">
           <li class="nav-item nav-spacing"><a href="SecretaryDashboard.php" class="active"><img src="../icons/menu.png" class="nav-icon">Dashboard</a></li>
           <li class="nav-spacing"><a href="SecretaryThesis.php"><img src="../icons/file.png" class="nav-icon">Προβολή ΔΕ</a></li>
-          <li class="nav-spacing"><a href="SecretaryDataInput.php"><img src="../icons/graph.png" class="nav-icon">Εισαγωγή δεδομένων</a></li>
+          <li class="nav-spacing"><a href="SecretaryDataInput.html"><img src="../icons/graph.png" class="nav-icon">Εισαγωγή δεδομένων</a></li>
           <li class="nav-spacing"><a href="SecretaryManageThesis.php"><img src="../icons/stats.png" class="nav-icon">Διαχείριση ΔΕ</a></li>
           <div class="nav-separator"></div>
           <li class="nav-spacing"><a href="SecretaryProfile.php"><img src="../icons/setting.png" class="nav-icon">Προφίλ</a></li>
@@ -88,19 +86,19 @@ $completed_thesis = getCount($db, "SELECT COUNT(*) AS c FROM topics WHERE status
           </div>
 
           <div class="col-md-4">
-            <div class="stat-card bg-success text-white">
+            <div class="stat-card bg-light">
               <div class="stat-value"><?= $active_thesis ?></div>
               <div class="stat-label">Ενεργές ΔΕ</div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="stat-card bg-warning">
+            <div class="stat-card bg-light">
               <div class="stat-value"><?= $exam_thesis ?></div>
               <div class="stat-label">Υπό Εξέταση</div>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="stat-card bg-secondary text-white">
+            <div class="stat-card bg-light">
               <div class="stat-value"><?= $completed_thesis ?></div>
               <div class="stat-label">Ολοκληρωμένες</div>
             </div>
