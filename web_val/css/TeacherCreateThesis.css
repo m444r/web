@@ -1,6 +1,10 @@
+:root {
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
 /* Sidebar Styles from TeacherDashboard */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family);
     background-color: #F0F8FF;
     margin: 0;
     padding: 0;
@@ -41,7 +45,7 @@ body {
   text-align: center;
   margin-bottom: 30px;
   font-size: 18px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family);
 }
   
   .name-separator {
@@ -65,7 +69,7 @@ body {
   margin-right: 8px;
   font-weight: 500;
   position: relative;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family);
   white-space: nowrap;
   min-height: 44px;
   height: 44px;
@@ -94,7 +98,7 @@ body {
 }
 
 .sidebar a.logout:hover {
-  color: #FF0000;
+  color: #FF0000 !important;
   background-color: rgba(255, 255, 255, 0.15);
   transform: translateX(4px);
 }
@@ -171,7 +175,7 @@ header h1 {
     margin-bottom: 35px;
     margin-top: 0;
     margin-left: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family);
 }
 
 /* Horizontal Line */
@@ -196,7 +200,7 @@ h2 {
     padding-bottom: 6px;
     width: fit-content;
     border-bottom: none;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family);
 }
 
 /* Specific styling for headings inside create-topic container */
@@ -249,29 +253,12 @@ h2 {
     padding-bottom: 6px;
     width: fit-content;
     border-bottom: none;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family);
 }
 
 .section-arrows {
     display: flex;
     gap: 8px;
-}
-
-.pagination-btn {
-    background: none;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: #292D32;
-    font-size: 14px;
-    box-shadow: none;
-    outline: none;
-}
-
-.pagination-btn:hover {
-    background-color: #f8f9fa;
 }
 
 /* Topics Grid */
@@ -390,7 +377,7 @@ button:active {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-family);
 }
 
 
@@ -626,23 +613,6 @@ button:active {
     }
 }
 
-.edit-icon {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 1.2rem;
-    color: #6a7a8c;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
-}
-
-.edit-icon:hover {
-    color: #5a6a7a;
-}
-
-.edit-icon:active {
-    color: #4a5a6a;
-}
 
 .edit-icon::after {
     content: "Επεξεργασία";
@@ -665,4 +635,165 @@ button:active {
 .edit-icon:hover::after {
     opacity: 1;
     visibility: visible;
+}
+
+/* Alert Styles */
+.alert-top {
+    position: fixed;
+    top: 20px;
+    left: calc(16.66667% + (83.33333% / 2));
+    transform: translateX(-50%);
+    z-index: 1050;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 500;
+}
+
+.alert-info {
+    background-color: #6A90C7;
+    border-color: #6A90C7;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .alert-top {
+        left: 50%;
+    }
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #6A90C7;
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    border-color: #6A90C7;
+    box-shadow: 0 0 0 0.2rem rgba(106, 144, 199, 0.25);
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #6A90C7;
+    border-color: #6A90C7;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #5a7fb7;
+    border-color: #5a7fb7;
+}
+
+.btn-secondary {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+/* Pagination Styles */
+.topics-pagination {
+    flex-shrink: 0; /* Never shrink */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+    height: 60px; /* Fixed height for pagination */
+}
+
+.pagination-btn {
+    background: none;
+    border: none;
+    color: #6A90C7;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #6A90C7;
+    color: white;
+    transform: scale(1.05);
+}
+
+.pagination-btn:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination-info {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Custom Scrollbar Styling */
+.topics-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.topics-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.topics-grid::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.topics-grid:hover::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.topics-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Firefox scrollbar styling */
+.topics-grid {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.topics-grid:hover {
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }

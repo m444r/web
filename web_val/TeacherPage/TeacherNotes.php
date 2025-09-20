@@ -55,7 +55,7 @@ if ($row = $result->fetch_assoc()) {
     }
 }
 
-// Get teacher's theses for note association
+// Get teacher's theses for note association (confirmed and for examination topics)
 $theses = [];
     $stmt = $db->prepare("
         SELECT 
@@ -65,11 +65,12 @@ $theses = [];
             u.surname as student_surname
         FROM topics t
         LEFT JOIN users u ON u.id = t.assigned_to
-        WHERE t.teacher_id = ? OR t.id IN (
+        WHERE (t.teacher_id = ? OR t.id IN (
             SELECT cr.topic_id 
             FROM committee_requests cr 
             WHERE cr.teacher_id = ? AND cr.status = 'accepted'
-        )
+        ))
+        AND t.status IN ('confirmed', 'for examination')
         ORDER BY t.assigned_time DESC, t.id DESC
     ");
 $stmt->bind_param("ii", $teacher_id, $teacher_id);

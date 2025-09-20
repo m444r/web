@@ -26,27 +26,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['student_query'], $_PO
         $student = $result->fetch_assoc();
         $student_id = $student['id'];
 
-        // Debug: Check all topics assigned to this student
-        $debug_stmt = $db->prepare("SELECT id, title, status FROM topics WHERE assigned_to = ?");
-        $debug_stmt->bind_param("i", $student_id);
-        $debug_stmt->execute();
-        $all_assignments = $debug_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        error_log("All assignments for student " . $student_id . ": " . print_r($all_assignments, true));
-        
         // Check if student already has a thesis assigned (excluding cancelled topics)
         $stmt = $db->prepare("SELECT id, title, status FROM topics WHERE assigned_to = ? AND status NOT IN ('cancelled', 'completed', 'available')");
         $stmt->bind_param("i", $student_id);
         $stmt->execute();
         $existing_thesis = $stmt->get_result()->fetch_assoc();
-        
-        // Debug: Log the existing thesis info
-        if ($existing_thesis) {
-            error_log("Student " . $student_id . " has existing thesis: " . print_r($existing_thesis, true));
-        }
 
         if ($existing_thesis) {
             $message = "Ο φοιτητής έχει ήδη ανατεθεί σε άλλο θέμα: '" . htmlspecialchars($existing_thesis['title']) . "' (Status: " . $existing_thesis['status'] . "). Κάθε φοιτητής μπορεί να έχει μόνο μία διπλωματική εργασία.";
-            $message .= "<br><br>DEBUG: Existing thesis details: " . print_r($existing_thesis, true);
         } else {
             // Proceed with assignment
             try {
@@ -106,7 +93,6 @@ if ($row = $result->fetch_assoc()) {
 }
 
 if (isset($_GET['search_student'])) {
-    require '../config.php';
     $term = "%" . $_GET['search_student'] . "%";
 
     $stmt = $db->prepare("SELECT id, am, name, surname, email 
@@ -129,11 +115,6 @@ if (isset($_GET['search_student'])) {
     echo json_encode($students);
     exit;
 }
-
-// --- Λίστα φοιτητών ---
-$students = [];
-$res = $db->query("SELECT id, name, surname FROM users WHERE role='student'");
-while ($s = $res->fetch_assoc()) $students[] = $s;
 
 // --- Λίστα θεμάτων ---
 $topics = [];
@@ -166,9 +147,6 @@ $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
     $status_counts[$row['status']] = (int)$row['total'];
 }
-
-// Debug: Show what status values we actually got
-// echo "<!-- Debug status counts: " . print_r($status_counts, true) . " -->";
 
 $stmt->close();
 
@@ -211,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_grade'])) {
     $stmt2->bind_param("iid", $topic_id, $teacher_id, $final_grade);
     $stmt2->execute();
 
-    echo "<div class='alert alert-success'>Βαθμός καταχωρήθηκε: ".round($final_grade,2)."</div>";
+    $message = "Βαθμός καταχωρήθηκε: " . round($final_grade, 2);
     header("Location: TeacherDashboard.php");
 }
 
@@ -282,28 +260,6 @@ if (count($teachers_to_grade) == $total_grades) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <link rel="stylesheet" href="../css/TeacherDashboard.css?v=<?php echo time(); ?>">
-    <style>
-        .alert-top {
-            position: fixed;
-            top: 20px;
-            left: calc(16.66667% + (83.33333% / 2));
-            transform: translateX(-50%);
-            z-index: 1050;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-            .alert-top {
-                left: 50%;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -670,10 +626,6 @@ if (count($teachers_to_grade) == $total_grades) {
           bottom: 10
         }
       },
-      animation: {
-        duration: 1000,
-        easing: 'easeInOutQuart'
-      }
     }
   });
 

@@ -15,9 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_topic'], $_POS
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     
-    // Debug: Log the form submission
-    error_log("Topic creation attempt - Title: " . $title . ", Description: " . $description);
-    
     if (empty($title)) {
         $message = "Παρακαλώ εισάγετε τίτλο θέματος.";
     } elseif (empty($description)) {
@@ -55,14 +52,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create_topic'], $_POS
                 $stmt->bind_param("sssi", $title, $description, $pdf_path, $teacher_id);
                 
                 if ($stmt->execute()) {
-                    // Debug: Log successful insertion
-                    error_log("Topic created successfully - ID: " . $db->insert_id);
                     // Redirect to refresh the page and show the new topic
                     header("Location: " . $_SERVER['PHP_SELF'] . "?created=1");
                     exit;
                 } else {
-                    // Debug: Log database error
-                    error_log("Database error: " . $db->error);
                     $message = "Σφάλμα κατά τη δημιουργία του θέματος: " . $db->error;
                 }
                 $stmt->close();
@@ -106,9 +99,6 @@ if (isset($_GET['updated']) && $_GET['updated'] == '1') {
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_topic'], $_POST['topic_id'])) {
     $topic_id = intval($_POST['topic_id']);
     
-    // Debug: Log deletion attempt
-    error_log("Topic deletion attempt - ID: " . $topic_id . ", Teacher ID: " . $teacher_id);
-    
     // Verify the topic belongs to this teacher
     $verify_stmt = $db->prepare("SELECT id, pdf_path FROM topics WHERE id = ? AND teacher_id = ?");
     $verify_stmt->bind_param("ii", $topic_id, $teacher_id);
@@ -149,9 +139,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_topic'], $_POS
             // Commit the transaction
             $db->commit();
             
-            // Debug: Log successful deletion
-            error_log("Topic deleted successfully - ID: " . $topic_id);
-            
             // Delete associated PDF file if it exists
             if (!empty($topic['pdf_path']) && file_exists($topic['pdf_path'])) {
                 unlink($topic['pdf_path']);
@@ -174,19 +161,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_topic'], $_POS
 $topics_per_page = 6;
 $current_page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($current_page - 1) * $topics_per_page;
-
-// Debug: Show database info on page
-$debug_info = "";
-$debug_count_stmt = $db->prepare("SELECT COUNT(*) as total FROM topics WHERE teacher_id = ?");
-$debug_count_stmt->bind_param("i", $teacher_id);
-$debug_count_stmt->execute();
-$debug_total = $debug_count_stmt->get_result()->fetch_assoc()['total'];
-$debug_count_stmt->close();
-
-$debug_info .= "Total topics in DB: " . $debug_total . "<br>";
-$debug_info .= "Current page: " . $current_page . "<br>";
-$debug_info .= "Offset: " . $offset . "<br>";
-
 
 // Get teacher name
 $teacherName = "";
@@ -219,20 +193,6 @@ $count_stmt->execute();
 $total_topics = $count_stmt->get_result()->fetch_assoc()['total'];
 $total_pages = ceil($total_topics / $topics_per_page);
 
-// Debug: Log total topics count
-error_log("Total topics in database for teacher " . $teacher_id . ": " . $total_topics);
-
-// Debug: Get all topics for this teacher to see what's in the database
-$debug_stmt = $db->prepare("SELECT id, title, created_at FROM topics WHERE teacher_id = ? ORDER BY created_at DESC");
-$debug_stmt->bind_param("i", $teacher_id);
-$debug_stmt->execute();
-$debug_result = $debug_stmt->get_result();
-$all_topics = [];
-while ($row = $debug_result->fetch_assoc()) {
-    $all_topics[] = $row;
-}
-error_log("All topics in database: " . print_r($all_topics, true));
-
 // Get teacher's topics for display with pagination
 $topics = [];
 $stmt = $db->prepare("SELECT * FROM topics WHERE teacher_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?");
@@ -240,18 +200,9 @@ $stmt->bind_param("iii", $teacher_id, $topics_per_page, $offset);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Debug: Log the query parameters and results
-error_log("Topics query - Teacher ID: " . $teacher_id . ", Limit: " . $topics_per_page . ", Offset: " . $offset);
-$topic_count = 0;
 while ($row = $result->fetch_assoc()) {
     $topics[] = $row;
-    $topic_count++;
 }
-error_log("Found " . $topic_count . " topics for display");
-
-// Debug: Add to debug info
-$debug_info .= "Topics query executed - Found: " . $topic_count . " topics<br>";
-$debug_info .= "Topics array after query: " . print_r($topics, true) . "<br>";
 ?>
 <!DOCTYPE html>
 <html lang="el">
@@ -265,155 +216,6 @@ $debug_info .= "Topics array after query: " . print_r($topics, true) . "<br>";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../css/TeacherCreateThesis.css?v=<?php echo time(); ?>">
-    <style>
-        .modal-content {
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        .modal-header {
-            background-color: #6A90C7;
-            color: white;
-            border-radius: 12px 12px 0 0;
-        }
-        .modal-header .btn-close {
-            filter: invert(1);
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            padding: 12px;
-            font-size: 14px;
-        }
-        .form-control:focus {
-            border-color: #6A90C7;
-            box-shadow: 0 0 0 0.2rem rgba(106, 144, 199, 0.25);
-        }
-        .btn-primary {
-            background-color: #6A90C7;
-            border-color: #6A90C7;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-        .btn-primary:hover {
-            background-color: #5a7fb7;
-            border-color: #5a7fb7;
-        }
-        .btn-secondary {
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-        
-        /* Pagination Styles */
-        
-        /* Custom scrollbar styling - invisible by default, visible on hover */
-        .topics-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .topics-grid::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        .topics-grid::-webkit-scrollbar-thumb {
-            background: transparent;
-            border-radius: 4px;
-            transition: background 0.3s ease;
-        }
-        
-        .topics-grid:hover::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        .topics-grid::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Firefox scrollbar styling */
-        .topics-grid {
-            scrollbar-width: thin;
-            scrollbar-color: transparent transparent;
-        }
-        
-        .topics-grid:hover {
-            scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-        }
-        
-        .topics-pagination {
-            flex-shrink: 0; /* Never shrink */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            padding: 20px 0;
-            height: 60px; /* Fixed height for pagination */
-        }
-        
-        .pagination-btn {
-            background: none;
-            border: none;
-            color: #6A90C7;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .pagination-btn:hover:not(:disabled) {
-            background-color: #6A90C7;
-            color: white;
-            transform: scale(1.05);
-        }
-        
-        .pagination-btn:disabled {
-            color: #ccc;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-        
-        .pagination-info {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-            min-width: 50px;
-            text-align: center;
-        }
-        
-        .alert-top {
-            position: fixed;
-            top: 20px;
-            left: calc(16.66667% + (83.33333% / 2));
-            transform: translateX(-50%);
-            z-index: 1050;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-            .alert-top {
-                left: 50%;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -509,7 +311,7 @@ $debug_info .= "Topics array after query: " . print_r($topics, true) . "<br>";
             <h2>Δημιουργία Νέου Θέματος</h2>
             <?php if (!empty($message)): ?>
                 <?php 
-                $alert_class = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'alert-success' : 'alert-danger';
+                $alert_class = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'alert-info' : 'alert-danger';
                 ?>
                 <div class="alert <?= $alert_class ?> alert-top"><?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
