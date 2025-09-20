@@ -2,7 +2,7 @@
 require_once "../config.php"; 
 session_start();
 
-// Only secretary allowed
+
 if (!isset($_SESSION['userid']) || $_SESSION['role'] !== 'secretary') {
     header("Location: login_page.php");
     exit();
@@ -11,7 +11,7 @@ if (!isset($_SESSION['userid']) || $_SESSION['role'] !== 'secretary') {
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['jsonFile'])) {
-    $role = $_POST['role']; // student or teacher
+    $role = $_POST['role']; 
     $fileTmp = $_FILES['jsonFile']['tmp_name'];
 
     if ($_FILES['jsonFile']['error'] !== UPLOAD_ERR_OK) {
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['jsonFile'])) {
         if ($data === null) {
             $message = "Λανθασμένη μορφή JSON.";
         } else {
-            // Αν το JSON είναι ένα object, το βάζουμε σε array
+            
             if (isset($data['am'])) {
                 $data = [$data];
             }
@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['jsonFile'])) {
                 $city          = $user['city'] ?? '';
                 $postcode      = $user['postcode'] ?? '';
 
-                // Αν δεν έχει email, skip
+                
                 if (empty($email)) {
                     $skipped++;
                     continue;
                 }
 
-                // auto-generate password
+                
                 $plainPassword  = $surname . rand(100, 999);
                 $hashedPassword = password_hash($plainPassword, PASSWORD_BCRYPT);
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['jsonFile'])) {
                         $inserted++;
                     }
                 } catch (mysqli_sql_exception $e) {
-                    // Αν υπάρχει διπλό email -> skip
+                    
                     if ($e->getCode() == 1062) { 
                         $skipped++;
                     } else {
