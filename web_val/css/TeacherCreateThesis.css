@@ -653,9 +653,19 @@ button:active {
     font-weight: 500;
 }
 
-.alert-info {
+/* Alert color variations for TeacherCreateThesis */
+.alert-top.alert-success {
     background-color: #6A90C7;
-    border-color: #6A90C7;
+    color: white;
+}
+
+.alert-top.alert-danger {
+    background-color: #bf323e;
+    color: white;
+}
+
+.alert-top.alert-info {
+    background-color: #6A90C7;
     color: white;
 }
 

@@ -138,10 +138,62 @@ $tRes = $db->query($q);
 <html lang="el">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Διαχείριση ΔΕ - Γραμματεία</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <link rel="stylesheet" href="../css/SecretaryManageThesis.css"> </head> <body> <div class="container-fluid"> <div class="row flex-nowrap"> <!-- Sidebar --> <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar collapse d-md-block" id="sidebarMenu"> <div class="sidebar-container"> <!-- Profile pic --> <img src="../icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='SecretaryProfile.html'"> <!-- User name link --> <div class="user-name"> Γραμματεία </div> <!-- Name separator --> <div class="name-separator"></div> <ul class="nav nav-pills flex-column mb-auto w-100"> <li class="nav-item nav-spacing"> <a href="SecretaryDashboard.php"> <img src="../icons/menu.png" alt="Dashboard" class="nav-icon"> Dashboard </a> </li> <li class="nav-spacing"> <a href="SecretaryThesis.php"> <img src="../icons/file.png" alt="Thesis View" class="nav-icon"> Προβολή ΔΕ </a> </li> <li class="nav-spacing"> <a href="SecretaryDataInput.html"> <img src="../icons/graph.png" alt="Data Input" class="nav-icon"> Εισαγωγή δεδομένων </a> </li> <li class="nav-spacing"> <a href="SecretaryManageThesis.php" class="active"> <img src="../icons/stats.png" alt="Manage Thesis" class="nav-icon"> Διαχείριση ΔΕ </a> </li> <div class="nav-separator"></div> <li class="nav-spacing"> <a href="SecretaryProfile.html"> <img src="../icons/setting.png" alt="Profile" class="nav-icon"> Προφίλ </a> </li> <li class="nav-spacing"> <a href="../login_page.php" class="logout"> <img src="../icons/logout.png" alt="Logout" class="nav-icon"> Αποσυνδεση </a> </li> </ul> </div> </div>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/SecretaryManageThesis.css">
 </head>
 <body>
+<div class="container-fluid">
+  <div class="row flex-nowrap">
+    <!-- Sidebar -->
+    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar collapse d-md-block" id="sidebarMenu">
+      <div class="sidebar-container">
+        <!-- Profile pic -->
+        <img src="../icons/account.png" alt="Profile" class="profile-avatar">
+        <!-- User name link -->
+        <div class="user-name">Γραμματεία</div>
+        <!-- Name separator -->
+        <div class="name-separator"></div>
+        <ul class="nav nav-pills flex-column mb-auto w-100">
+          <li class="nav-item nav-spacing">
+            <a href="SecretaryDashboard.php">
+              <img src="../icons/menu.png" alt="Dashboard" class="nav-icon">
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="SecretaryThesis.php">
+              <img src="../icons/file.png" alt="Thesis View" class="nav-icon">
+              Προβολή ΔΕ
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="SecretaryDataInput.html">
+              <img src="../icons/graph.png" alt="Data Input" class="nav-icon">
+              Εισαγωγή δεδομένων
+            </a>
+          </li>
+          <li class="nav-spacing">
+            <a href="SecretaryManageThesis.php" class="active">
+              <img src="../icons/stats.png" alt="Manage Thesis" class="nav-icon">
+              Διαχείριση ΔΕ
+            </a>
+          </li>
+          <div class="nav-separator"></div>
+          <li class="nav-spacing">
+            <a href="../logout.php" class="logout">
+              <img src="../icons/logout.png" alt="Logout" class="nav-icon">
+              Αποσυνδεση
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col py-3">
 <div class="container mt-4">
   <h1>Διαχείριση Διπλωματικών Εργασιών</h1>
   <hr>
@@ -198,8 +250,8 @@ $tRes = $db->query($q);
   <?php else: ?>
     <div class="alert alert-info">Δεν βρέθηκαν διπλωματικές.</div>
   <?php endif; ?>
-
-  
+    </div>
+  </div>
 </div>
 </body>
 </html>

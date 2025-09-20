@@ -139,91 +139,7 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../css/TeacherNotes.css?v=<?php echo time(); ?>">
-    <style>
-        .notification.info {
-            background: #17a2b8;
-        }
-        
-        .notes-section {
-            margin-top: 3rem;
-        }
-        
-        .notes-header {
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .notes-navigation {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .nav-arrow {
-            background: none;
-            border: none;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #333;
-        }
-        
-        .nav-arrow:hover {
-            color: #000;
-            transform: translateY(-1px);
-        }
-        
-        .nav-arrow.disabled {
-            color: #ccc;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-        
-        .nav-arrow.disabled:hover {
-            color: #ccc;
-            transform: none;
-        }
-        
-        .nav-arrow i {
-            font-size: 16px;
-        }
-        
-        .notes-list {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-        
-        .note-card {
-            width: 100%;
-        }
-        
-        .alert-top {
-            position: fixed;
-            top: 20px;
-            left: calc(16.66667% + (83.33333% / 2));
-            transform: translateX(-50%);
-            z-index: 1050;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-            .alert-top {
-                left: 50%;
-            }
-        }
-    </style>
+    
 </head>
 <body>
 
@@ -316,7 +232,16 @@ try {
 
         <!-- Alert Messages -->
         <?php if (!empty($message)): ?>
-            <div class="alert alert-info alert-top"><?= htmlspecialchars($message) ?></div>
+            <?php 
+            // Determine alert type based on message content
+            $alertClass = 'alert-info'; // Default to info (blue)
+            if (strpos($message, 'Σφάλμα') !== false) {
+                $alertClass = 'alert-danger'; // Red for errors
+            } elseif (strpos($message, 'διαγράφηκε επιτυχώς') !== false) {
+                $alertClass = 'alert-success'; // Blue for success
+            }
+            ?>
+            <div class="alert <?= $alertClass ?> alert-top"><?= htmlspecialchars($message) ?></div>
         <?php endif; ?>
 
         <!-- New Note Section -->

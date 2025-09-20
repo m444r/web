@@ -145,7 +145,7 @@ $cstmt = $db->prepare("
     <!-- Sidebar -->
     <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar collapse d-md-block" id="sidebarMenu">
       <div class="sidebar-container">
-        <img src="../icons/account.png" alt="Profile" class="profile-avatar" onclick="window.location.href='SecretaryProfile.html'">
+        <img src="../icons/account.png" alt="Profile" class="profile-avatar">
         <div class="user-name">Γραμματεία</div>
         <div class="name-separator"></div>
 
@@ -155,7 +155,6 @@ $cstmt = $db->prepare("
           <li class="nav-spacing"><a href="SecretaryDataInput.html"><img src="../icons/graph.png" class="nav-icon">Εισαγωγή δεδομένων</a></li>
           <li class="nav-spacing"><a href="SecretaryManageThesis.php"><img src="../icons/stats.png" class="nav-icon">Διαχείριση ΔΕ</a></li>
           <div class="nav-separator"></div>
-          <li class="nav-spacing"><a href="SecretaryProfile.html"><img src="../icons/setting.png" class="nav-icon">Προφίλ</a></li>
           <li class="nav-spacing"><a href="../login_page.php" class="logout"><img src="../icons/logout.png" class="nav-icon">Αποσύνδεση</a></li>
         </ul>
       </div>

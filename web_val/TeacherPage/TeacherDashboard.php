@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['student_query'], $_PO
         $existing_thesis = $stmt->get_result()->fetch_assoc();
 
         if ($existing_thesis) {
-            $message = "Ο φοιτητής έχει ήδη ανατεθεί σε άλλο θέμα: '" . htmlspecialchars($existing_thesis['title']) . "' (Status: " . $existing_thesis['status'] . "). Κάθε φοιτητής μπορεί να έχει μόνο μία διπλωματική εργασία.";
+            $message = "Ο φοιτητής έχει ήδη ανατεθεί σε άλλο θέμα: " . htmlspecialchars($existing_thesis['title']);
         } else {
             // Proceed with assignment
             try {
@@ -444,7 +444,16 @@ if (count($teachers_to_grade) == $total_grades) {
                 <div class="thesis-card">
                     <h3>Ανάθεση σε Φοιτητές</h3>
                     <?php if (!empty($message)): ?>
-                        <div class="alert alert-info alert-top"><?= htmlspecialchars($message) ?></div>
+                        <?php 
+                        // Determine alert type based on message content
+                        $alertClass = 'alert-info'; // Default to info (blue)
+                        if (strpos($message, 'Σφάλμα') !== false || strpos($message, 'δεν βρέθηκε') !== false || strpos($message, 'ήδη ανατεθεί') !== false) {
+                            $alertClass = 'alert-danger'; // Red for errors
+                        } elseif (strpos($message, 'ανατέθηκε') !== false || strpos($message, 'Βαθμός καταχωρήθηκε') !== false) {
+                            $alertClass = 'alert-success'; // Blue for success
+                        }
+                        ?>
+                        <div class="alert <?= $alertClass ?> alert-top"><?= htmlspecialchars($message) ?></div>
                     <?php endif; ?>
                     <form class="thesis-form" method="post">
                         <div class="form-group">

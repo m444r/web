@@ -3,7 +3,7 @@ session_start();
 require '../config.php';
 
 if (!isset($_SESSION["userid"])) {
-    header("Location: ../register.php");
+    header("Location: ../login_page.php");
     exit;
 }
 
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
                                 <i class="fas fa-link"></i> Σύνδεσμος Βιβλιοθήκης
                             </a>
                         <?php elseif ($thesis['status'] == 'completed'): ?>
-                            <a href="StudentManageThesis.php#protocol-section" class="btn btn-secondary">
+                            <a href="view_exam_protocol.php?topic_id=<?= $thesis['id'] ?>" target="_blank" class="btn btn-secondary">
                                 <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
                             </a>
                         <?php endif; ?>

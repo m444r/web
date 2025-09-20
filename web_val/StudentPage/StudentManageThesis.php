@@ -3,7 +3,7 @@ session_start();
 require '../config.php';
 
 if (!isset($_SESSION["userid"])) {
-    header("Location: ../register.php");
+    header("Location: ../login_page.php");
     exit;
 }
 
@@ -429,7 +429,7 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
                         <i class="fas fa-link"></i> Σύνδεσμος Βιβλιοθήκης
                     </a>
                 <?php elseif ($topic['status'] == 'completed'): ?>
-                    <a href="#protocol-section" class="btn btn-secondary">
+                    <a href="view_exam_protocol.php?topic_id=<?= $topic['id'] ?>" target="_blank" class="btn btn-secondary">
                         <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
                     </a>
                 <?php endif; ?>
@@ -572,29 +572,31 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
             return in_array($topic['status'], ['for_grade', 'completed']);
         });
         if (!empty($library_topics)): ?>
-        <div class="thesis-section" id="library-section">
-            <h2>Σύνδεσμος Βιβλιοθήκης</h2>
-            <p class="text-muted">Καταχωρήστε το σύνδεσμο προς το αποθετήριο της βιβλιοθήκης (Νημερτής).</p>
-            <form method="POST">
-                <div class="mb-3">
-                    <label for="library_topic" class="form-label">Επιλέξτε Διπλωματική</label>
-                    <select name="library_topic_id" id="library_topic" class="form-select" required>
-                        <option value="">-- Επιλέξτε Διπλωματική --</option>
-                        <?php foreach ($library_topics as $t): ?>
-                            <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['title']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+        <div class="status-card" id="library-section">
+                <h3>Σύνδεσμος Βιβλιοθήκης</h3>
+                <p class="text-muted">Καταχωρήστε το σύνδεσμο προς το αποθετήριο της βιβλιοθήκης (Νημερτής).</p>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="library_topic" class="form-label">Επιλέξτε Διπλωματική</label>
+                        <select name="library_topic_id" id="library_topic" class="form-select" required>
+                            <option value="">-- Επιλέξτε Διπλωματική --</option>
+                            <?php foreach ($library_topics as $t): ?>
+                                <option value="<?= $t['id'] ?>"><?= htmlspecialchars($t['title']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="library_link" class="form-label">Σύνδεσμος Βιβλιοθήκης</label>
-                    <input type="url" name="library_link" id="library_link" class="form-control" 
-                           placeholder="https://nemertes.lis.upatras.gr/..." required>
-                    <small class="form-text text-muted">Σύνδεσμος προς το τελικό κείμενο της διπλωματικής στο αποθετήριο της βιβλιοθήκης.</small>
-                </div>
+                    <div class="mb-3">
+                        <label for="library_link" class="form-label">Σύνδεσμος Βιβλιοθήκης</label>
+                        <input type="url" name="library_link" id="library_link" class="form-control" 
+                               placeholder="https://nemertes.lis.upatras.gr/..." required>
+                        <small class="form-text text-muted">Σύνδεσμος προς το τελικό κείμενο της διπλωματικής στο αποθετήριο της βιβλιοθήκης.</small>
+                    </div>
 
-                <button type="submit" class="btn btn-primary">Καταχώρηση Συνδέσμου</button>
-            </form>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Καταχώρηση Συνδέσμου</button>
+                    </div>
+                </form>
         </div>
         <?php endif; ?>
 
@@ -604,17 +606,22 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
             return $topic['status'] == 'completed';
         });
         if (!empty($protocol_topics)): ?>
-        <div class="thesis-section" id="protocol-section">
-            <h2>Πρακτικό Εξέτασης</h2>
-            <p class="text-muted">Προβολή του πρακτικού εξέτασης σε μορφή HTML.</p>
-            <?php foreach ($protocol_topics as $t): ?>
-                <div class="protocol-card mb-3">
-                    <h4><?= htmlspecialchars($t['title']) ?></h4>
-                    <a href="view_exam_protocol.php?topic_id=<?= $t['id'] ?>" target="_blank" class="btn btn-secondary">
-                        <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
-                    </a>
-                </div>
-            <?php endforeach; ?>
+        <div class="status-card" id="protocol-section">
+                <h3>Πρακτικό Εξέτασης</h3>
+                <p class="text-muted">Προβολή του πρακτικού εξέτασης σε μορφή HTML.</p>
+                <?php foreach ($protocol_topics as $t): ?>
+                    <div class="protocol-item mb-3">
+                        <div class="status-info">
+                            <span class="status-label">Διπλωματική:</span>
+                            <span class="status-value"><?= htmlspecialchars($t['title']) ?></span>
+                        </div>
+                        <div class="text-end mt-3">
+                            <a href="view_exam_protocol.php?topic_id=<?= $t['id'] ?>" target="_blank" class="btn btn-secondary">
+                                <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
         </div>
         <?php endif; ?>
 

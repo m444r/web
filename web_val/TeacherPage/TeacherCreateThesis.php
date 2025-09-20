@@ -311,9 +311,15 @@ while ($row = $result->fetch_assoc()) {
             <h2>Δημιουργία Νέου Θέματος</h2>
             <?php if (!empty($message)): ?>
                 <?php 
-                $alert_class = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'alert-info' : 'alert-danger';
+                // Determine alert type based on message content
+                $alertClass = 'alert-info'; // Default to info (blue)
+                if (strpos($message, 'Σφάλμα') !== false || strpos($message, 'δεν βρέθηκε') !== false || strpos($message, 'Μόνο αρχεία PDF') !== false || strpos($message, 'Παρακαλώ εισάγετε') !== false || strpos($message, 'Παρουσιάστηκε σφάλμα') !== false) {
+                    $alertClass = 'alert-danger'; // Red for errors
+                } elseif (strpos($message, 'δημιουργήθηκε επιτυχώς') !== false || strpos($message, 'ενημερώθηκε επιτυχώς') !== false || strpos($message, 'διαγράφηκε επιτυχώς') !== false) {
+                    $alertClass = 'alert-success'; // Blue for success
+                }
                 ?>
-                <div class="alert <?= $alert_class ?> alert-top"><?= htmlspecialchars($message) ?></div>
+                <div class="alert <?= $alertClass ?> alert-top"><?= htmlspecialchars($message) ?></div>
             <?php endif; ?>
             
             <form action="" method="POST" enctype="multipart/form-data">

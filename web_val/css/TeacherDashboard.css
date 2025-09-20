@@ -162,6 +162,47 @@ body {
   .sidebar.show {
     left: 0;
   }
+
+  /* Mobile container adjustments */
+  .container-fluid {
+    padding: 0 10px;
+  }
+
+  /* Mobile table responsiveness */
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+
+  .table th, .table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  /* Mobile form elements */
+  .form-control, .form-select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Mobile buttons */
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Mobile grading form */
+  .grading-form {
+    padding: 15px;
+  }
+
+  .form-input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  /* Mobile pagination */
+  .thesis-pagination {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 /* Teacher Dashboard Specific Styles */
@@ -621,6 +662,22 @@ header h1 {
   border-radius: 8px;
   padding: 12px 20px;
   font-weight: 500;
+}
+
+/* Alert color variations for TeacherDashboard */
+.alert-top.alert-success {
+  background-color: #6A90C7;
+  color: white;
+}
+
+.alert-top.alert-danger {
+  background-color: #bf323e;
+  color: white;
+}
+
+.alert-top.alert-info {
+  background-color: #6A90C7;
+  color: white;
 }
         
 @media (max-width: 768px) {

@@ -99,17 +99,17 @@ body {
 }
 
 .sidebar a.logout {
-  color: #FF6B6B;
+  color: #FF0000;
 }
 
 .sidebar a.logout:hover {
-  color: #FF5252;
-  background-color: rgba(255, 107, 107, 0.15);
+  color: #FF0000 !important;
+  background-color: rgba(255, 255, 255, 0.15);
   transform: translateX(4px);
 }
 
 .sidebar a.logout .nav-icon {
-  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+  filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(360deg) brightness(91%) contrast(118%);
 }
 
 .nav-spacing {
@@ -502,3 +502,105 @@ header h1 {
         grid-template-columns: 1fr;
     }
 }
+
+
+        .notification.info {
+            background: #17a2b8;
+        }
+        
+        .notes-section {
+            margin-top: 3rem;
+        }
+        
+        .notes-header {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notes-navigation {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .nav-arrow {
+            background: none;
+            border: none;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+        
+        .nav-arrow:hover {
+            color: #000;
+            transform: translateY(-1px);
+        }
+        
+        .nav-arrow.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .nav-arrow.disabled:hover {
+            color: #ccc;
+            transform: none;
+        }
+        
+        .nav-arrow i {
+            font-size: 16px;
+        }
+        
+        .notes-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .note-card {
+            width: 100%;
+        }
+        
+        .alert-top {
+            position: fixed;
+            top: 20px;
+            left: calc(16.66667% + (83.33333% / 2));
+            transform: translateX(-50%);
+            z-index: 1050;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 500;
+        }
+
+        /* Alert color variations for TeacherNotes */
+        .alert-top.alert-success {
+            background-color: #6A90C7;
+            color: white;
+        }
+
+        .alert-top.alert-danger {
+            background-color: #bf323e;
+            color: white;
+        }
+
+        .alert-top.alert-info {
+            background-color: #6A90C7;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .alert-top {
+                left: 50%;
+            }
+        }
+    

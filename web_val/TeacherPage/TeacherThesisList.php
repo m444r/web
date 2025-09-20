@@ -194,6 +194,154 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_grades' && isset($_GET['t
     echo implode('<br>', $gradesArr);
     exit;
 }
+
+// Handle announcement generation
+if (isset($_GET['action']) && $_GET['action'] === 'generate_announcement' && isset($_GET['topic_id'])) {
+    $topic_id = intval($_GET['topic_id']);
+    
+    // Get thesis details including presentation information
+    $stmt = $db->prepare("
+        SELECT t.id, t.title, t.status, t.exam_datetime, t.exam_mode, t.exam_location, t.presentation_location,
+               s.name AS student_name, s.surname AS student_surname,
+               u.name AS supervisor_name, u.surname AS supervisor_surname,
+               GROUP_CONCAT(
+                   DISTINCT CONCAT(c.name, ' ', c.surname)
+                   ORDER BY c.surname ASC SEPARATOR ', '
+               ) AS committee_members
+        FROM topics t
+        LEFT JOIN users s ON s.id = t.assigned_to  
+        JOIN users u ON u.id = t.teacher_id
+        LEFT JOIN committee_requests cr ON cr.topic_id = t.id AND cr.status='accepted'
+        LEFT JOIN users c ON c.id = cr.teacher_id
+        WHERE t.id = ? AND t.teacher_id = ?
+        GROUP BY t.id
+    ");
+    $stmt->bind_param("ii", $topic_id, $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        echo json_encode(['success' => false, 'message' => 'Διπλωματική δεν βρέθηκε ή δεν έχετε δικαίωμα πρόσβασης.']);
+        exit;
+    }
+    
+    $thesis = $result->fetch_assoc();
+    
+    // Check if thesis is in "for examination" status
+    if ($thesis['status'] !== 'for examination') {
+        echo json_encode(['success' => false, 'message' => 'Η ανακοίνωση μπορεί να δημιουργηθεί μόνο για διπλωματικές υπό εξέταση.']);
+        exit;
+    }
+    
+    // Check if student has completed presentation details
+    if (empty($thesis['student_name'])) {
+        echo json_encode(['success' => false, 'message' => 'Δεν υπάρχει φοιτητής ανατεθεί σε αυτή τη διπλωματική.']);
+        exit;
+    }
+    
+    // Check if presentation details are filled (exam_datetime and either exam_mode or exam_location)
+    if (empty($thesis['exam_datetime']) || (empty($thesis['exam_mode']) && empty($thesis['exam_location']) && empty($thesis['presentation_location']))) {
+        echo json_encode(['success' => false, 'message' => 'Η ανακοίνωση μπορεί να δημιουργηθεί μόνο εφόσον ο φοιτητής έχει συμπληρώσει τις λεπτομέρειες της παρουσίασης (ημερομηνία, ώρα και τρόπος διεξαγωγής).']);
+        exit;
+    }
+    
+    // Generate announcement text
+    $announcement = generateAnnouncementText($thesis);
+    
+    echo json_encode(['success' => true, 'announcement' => $announcement]);
+    exit;
+}
+
+// Handle checking presentation details
+if (isset($_GET['action']) && $_GET['action'] === 'check_presentation_details' && isset($_GET['topic_id'])) {
+    $topic_id = intval($_GET['topic_id']);
+    
+    // Check if thesis has presentation details filled
+    $stmt = $db->prepare("
+        SELECT t.exam_datetime, t.exam_mode, t.exam_location, t.presentation_location, t.status
+        FROM topics t
+        WHERE t.id = ? AND t.teacher_id = ?
+    ");
+    $stmt->bind_param("ii", $topic_id, $teacher_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        echo json_encode(['hasDetails' => false]);
+        exit;
+    }
+    
+    $thesis = $result->fetch_assoc();
+    
+    // Check if thesis is in "for examination" status and has presentation details
+    $hasDetails = ($thesis['status'] === 'for examination' && 
+                   !empty($thesis['exam_datetime']) && 
+                   (!empty($thesis['exam_mode']) || !empty($thesis['exam_location']) || !empty($thesis['presentation_location'])));
+    
+    echo json_encode(['hasDetails' => $hasDetails]);
+    exit;
+}
+
+// Function to generate announcement text
+function generateAnnouncementText($thesis) {
+    $title = htmlspecialchars($thesis['title']);
+    $student = htmlspecialchars($thesis['student_name'] . ' ' . $thesis['student_surname']);
+    $supervisor = htmlspecialchars($thesis['supervisor_name'] . ' ' . $thesis['supervisor_surname']);
+    $committee = htmlspecialchars($thesis['committee_members'] ?? '');
+    
+    // Format the exam datetime
+    $exam_datetime = '';
+    if (!empty($thesis['exam_datetime'])) {
+        $exam_datetime = date('d/m/Y \στις H:i', strtotime($thesis['exam_datetime']));
+    }
+    
+    // Format the exam mode and location
+    $exam_mode = htmlspecialchars($thesis['exam_mode'] ?? '');
+    $exam_location = htmlspecialchars($thesis['exam_location'] ?? '');
+    $presentation_location = htmlspecialchars($thesis['presentation_location'] ?? '');
+    
+    $exam_place = '';
+    if (!empty($presentation_location)) {
+        $exam_place = $presentation_location;
+    } elseif (!empty($exam_location)) {
+        $exam_place = $exam_location;
+    } elseif ($exam_mode === 'online' || $exam_mode === 'Γ') {
+        $exam_place = 'Διαδικτυακά (Online)';
+    } elseif ($exam_mode === 'in_person') {
+        $exam_place = 'Προσωπικά (Στο Πανεπιστήμιο)';
+    } else {
+        $exam_place = !empty($exam_mode) ? $exam_mode : 'Δεν έχει οριστεί';
+    }
+    
+    $announcement = "
+    <div class='announcement-text' style='background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #6A90C7;'>
+        <h4 style='color: #2c3e50; margin-bottom: 15px;'>ΑΝΑΚΟΙΝΩΣΗ ΠΑΡΟΥΣΙΑΣΗΣ ΔΙΠΛΩΜΑΤΙΚΗΣ ΕΡΓΑΣΙΑΣ</h4>
+        
+        <p><strong>Τίτλος Διπλωματικής:</strong> {$title}</p>
+        <p><strong>Φοιτητής/τρια:</strong> {$student}</p>
+        <p><strong>Επιβλέπων:</strong> {$supervisor}</p>";
+    
+    if (!empty($committee)) {
+        $announcement .= "<p><strong>Τριμελής:</strong> {$committee}</p>";
+    }
+    
+    $announcement .= "
+        <p><strong>Ημερομηνία και Ώρα:</strong> {$exam_datetime}</p>
+        <p><strong>Τόπος/Τρόπος Διεξαγωγής:</strong> {$exam_place}</p>
+        
+        <hr style='margin: 20px 0; border: none; border-top: 1px solid #dee2e6;'>
+        
+        <p style='font-style: italic; color: #6c757d;'>
+            Η παρουσίαση είναι ανοιχτή στο ευρύ κοινό και θα ακολουθηθεί συζήτηση.
+        </p>
+        
+        <p style='margin-top: 15px; font-size: 0.9em; color: #6c757d;'>
+            Για περισσότερες πληροφορίες, επικοινωνήστε με τον επιβλέποντα καθηγητή.
+        </p>
+    </div>";
+    
+    return $announcement;
+}
 ?>
 <!DOCTYPE html>
 <html lang="el">
@@ -207,53 +355,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_grades' && isset($_GET['t
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../css/TeacherThesisList.css?v=<?php echo time(); ?>">
-    <style>
-        .alert-top {
-            position: fixed;
-            top: 20px;
-            left: calc(16.66667% + (83.33333% / 2));
-            transform: translateX(-50%);
-            z-index: 1050;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            border-radius: 12px;
-            padding: 16px 24px;
-            font-weight: 500;
-            animation: slideDown 0.4s ease-out;
-            border: none;
-            font-size: 14px;
-            transition: opacity 0.5s ease;
-        }
-        
-        .alert-top.alert-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-        
-        .alert-top.alert-danger {
-            background: linear-gradient(135deg, #dc3545, #e74c3c);
-            color: white;
-        }
-        
-        @keyframes slideDown {
-            from {
-                transform: translateX(-50%) translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(-50%) translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .alert-top {
-                left: 50%;
-            }
-        }
-    </style>
 </head>
 
 <script>
@@ -467,7 +568,8 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     data-supervisor="<?= htmlspecialchars($row['supervisor_name'].' '.$row['supervisor_surname']) ?>"
                     data-committee="<?= htmlspecialchars($row['committee_members'] ?? '') ?>"
                     data-confirmed="<?= htmlspecialchars($row['confirmed_time'] ?? '') ?>"
-                    data-deadline="<?= $row['deadline'] ? htmlspecialchars(date('Y-m-d', strtotime($row['deadline']))) : '' ?>">
+                    data-deadline="<?= $row['deadline'] ? htmlspecialchars(date('Y-m-d', strtotime($row['deadline']))) : '' ?>"
+                    data-status="<?= htmlspecialchars($row['status']) ?>">
                     <i class="fas fa-eye"></i> Προβολή Λεπτομερειών
                   </button>
 
@@ -540,7 +642,16 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                 </form>
 
                 <?php if (!empty($_SESSION['cancel_message'])): ?>
-                  <div class="alert alert-info alert-top"><?= $_SESSION['cancel_message']; ?></div>
+                  <?php 
+                  // Determine alert type based on message content
+                  $alertClass = 'alert-info'; // Default to info (blue)
+                  if (strpos($_SESSION['cancel_message'], 'Σφάλμα') !== false) {
+                      $alertClass = 'alert-danger'; // Red for errors
+                  } elseif (strpos($_SESSION['cancel_message'], 'ακυρώθηκε') !== false || strpos($_SESSION['cancel_message'], 'ενεργοποιήθηκε') !== false) {
+                      $alertClass = 'alert-success'; // Blue for success
+                  }
+                  ?>
+                  <div class="alert <?= $alertClass ?> alert-top"><?= $_SESSION['cancel_message']; ?></div>
                   <?php unset($_SESSION['cancel_message']); ?>
                 <?php endif; ?>
 
@@ -555,6 +666,11 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                       <input type="hidden" name="activate_grading" value="1">
                       <button type="button" class="btn btn-success" id="activate-grading-btn">Υποβολη Βαθμου</button>
                   </form>
+
+                  <!-- Announcement Generation Button (only for for examination status) -->
+                  <button type="button" class="btn btn-info mt-2" id="generate-announcement-btn" style="display: none;">
+                      <i class="fas fa-bullhorn"></i> Δημιουργία Ανακοίνωσης
+                  </button>
                   </div>
 
                   <!-- Grade Submission Form -->
@@ -590,6 +706,25 @@ document.getElementById("saveBtn").addEventListener("click", function () {
                     </form>
                   </div>
 
+                  <!-- Announcement Generation Section -->
+                  <div class="mt-4" id="announcement-section" style="display: none;">
+                    <h5 class="mb-3">Ανακοίνωση Παρουσίασης Διπλωματικής</h5>
+                    <div class="alert alert-info">
+                      <strong>Σημείωση:</strong> Η ανακοίνωση μπορεί να δημιουργηθεί μόνο εφόσον ο φοιτητής έχει συμπληρώσει τις λεπτομέρειες της παρουσίασης.
+                    </div>
+                    <div id="announcement-content" class="announcement-text">
+                      <!-- Announcement will be generated here -->
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                      <button type="button" class="btn btn-primary" id="copy-announcement-btn">
+                        <i class="fas fa-copy"></i> Αντιγραφή
+                      </button>
+                      <button type="button" class="btn btn-success" id="download-announcement-btn">
+                        <i class="fas fa-download"></i> Λήψη
+                      </button>
+                      <button type="button" class="btn btn-secondary" onclick="hideAnnouncementSection()">Κλείσιμο</button>
+                    </div>
+                  </div>
 
                   <!-- ===== Ακύρωση λόγω καθυστέρησης ===== -->
                   <form method="post" action="../updateExam.php" 
@@ -725,6 +860,7 @@ document.addEventListener("DOMContentLoaded", () => {
   detailsModal.addEventListener('show.bs.modal', event => {
     const button = event.relatedTarget;
     const topicId = button.getAttribute('data-id');
+    const status = button.getAttribute('data-status');
 
     // Γεμίζουμε όλα τα hidden inputs με το topicId
     document.getElementById('modal-topic-id').value = topicId;
@@ -746,6 +882,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('activate-grading-btn').onclick = function() {
         document.getElementById('modal-activate-topic-id').value = topicId;
     };
+
+    // Show/hide announcement button based on status and presentation details
+    const announcementBtn = document.getElementById('generate-announcement-btn');
+    if (status === 'for examination') {
+        // Check if presentation details are available by making a quick check
+        checkPresentationDetails(topicId, announcementBtn);
+    } else {
+        announcementBtn.style.display = 'none';
+    }
 
   });
 });
@@ -798,7 +943,115 @@ detailsModal.addEventListener('show.bs.modal', event => {
         showGradeForm(topicId);
       });
     }
+
+    // Announcement generation functionality
+    const generateAnnouncementBtn = document.getElementById('generate-announcement-btn');
+    if (generateAnnouncementBtn) {
+      generateAnnouncementBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const topicId = document.getElementById('modal-topic-id').value;
+        generateAnnouncement(topicId);
+      });
+    }
+
+    // Copy announcement functionality
+    const copyAnnouncementBtn = document.getElementById('copy-announcement-btn');
+    if (copyAnnouncementBtn) {
+      copyAnnouncementBtn.addEventListener('click', function() {
+        copyAnnouncement();
+      });
+    }
+
+    // Download announcement functionality
+    const downloadAnnouncementBtn = document.getElementById('download-announcement-btn');
+    if (downloadAnnouncementBtn) {
+      downloadAnnouncementBtn.addEventListener('click', function() {
+        downloadAnnouncement();
+      });
+    }
   });
+
+  // Check if presentation details are filled
+  function checkPresentationDetails(topicId, announcementBtn) {
+    fetch(`?action=check_presentation_details&topic_id=${topicId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.hasDetails) {
+          announcementBtn.style.display = 'inline-block';
+        } else {
+          announcementBtn.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('Error checking presentation details:', error);
+        announcementBtn.style.display = 'none';
+      });
+  }
+
+  // Announcement generation functions
+  function generateAnnouncement(topicId) {
+    // Show loading state
+    document.getElementById('announcement-content').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Δημιουργία ανακοίνωσης...</div>';
+    document.getElementById('announcement-section').style.display = 'block';
+    
+    // Scroll to announcement section
+    document.getElementById('announcement-section').scrollIntoView({ behavior: 'smooth' });
+
+    // Fetch announcement data
+    fetch(`?action=generate_announcement&topic_id=${topicId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('announcement-content').innerHTML = data.announcement;
+        } else {
+          document.getElementById('announcement-content').innerHTML = 
+            `<div class="alert alert-danger">${data.message}</div>`;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('announcement-content').innerHTML = 
+          '<div class="alert alert-danger">Σφάλμα κατά τη δημιουργία της ανακοίνωσης.</div>';
+      });
+  }
+
+  function hideAnnouncementSection() {
+    document.getElementById('announcement-section').style.display = 'none';
+  }
+
+  function copyAnnouncement() {
+    const announcementText = document.getElementById('announcement-content').textContent;
+    navigator.clipboard.writeText(announcementText).then(function() {
+      // Show success message
+      const btn = document.getElementById('copy-announcement-btn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> Αντιγράφηκε!';
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-success');
+      
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-primary');
+      }, 2000);
+    }).catch(function(err) {
+      console.error('Could not copy text: ', err);
+      alert('Σφάλμα κατά την αντιγραφή');
+    });
+  }
+
+  function downloadAnnouncement() {
+    const announcementText = document.getElementById('announcement-content').textContent;
+    const blob = new Blob([announcementText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'announcement.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 </script>
 </body>
 </html>
