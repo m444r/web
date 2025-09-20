@@ -1,34 +1,34 @@
 <?php
 session_start();
-require_once "../config.php"; // adjust path if needed
+require_once "../config.php";
 
-// Development debug flag - set to false on production
+
 $debug = true;
 
-// Protect page: only secretary allowed
+
 if (!isset($_SESSION['userid']) || $_SESSION['role'] !== 'secretary') {
     header("Location: ../login_page.php");
     exit();
 }
 
-// Ensure DB connection exists
+
 if (!isset($db) || !$db) {
     die("Database connection not established.");
 }
 
-// === Collect filters ===
+
 $statusFilter     = $_GET['status'] ?? 'all';
 $departmentFilter = $_GET['department'] ?? 'all';
 $search           = trim($_GET['search'] ?? '');
 
-// === Map UI status values to DB status values ===
+
 $status_map = [
     'active'     => ["confirmed", "available"],
     'examination'=> ["for examination"],
     'completed'  => ["completed"],
 ];
 
-// === Department column detection ===
+
 $deptColumn = null;
 $colRes = $db->query("SHOW COLUMNS FROM users LIKE 'department'");
 if ($colRes && $colRes->num_rows > 0) {
@@ -40,7 +40,7 @@ if ($colRes && $colRes->num_rows > 0) {
     }
 }
 
-// === Build SQL ===
+
 $sql = "
     SELECT
       t.id,
@@ -63,11 +63,11 @@ $sql = "
     WHERE 1=1
 ";
 
-// === Apply filters with prepared statements ===
+
 $types = "";
 $params = [];
 
-// Status filter
+
 if ($statusFilter !== 'all') {
     if (isset($status_map[$statusFilter])) {
         $placeholders = implode(',', array_fill(0, count($status_map[$statusFilter]), '?'));
@@ -83,14 +83,14 @@ if ($statusFilter !== 'all') {
     }
 }
 
-// Department filter
+
 if ($departmentFilter !== 'all' && $deptColumn !== null) {
     $sql .= " AND s.$deptColumn = ?";
     $types .= "s";
     $params[] = $departmentFilter;
 }
 
-// Search filter
+
 if (!empty($search)) {
     $sql .= " AND (t.title LIKE CONCAT('%', ?, '%') OR s.name LIKE CONCAT('%', ?, '%') OR s.surname LIKE CONCAT('%', ?, '%'))";
     $types .= "sss";
@@ -113,7 +113,6 @@ if ($types !== "") {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Committee lookup prepared stmt
 $cstmt = $db->prepare("
     SELECT u.name, u.surname, u.role
     FROM committee_requests cr
