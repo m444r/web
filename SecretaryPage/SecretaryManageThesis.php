@@ -1,16 +1,16 @@
 <?php
 session_start();
-require_once "../config.php"; // ensure this creates a mysqli $db connection ($db = new mysqli(...))
+require_once "../config.php";
 
-$debug = true; // false σε production
+$debug = true; 
 
-// --- Protect page: only secretary allowed
+
 if (!isset($_SESSION['userid']) || $_SESSION['role'] !== 'secretary') {
     header("Location: ../login_page.php");
     exit();
 }
 
-// --- Helper flash messages
+
 function set_flash($msg, $type = 'success') {
     $_SESSION['flash'] = ['msg' => $msg, 'type' => $type];
 }
@@ -23,35 +23,12 @@ function get_flash() {
     return null;
 }
 
-// --- Ensure topic_logs table exists
-$db->query("
-CREATE TABLE IF NOT EXISTS topic_logs (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  topic_id INT NOT NULL,
-  user_id INT DEFAULT NULL,
-  action VARCHAR(100) NOT NULL,
-  old_status VARCHAR(50) DEFAULT NULL,
-  new_status VARCHAR(50) DEFAULT NULL,
-  details TEXT DEFAULT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  KEY idx_topic (topic_id),
-  KEY idx_user (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-");
 
-// --- Ensure topics has needed columns
-$db->query("ALTER TABLE topics ADD COLUMN IF NOT EXISTS protocol_ap VARCHAR(100) DEFAULT NULL");
-$db->query("ALTER TABLE topics ADD COLUMN IF NOT EXISTS cancel_reason TEXT DEFAULT NULL");
-$db->query("ALTER TABLE topics ADD COLUMN IF NOT EXISTS cancel_info VARCHAR(255) DEFAULT NULL");
-$db->query("ALTER TABLE topics ADD COLUMN IF NOT EXISTS final_grade FLOAT DEFAULT NULL");
-$db->query("ALTER TABLE topics ADD COLUMN IF NOT EXISTS nemertes_url VARCHAR(255) DEFAULT NULL");
-
-// --- Handle actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
     $topic_id = (int)($_POST['topic_id'] ?? 0);
 
-    // fetch old status
+    
     $oldStatus = null;
     $ps = $db->prepare("SELECT status FROM topics WHERE id=?");
     $ps->bind_param("i", $topic_id);
@@ -66,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         exit();
     }
 
-    // --- Register Protocol (only if active)
+    
     if ($action === 'register_protocol' && in_array($oldStatus, ['confirmed','available'])) {
         $protocol_number = trim($_POST['protocol_number'] ?? '');
         if ($protocol_number === '') {
@@ -78,49 +55,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $upd->close();
 
             if ($ok) {
-                $log = $db->prepare("INSERT INTO topic_logs (topic_id,user_id,action,old_status,new_status,details) VALUES (?,?,?,?,?,?)");
-                $uid = $_SESSION['userid'];
-                $detail = "ΑΠ: ".$protocol_number;
-                $log->bind_param("iissss", $topic_id, $uid, $action, $oldStatus, $oldStatus, $detail);
-                $log->execute();
-                $log->close();
                 set_flash("Ο ΑΠ ($protocol_number) καταχωρήθηκε επιτυχώς.");
             }
         }
         header("Location: SecretaryManageThesis.php"); exit();
     }
 
-    // --- Cancel Thesis (only if active)
-    if ($action === 'cancel_thesis' && in_array($oldStatus, ['confirmed','available'])) {
-        $cancel_info = trim($_POST['cancellation_reason'] ?? '');
-        if ($cancel_info === '') {
-            set_flash("Παρακαλώ εισάγετε ΓΣ για ακύρωση.", "danger");
-        } else {
-            $reason_text = "κατόπιν αίτησης Φοιτητή/τριας";
-            $upd = $db->prepare("UPDATE topics SET status='cancelled', cancel_reason=?, cancel_info=? WHERE id=?");
-            $upd->bind_param("ssi", $reason_text, $cancel_info, $topic_id);
-            $ok = $upd->execute();
-            $upd->close();
+   
+if ($action === 'cancel_thesis' && in_array($oldStatus, ['confirmed','available'])) {
+    $cancel_info = trim($_POST['cancellation_reason'] ?? '');
+    if ($cancel_info === '') {
+        set_flash("Παρακαλώ εισάγετε ΓΣ για ακύρωση.", "danger");
+    } else {
+        $reason_text = "κατόπιν αίτησης Φοιτητή/τριας";
+        $cancel_info_formatted = "ΓΣ " . $cancel_info; 
 
-            if ($ok) {
-                $uid = $_SESSION['userid'];
-                $newStatus = "cancelled";
-                $detail = "Ακύρωση ΓΣ: ".$cancel_info;
-                $log = $db->prepare("INSERT INTO topic_logs (topic_id,user_id,action,old_status,new_status,details) VALUES (?,?,?,?,?,?)");
-                $log->bind_param("iissss", $topic_id, $uid, $action, $oldStatus, $newStatus, $detail);
-                $log->execute(); $log->close();
-                set_flash("Η ΔΕ ακυρώθηκε επιτυχώς.");
-            }
+        $upd = $db->prepare("UPDATE topics SET status='cancelled', cancel_reason=?, cancel_info=? WHERE id=?");
+        $upd->bind_param("ssi", $reason_text, $cancel_info_formatted, $topic_id);
+        $ok = $upd->execute();
+        $upd->close();
+
+        if ($ok) {
+            set_flash("Η ΔΕ ακυρώθηκε επιτυχώς.");
         }
-        header("Location: SecretaryManageThesis.php"); exit();
     }
+    header("Location: SecretaryManageThesis.php"); exit();
+}
 
-    // --- Complete Thesis (only if under examination)
+
+    
     if ($action === 'complete_thesis' && $oldStatus === 'for examination') {
         $grade = trim($_POST['final_grade'] ?? '');
         $grade = $grade !== '' ? floatval(str_replace(',', '.', $grade)) : null;
 
-        // check nemertes url
+    
         $nem = null;
         $chk = $db->prepare("SELECT nemertes_url FROM topics WHERE id=?");
         $chk->bind_param("i", $topic_id);
@@ -142,12 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $ok = $upd->execute(); $upd->close();
 
             if ($ok) {
-                $uid = $_SESSION['userid'];
-                $newStatus = "completed";
-                $detail = "Ολοκλήρωση ΔΕ".($grade!==null ? " με βαθμό $grade" : "");
-                $log = $db->prepare("INSERT INTO topic_logs (topic_id,user_id,action,old_status,new_status,details) VALUES (?,?,?,?,?,?)");
-                $log->bind_param("iissss", $topic_id, $uid, $action, $oldStatus, $newStatus, $detail);
-                $log->execute(); $log->close();
                 set_flash("Η ΔΕ χαρακτηρίστηκε ως Περατωμένη.");
             }
         }
@@ -158,22 +120,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header("Location: SecretaryManageThesis.php"); exit();
 }
 
-// --- Fetch all theses
+
 $q = "
 SELECT t.id,t.title,t.status,t.protocol_ap,t.final_grade,t.nemertes_url,
        s.name AS student_name,s.surname AS student_surname,
        sup.name AS supervisor_name,sup.surname AS supervisor_surname
 FROM topics t
 LEFT JOIN users s ON t.assigned_to=s.id
-LEFT JOIN users sup ON t.teacher_id=s.id
+LEFT JOIN users sup ON t.teacher_id=sup.id
 ORDER BY t.id DESC";
 $tRes = $db->query($q);
-
-// --- Fetch logs
-$logs = [];
-$lr = $db->query("SELECT l.*,u.name AS uname,u.surname AS usurname FROM topic_logs l LEFT JOIN users u ON l.user_id=u.id ORDER BY l.created_at DESC LIMIT 10");
-if ($lr) { while ($r=$lr->fetch_assoc()) $logs[]=$r; }
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="el">
 <head>
@@ -202,7 +162,7 @@ if ($lr) { while ($r=$lr->fetch_assoc()) $logs[]=$r; }
           <p><strong>Κατάσταση:</strong> <?php echo htmlspecialchars($row['status']); ?></p>
           <p><strong>ΑΠ:</strong> <?php echo htmlspecialchars($row['protocol_ap']??'-'); ?> | <strong>Βαθμός:</strong> <?php echo htmlspecialchars($row['final_grade']??'-'); ?></p>
 
-          <!-- Actions depending on status -->
+        
           <?php if (in_array($row['status'], ['confirmed','available'])): ?>
             <form method="post" class="mb-2">
               <input type="hidden" name="action" value="register_protocol">
@@ -239,18 +199,7 @@ if ($lr) { while ($r=$lr->fetch_assoc()) $logs[]=$r; }
     <div class="alert alert-info">Δεν βρέθηκαν διπλωματικές.</div>
   <?php endif; ?>
 
-  <h4 class="mt-4">Ιστορικό</h4>
-  <?php if ($logs): ?>
-    <ul class="list-group">
-      <?php foreach($logs as $l): ?>
-        <li class="list-group-item">
-          <strong><?php echo htmlspecialchars($l['action']); ?></strong>
-          - <?php echo htmlspecialchars($l['details']); ?>
-          <br><small><?php echo htmlspecialchars($l['created_at']); ?> από <?php echo htmlspecialchars($l['uname'].' '.$l['usurname']); ?></small>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-  <?php endif; ?>
+  
 </div>
 </body>
 </html>
