@@ -1,0 +1,68 @@
+/* announcements.css */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.login-btn {
+  display: inline-block;
+  float: right;
+  margin-top: -50px;
+  padding: 10px 20px;
+  background: #3498db;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.login-btn:hover {
+  background: #2980b9;
+}
+
+.announcements {
+  list-style: none;
+  padding: 0;
+}
+
+.announcement {
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.announcement:last-child {
+  border-bottom: none;
+}
+
+.announcement h3 {
+  margin: 0 0 10px;
+  color: #34495e;
+}
+
+.announcement p {
+  margin: 5px 0;
+  font-size: 15px;
+}
+
+.announcement strong {
+  color: #2c3e50;
+}
