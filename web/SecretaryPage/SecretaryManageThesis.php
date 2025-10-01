@@ -176,7 +176,7 @@ $tRes = $db->query($q);
             </a>
           </li>
           <li class="nav-spacing">
-            <a href="SecretaryDataInput.html">
+            <a href="SecretaryDataInput.php">
               <img src="../icons/graph.png" alt="Data Input" class="nav-icon">
               Εισαγωγή δεδομένων
             </a>

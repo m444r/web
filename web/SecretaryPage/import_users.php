@@ -92,6 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['jsonFile'])) {
 </head>
 <body>
   <h1><?php echo htmlspecialchars($message); ?></h1>
-  <a href="SecretaryDataInput.html">Επιστροφή</a>
+  <a href="SecretaryDataInput.php">Επιστροφή</a>
 </body>
 </html>

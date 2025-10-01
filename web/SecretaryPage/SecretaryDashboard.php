@@ -48,7 +48,7 @@ $completed_thesis = getCount($db, "SELECT COUNT(*) AS c FROM topics WHERE status
         <ul class="nav nav-pills flex-column mb-auto w-100">
           <li class="nav-item nav-spacing"><a href="SecretaryDashboard.php" class="active"><img src="../icons/menu.png" class="nav-icon">Dashboard</a></li>
           <li class="nav-spacing"><a href="SecretaryThesis.php"><img src="../icons/file.png" class="nav-icon">Προβολή ΔΕ</a></li>
-          <li class="nav-spacing"><a href="SecretaryDataInput.html"><img src="../icons/graph.png" class="nav-icon">Εισαγωγή δεδομένων</a></li>
+          <li class="nav-spacing"><a href="SecretaryDataInput.php"><img src="../icons/graph.png" class="nav-icon">Εισαγωγή δεδομένων</a></li>
           <li class="nav-spacing"><a href="SecretaryManageThesis.php"><img src="../icons/stats.png" class="nav-icon">Διαχείριση ΔΕ</a></li>
           <div class="nav-separator"></div>
           <li class="nav-spacing"><a href="../logout.php" class="logout"><img src="../icons/logout.png" class="nav-icon">Αποσύνδεση</a></li>
