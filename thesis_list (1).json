@@ -1,0 +1,30 @@
+[
+    {
+      "id": "50",
+      "name": "Makis",
+      "surname": "Makopoulos",
+      "student_number": "10433999",
+      "street": "test street",
+      "number": "45",
+      "city": "test city",
+      "postcode": "39955",
+      "father_name": "Orestis",
+      "landline_telephone": "2610333000",
+      "mobile_telephone": "6939096979",
+      "email": "104333999@students.upatras.gr"
+    },
+    {
+      "id": "55",
+      "name": "John",
+      "surname": "Lennon",
+      "student_number": "10434000",
+      "street": "Ermou",
+      "number": "18",
+      "city": "Athens",
+      "postcode": "10431",
+      "father_name": "George",
+      "landline_telephone": "2610123456",
+      "mobile_telephone": "6970001112",
+      "email": "st10434000@upnet.gr"
+    }
+]
