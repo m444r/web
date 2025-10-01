@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                         header("Location: TeacherPage/TeacherDashboard.php"); // Redirect to teacher's page
                         exit;
                     } elseif ($role == 'secretary') {
-                        header("Location: SecretaryPage/SecretaryDashboard.html"); // Redirect to secretary's page
+                        header("Location: SecretaryPage/SecretaryDashboard.php"); // Redirect to secretary's page
                         exit;
                     }
                     else {
@@ -138,4 +138,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     });
   </script>
 </body>
+
 </html>
