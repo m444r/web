@@ -1,142 +1,86 @@
 <?php
-require_once "config.php";
-require_once "session.php";
+// announcments_page.php
+// This file shows the announcements in styled HTML using announcments.css
 
-$error = '';
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+// --- DB Connection ---
+$host = "localhost";
+$user = "root";      // change this
+$pass = "";  // change this
+$dbname = "web";    // change this
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $role = $_POST['role'];
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
 
-    // validate if email is empty
-    if (empty($email)) {
-        $error = 'Please enter email.';
-    }
+// --- Fetch announcements (latest first) ---
+$sql = "SELECT id, title, presenter, date, location, description 
+        FROM announcements 
+        ORDER BY date ASC";
+$result = $conn->query($sql);
 
-    // validate if password is empty
-    if (empty($password)) {
-        $error = 'Please enter your password.';
-    }
-
-    if (empty($error)) {
-        // Παίρνουμε τον χρήστη από τη βάση
-        $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        if ($row) {
-            if (password_verify($password, $row['password'])) {
-                $_SESSION["userid"] = $row['id'];
-                $_SESSION["user"] = $row;
-                $_SESSION["role"] = $row['role'];
-                
-                if ($role == $row['role']) {
-                    $_SESSION["userid"] = $row['id'];  // Store user ID in session
-
-                    // Redirect based on the user's role
-                    if ($role == 'student') {
-                        header("Location: StudentPage/StudentDashboard.php"); // Redirect to student's page
-                        exit;
-                    } elseif ($role == 'teacher') {
-                        header("Location: TeacherPage/TeacherDashboard.php"); // Redirect to teacher's page
-                        exit;
-                    } elseif ($role == 'secretary') {
-                        header("Location: SecretaryPage/SecretaryDashboard.php"); // Redirect to secretary's page
-                        exit;
-                    }
-                    else {
-                        $error = 'Your selected role does not match your account role.';
-                    }
-
-                } else {
-                    $error = 'Selected role (' . $role . ') does not match account role (' . $row['role'] . ').';
-                } 
-     
-            } else {
-                $error = 'The password is not valid.';
-            }
-            
-            
-        } else {
-            $error = 'No User exist with that email address.';
-        }
+$announcements = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $announcements[] = $row;
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login Page</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
-  <link rel="stylesheet" href="css/login.css">
+    <meta charset="UTF-8">
+    <title>Ανακοινώσεις Διπλωματικών</title>
+    <link rel="stylesheet" href="css/announcments.css">
 </head>
 <body>
-  <form class="login-container" id="loginForm" method="POST" novalidate>
-    <div class="login-icon">
-      <img src="icons/account.png" alt="Profile" class="profile-icon">
+    <!-- Top bar -->
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <div class="brand-logo">Π</div>
+                <div class="brand-text">
+                    <div class="brand-title">Παρουσιάσεις Διπλωματικών</div>
+                    <div class="brand-tagline">Τμήμα Μηχανικών Η/Υ και Πληροφορικής</div>
+                </div>
+            </div>
+            <a href="login_page.php" class="login-btn">Σύνδεση</a>
+        </div>
     </div>
-    <div class="roles">
-      <label><input type="radio" name="role" value="student" <?php echo (!isset($_POST['role']) || $_POST['role'] == 'student') ? 'checked' : ''; ?>> Student</label>
-      <label><input type="radio" name="role" value="teacher" <?php echo (isset($_POST['role']) && $_POST['role'] == 'teacher') ? 'checked' : ''; ?>> Teacher</label>
-      <label><input type="radio" name="role" value="secretary" <?php echo (isset($_POST['role']) && $_POST['role'] == 'secretary') ? 'checked' : ''; ?>> Secretary</label>
-    </div>
-    <div class="form-group">
-      <input type="email" id="email" name="email" class="form-input" placeholder=" " required autocomplete="username" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
-      <label for="email" class="form-label">Email Address</label>
-    </div>
-    <div class="form-group">
-      <input type="password" id="password" name="password" class="form-input" placeholder=" " required autocomplete="current-password" minlength="4">
-      <label for="password" class="form-label">Password</label>
-      <button type="button" class="password-toggle" id="passwordToggle" onclick="togglePassword()">
-        <img src="icons/hidden.png" alt="Show Password" class="toggle-icon" id="toggleIcon">
-      </button>
-    </div>
-    <button type="submit" name="submit" class="login-btn">LOGIN</button>
-    <?php if (!empty($error)): ?>
-      <div class="error-message" id="errorMsg"><?php echo htmlspecialchars($error); ?></div>
-    <?php else: ?>
-      <div class="error-message" id="errorMsg"></div>
-    <?php endif; ?>
-  </form>
-  <script>
-    const form = document.getElementById('loginForm');
-    const errorMsg = document.getElementById('errorMsg');
-    
-    function togglePassword() {
-      const passwordInput = document.getElementById('password');
-      const toggleIcon = document.getElementById('toggleIcon');
-      
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.src = 'icons/show.png';
-        toggleIcon.alt = 'Hide Password';
-      } else {
-        passwordInput.type = 'password';
-        toggleIcon.src = 'icons/hidden.png';
-        toggleIcon.alt = 'Show Password';
-      }
-    }
-    
-    form.addEventListener('submit', function(e) {
-      errorMsg.textContent = '';
-      if (!form.checkValidity()) {
-        e.preventDefault();
-        if (!form.email.value) {
-          errorMsg.textContent = 'Please enter your email address.';
-        } else if (!form.password.value) {
-          errorMsg.textContent = 'Please enter your password.';
-        } else if (!form.email.validity.valid) {
-          errorMsg.textContent = 'Please enter a valid email address.';
-        } else {
-          errorMsg.textContent = 'Please fill in all fields correctly.';
-        }
-      }
-    });
-  </script>
-</body>
 
+    <!-- Container -->
+    <div class="container">
+        <h1>Ανακοινώσεις Παρουσίασης Διπλωματικών</h1>
+        <p class="intro">Εδώ θα βρείτε όλες τις προγραμματισμένες παρουσιάσεις.</p>
+
+        <ul class="announcements">
+            <?php if (count($announcements) > 0): ?>
+                <?php foreach ($announcements as $a): ?>
+                    <li class="announcement">
+                        <div class="announcement-header">
+                            <h2 class="announcement-title"><?= htmlspecialchars($a['title']) ?></h2>
+                            <span class="badge"><?= date("d/m/Y", strtotime($a['date'])) ?></span>
+                        </div>
+                        <div class="announcement-body">
+                            <p><strong>Παρουσιαστής:</strong> <?= htmlspecialchars($a['presenter']) ?></p>
+                            <p><strong>Τοποθεσία:</strong> <?= htmlspecialchars($a['location']) ?></p>
+                            <p><?= nl2br(htmlspecialchars($a['description'])) ?></p>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Δεν υπάρχουν προγραμματισμένες παρουσιάσεις.</p>
+            <?php endif; ?>
+        </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="site-footer">
+        <div class="footer-inner">
+            <span>© <?= date("Y") ?> Τμήμα Μηχανικών Η/Υ και Πληροφορικής</span>
+            <a href="login_page.php" class="footer-login">Σύνδεση</a>
+        </div>
+    </div>
+</body>
 </html>
+
