@@ -38,7 +38,7 @@ if ($student_id) {
     $stmt = $db->prepare("SELECT t.*, u.name AS teacher_name, u.surname AS teacher_surname  
                           FROM topics t 
                           JOIN users u ON t.teacher_id = u.id 
-                          WHERE t.assigned_to = ? AND t.status IN ('awaiting_committee', 'confirmed', 'for examination', 'for_grade', 'completed')
+                          WHERE t.assigned_to = ? AND t.status IN ('awaiting_committee', 'confirmed', 'for examination', 'finished', 'completed')
                           ORDER BY t.id DESC");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
@@ -209,8 +209,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
                     'awaiting_committee' => ['title' => 'Υπό Ανάθεση - Επιλογή Επιτροπής', 'class' => 'warning', 'icon' => 'fas fa-users'],
                     'confirmed' => ['title' => 'Ενεργή Διπλωματική', 'class' => 'active', 'icon' => 'fas fa-play'],
                     'for examination' => ['title' => 'Υπό Εξέταση', 'class' => 'info', 'icon' => 'fas fa-search'],
-                    'for_grade' => ['title' => 'Υπό Βαθμολόγηση', 'class' => 'info', 'icon' => 'fas fa-chart-line'],
-                    'completed' => ['title' => 'Περατωμένη Διπλωματική', 'class' => 'success', 'icon' => 'fas fa-check-circle']
+                    'completed' => ['title' => 'Υπό Βαθμολόγηση', 'class' => 'info', 'icon' => 'fas fa-chart-line'],
+                    'finished' => ['title' => 'Περατωμένη Διπλωματική', 'class' => 'success', 'icon' => 'fas fa-check-circle']
                 ];
                 $current_status = $status_info[$thesis['status']] ?? ['title' => 'Διπλωματική Εργασία', 'class' => 'pending', 'icon' => 'fas fa-file'];
                 ?>
@@ -260,11 +260,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['topic_id'])) {
                             <a href="StudentManageThesis.php#exam-section" class="btn btn-info">
                                 <i class="fas fa-edit"></i> Ενημέρωση Εξέτασης
                             </a>
-                        <?php elseif ($thesis['status'] == 'for_grade'): ?>
+                        <?php elseif ($thesis['status'] == 'completed'): ?>
                             <a href="StudentManageThesis.php#library-section" class="btn btn-warning">
                                 <i class="fas fa-link"></i> Σύνδεσμος Βιβλιοθήκης
                             </a>
-                        <?php elseif ($thesis['status'] == 'completed'): ?>
+                        <?php elseif ($thesis['status'] == 'finished'): ?>
                             <a href="view_exam_protocol.php?topic_id=<?= $thesis['id'] ?>" target="_blank" class="btn btn-secondary">
                                 <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
                             </a>

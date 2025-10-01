@@ -319,11 +319,11 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
                     $status_title = "Υπό Εξέταση";
                     $status_class = "info";
                     break;
-                case 'for_grade':
+                case 'completed':
                     $status_title = "Υπό Βαθμολόγηση";
                     $status_class = "info";
                     break;
-                case 'completed':
+                case 'finished':
                     $status_title = "Περατωμένη Διπλωματική";
                     $status_class = "success";
                     break;
@@ -349,12 +349,6 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
                 <span class="status-value"><?= htmlspecialchars($topic['supervisor_name']." ".$topic['supervisor_surname']) ?></span>
             </div>
 
-            <div class="status-info">
-                <span class="status-label">Κατάσταση:</span>
-                <span class="status-badge <?= $status_class ?>">
-                    <?= htmlspecialchars($topic['status']) ?>
-                </span>
-            </div>
 
             <div class="status-info">
               <span class="status-label">Προβολή PDF :</span>
@@ -424,11 +418,11 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
                     <a href="#exam-section" class="btn btn-info">
                         <i class="fas fa-edit"></i> Ενημέρωση Εξέτασης
                     </a>
-                <?php elseif ($topic['status'] == 'for_grade'): ?>
+                <?php elseif ($topic['status'] == 'completed'): ?>
                     <a href="#library-section" class="btn btn-warning">
                         <i class="fas fa-link"></i> Σύνδεσμος Βιβλιοθήκης
                     </a>
-                <?php elseif ($topic['status'] == 'completed'): ?>
+                <?php elseif ($topic['status'] == 'finished'): ?>
                     <a href="view_exam_protocol.php?topic_id=<?= $topic['id'] ?>" target="_blank" class="btn btn-secondary">
                         <i class="fas fa-file-alt"></i> Προβολή Πρακτικού
                     </a>
@@ -569,7 +563,7 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
         <!-- Library Link Section -->
         <?php 
         $library_topics = array_filter($topics, function($topic) {
-            return in_array($topic['status'], ['for_grade', 'completed']);
+            return in_array($topic['status'], ['finished', 'completed']);
         });
         if (!empty($library_topics)): ?>
         <div class="status-card" id="library-section">
@@ -603,7 +597,7 @@ if (isset($_POST['topic_id']) && isset($_POST['teacher_ids'])) {
         <!-- Exam Protocol Section -->
         <?php 
         $protocol_topics = array_filter($topics, function($topic) {
-            return $topic['status'] == 'completed';
+            return $topic['status'] == 'finished';
         });
         if (!empty($protocol_topics)): ?>
         <div class="status-card" id="protocol-section">

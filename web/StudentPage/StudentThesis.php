@@ -39,7 +39,7 @@ $stmt->close();
 $sql = "SELECT t.*, u.name AS teacher_name, u.surname AS teacher_surname, u.email AS teacher_email
         FROM topics t
         JOIN users u ON u.id = t.teacher_id
-        WHERE t.assigned_to = ? AND t.status IN ('awaiting_committee', 'confirmed', 'for examination', 'for_grade', 'completed')
+        WHERE t.assigned_to = ? AND t.status IN ('awaiting_committee', 'confirmed', 'for examination', 'finished', 'completed')
         ORDER BY t.id DESC";
 
 $stmt = $db->prepare($sql);
@@ -150,8 +150,8 @@ $topics = $stmt->get_result();
                     'awaiting_committee' => ['title' => 'Υπό Ανάθεση - Επιλογή Επιτροπής', 'class' => 'warning', 'icon' => 'fas fa-users'],
                     'confirmed' => ['title' => 'Ενεργή Διπλωματική', 'class' => 'active', 'icon' => 'fas fa-play'],
                     'for examination' => ['title' => 'Υπό Εξέταση', 'class' => 'info', 'icon' => 'fas fa-search'],
-                    'for_grade' => ['title' => 'Υπό Βαθμολόγηση', 'class' => 'info', 'icon' => 'fas fa-chart-line'],
-                    'completed' => ['title' => 'Περατωμένη Διπλωματική', 'class' => 'success', 'icon' => 'fas fa-check-circle']
+                    'completed' => ['title' => 'Υπό Βαθμολόγηση', 'class' => 'info', 'icon' => 'fas fa-chart-line'],
+                    'finished' => ['title' => 'Περατωμένη Διπλωματική', 'class' => 'success', 'icon' => 'fas fa-check-circle']
                 ];
                 $current_status = $status_info[$row['status']] ?? ['title' => 'Διπλωματική Εργασία', 'class' => 'pending', 'icon' => 'fas fa-file'];
 
