@@ -84,37 +84,40 @@ if ($action === 'cancel_thesis' && in_array($oldStatus, ['confirmed','available'
 
 
     
-    if ($action === 'complete_thesis' && $oldStatus === 'for examination') {
-        $grade = trim($_POST['final_grade'] ?? '');
-        $grade = $grade !== '' ? floatval(str_replace(',', '.', $grade)) : null;
+   if ($action === 'complete_thesis' && $oldStatus === 'completed') {
+    // Παίρνουμε το library_link και τον final_grade
+    $nem = null;
+    $db_grade = null;
+    $chk = $db->prepare("SELECT library_link, final_grade FROM topics WHERE id=?");
+    $chk->bind_param("i", $topic_id);
+    $chk->execute();
+    $chk->bind_result($nem, $db_grade);
+    $chk->fetch();
+    $chk->close();
 
-    
-        $nem = null;
-        $chk = $db->prepare("SELECT nemertes_url FROM topics WHERE id=?");
-        $chk->bind_param("i", $topic_id);
-        $chk->execute();
-        $chk->bind_result($nem);
-        $chk->fetch();
-        $chk->close();
-
-        if (empty($nem)) {
-            set_flash("Δεν υπάρχει σύνδεσμος προς Νημερτή. Δεν μπορεί να ολοκληρωθεί.", "danger");
-        } else {
-            if ($grade !== null) {
-                $upd = $db->prepare("UPDATE topics SET status='completed', final_grade=? WHERE id=?");
-                $upd->bind_param("di", $grade, $topic_id);
-            } else {
-                $upd = $db->prepare("UPDATE topics SET status='completed' WHERE id=?");
-                $upd->bind_param("i", $topic_id);
-            }
-            $ok = $upd->execute(); $upd->close();
+    if (empty($nem)) {
+        set_flash("Δεν υπάρχει σύνδεσμος προς Νημερτή. Δεν μπορεί να ολοκληρωθεί.", "danger");
+    } else {
+        if ($db_grade !== null) {
+            // Υπάρχει βαθμός -> μπορούμε να χαρακτηρίσουμε ως finished
+            $upd = $db->prepare("UPDATE topics SET status='finished' WHERE id=?");
+            $upd->bind_param("i", $topic_id);
+            $ok = $upd->execute();
+            $upd->close();
 
             if ($ok) {
                 set_flash("Η ΔΕ χαρακτηρίστηκε ως Περατωμένη.");
+            } else {
+                set_flash("Πρόβλημα κατά την ενημέρωση της βάσης.", "danger");
             }
+        } else {
+            set_flash("Δεν υπάρχει καταχωρημένος βαθμός. Η εργασία δεν μπορεί να ολοκληρωθεί.", "danger");
         }
-        header("Location: SecretaryManageThesis.php"); exit();
     }
+    header("Location: SecretaryManageThesis.php"); 
+    exit();
+}
+
 
     set_flash("Μη έγκυρη ενέργεια ή κατάσταση.", "danger");
     header("Location: SecretaryManageThesis.php"); exit();
@@ -237,12 +240,12 @@ $tRes = $db->query($q);
             </form>
           <?php endif; ?>
 
-          <?php if ($row['status']==='for examination'): ?>
+          <?php if ($row['status']==='completed'): ?>
             <form method="post">
               <input type="hidden" name="action" value="complete_thesis">
               <input type="hidden" name="topic_id" value="<?php echo $row['id']; ?>">
               <div class="input-group">
-                <input type="text" name="final_grade" class="form-control" placeholder="Τελικός βαθμός">
+                
                 <button class="btn btn-outline-success">Ολοκλήρωση</button>
               </div>
             </form>
