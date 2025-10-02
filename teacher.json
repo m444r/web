@@ -1,1 +1,56 @@
---
+[
+       {
+      "id": "36",
+      "name": "Marina",
+      "surname": "Spanou",
+      "street": "Pagkrati Str.",
+      "number": "25",
+      "city": "Athens",
+      "postcode": "2456",
+      "father_name": "Gates",
+      "landline_telephone": "897",
+      "mobile_telephone": "354",
+      "email": "st10434021@upnet.gr"
+    },
+    {
+      "id": "37",
+      "name": "Rena",
+      "surname": "Koumioti",
+      "street": "Mpouat Str.",
+      "number": "24",
+      "city": "Athens",
+      "postcode": "5749",
+      "father_name": "Ellhniko",
+      "landline_telephone": "23557",
+      "mobile_telephone": "32453",
+      "email": "st10434022@upnet.gr"
+    }
+]
+[
+      {
+       "id": "34",
+      "name": "Giannis",
+      "surname": "Aggelakas",
+      "street": "Trypes Str.",
+      "number": "3",
+      "city": "Athens",
+      "postcode": "2354",
+      "father_name": "Theos",
+      "landline_telephone": "23",
+      "mobile_telephone": "45",
+      "email": "st10434019@upnet.gr"
+    },
+    {
+      "id": "35",
+      "name": "Eleutheria ",
+      "surname": "Arvanitaki",
+      "street": "Entexno Str. ",
+      "number": "2",
+      "city": "Athens",
+      "postcode": "345",
+      "father_name": "Kosmos",
+      "landline_telephone": "657",
+      "mobile_telephone": "345",
+      "email": "st10434020@upnet.gr"
+    }
+]
